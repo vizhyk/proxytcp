@@ -3,78 +3,82 @@
 namespace Proxy
 {
 
-    Status InitForwardingData(char **argv, ForwardingData &fwd) noexcept
+    Status InitForwardingData(int32_t argc, char **argv, ForwardingData &fwd) noexcept
     {
-//        if(argc < 3)
-//        {
-//            status = Status::IncorrectInputArguments;
-//            return;
-//        }
-//
-//        if(strcmp(argv[1],argv[2]) == 0)
-//        {
-//            status = Status::IncorrectInputArguments;
-//            return;
-//        }
+        Status status {};
 
+        if(argc < 3)
+        {
+            status = Status(Status::Error::IncorrectInputArguments);
+            return status;
+        }
 
+        if(strcmp(argv[1],argv[2]) == 0)
+        {
+            status = Status(Status::Error::IncorrectInputArguments);
+            return status;
+        }
 
-//        if(fwd.serverPort == 0L || errno == ERANGE)
-//        {
-//            status = Status::BadListeningPortConversion;
-//            return;
-//        }
+        fwd.listeningPort = std::strtoul(argv[1], nullptr, 10);
+        if(fwd.listeningPort == 0L || errno == ERANGE)
+        {
+            status = Status(Status::Error::BadListeningPortConversion);
+            return status;
+        }
 
-
-//        if(fwd.destinationPort == 0L || errno == ERANGE)
-//        {
-//            status = Status::BadDestinationPortConversion;
-//            return;
-//        }
         fwd.destinationPort = std::strtoul(argv[2], nullptr, 10);
-        fwd.serverPort = std::strtoul(argv[1], nullptr, 10);
-        std::cout << "[destination port = " << fwd.destinationPort << "]\n";
-        std::cout << "[server port = " << fwd.serverPort << "]\n";
+        if(fwd.destinationPort == 0L || errno == ERANGE)
+        {
+            status = Status(Status::Error::BadDestinationPortConversion);
+            return status;
+        }
 
+        std::cout << "[hostname = " << fwd.hostName << "]\n";
+        std::cout << "[destination port = " << fwd.destinationPort << "]\n";
+        std::cout << "[server port = " << fwd.listeningPort << "]\n";
+
+        return status;
     }
 
     Status CreateSocketOnListeningPort(int32_t &listeningPort, uint16_t serverPort) noexcept
     {
+        Status status {};
+
         sockaddr_in socketData {};
         int32_t  serverSocket {};
 
         listeningPort = socket(AF_INET, SOCK_STREAM, 0);
-
         if(listeningPort == -1)
         {
-            status = Status::BadserverSocketInitializaton;
-            exit(1);
-            //return -1;
+            status = Status(Status::Error::BadListeningSocketInitializaton);
+            return status;
         }
 
         memset(reinterpret_cast<char*>(&socketData),0,sizeof(socketData));
-//        bzero((char *) &socketData, sizeof(socketData));
+
         socketData.sin_family = AF_INET;
         socketData.sin_addr.s_addr = INADDR_ANY;
         socketData.sin_port = htons(serverPort);
 
         if(bind(listeningPort, reinterpret_cast<sockaddr*>(&socketData), sizeof(socketData)) == -1)
         {
-            std::cout << "bad binding\n";
-            exit(1);
+            status = Status(Status::Error::BadBindListeningPortToSocket);
+            return status;
         }
 
         if(listen(listeningPort, 40) == -1)
         {
-            std::cout << "bad server\n";
-            exit(1);
+            status = Status(Status::Error::MarkSocketPassive);
+            return status;
         }
 
-        return serverSocket;
+        return status;
     }
 
-    void TransferData(int32_t sourceSocket, int32_t destinationSocket) noexcept
+    Status TransferData(int32_t sourceSocket, int32_t destinationSocket) noexcept
     {
+        Status status {};
+
         const int32_t BUFFER_SIZE = 4096;
         char buffer[BUFFER_SIZE];
         uint32_t totalBytesWritten {};
@@ -86,13 +90,13 @@ namespace Proxy
             totalBytesWritten = 0;
             while(totalBytesWritten < bytesRead)
             {
-                int32_t writeSize = bytesRead - totalBytesWritten;
-                bytesWritten = write(destinationSocket, buffer + totalBytesWritten, writeSize );
+                int32_t writingSize = bytesRead - totalBytesWritten;
+                bytesWritten = write(destinationSocket, buffer + totalBytesWritten, writingSize );
 
                 if(bytesWritten == - 1)
                 {
-                    std::cout << "bad data forwarding(write)\n";
-                    exit(-1);
+                    status = Status(Status::Error::BadDataWrittenOnForwarding);
+                    return status;
                 }
 
                 totalBytesWritten += bytesWritten;
@@ -101,8 +105,7 @@ namespace Proxy
 
         if(bytesRead == -1)
         {
-            std::cout << "bad socket read(read)\n";
-            exit(-1);
+            status = Status(Status::Error::NoDataReadFromSocket);
         }
 
         shutdown(sourceSocket, SHUT_RD);
@@ -111,7 +114,7 @@ namespace Proxy
         close(sourceSocket);
         close(destinationSocket);
 
-        exit(0);
+        return status;
 
     }
 
@@ -121,9 +124,10 @@ namespace Proxy
         exit(status.Code());
     }
 
-    Status
-    CreateSocketForForwarding(uint16_t destinationPort, const char *hostName, int32_t &socketForForwarding) noexcept
+    Status CreateSocketForForwarding(int32_t &socketForForwarding, uint16_t destinationPort, const char *hostName) noexcept
     {
+        Status status {};
+
         hostent* destinationHost = nullptr;
         sockaddr_in destinationAddress {};
 
@@ -131,8 +135,8 @@ namespace Proxy
 
         if(destinationHost == nullptr)
         {
-            std::cout << "bad destination host";
-            return 1;
+            status = Proxy::Status(Proxy::Status::Error::BadDestinationHost);
+            Proxy::PrintStatusAndExit(status);
         }
 
         memset(&destinationAddress, 0, sizeof(destinationAddress));
@@ -149,20 +153,19 @@ namespace Proxy
 
         if(socketForForwarding == -1)
         {
-            std::cout << "bad socket for forwarding";
-            return 1;
+            status = Proxy::Status(Proxy::Status::Error::BadForwardingSocketCreation);
+            Proxy::PrintStatusAndExit(status);
         }
 
-        int16_t connectResult {};
-        connectResult = connect(socketForForwarding, reinterpret_cast<sockaddr*>(&destinationAddress), sizeof(destinationAddress));
+        auto connectResult = connect(socketForForwarding, reinterpret_cast<sockaddr*>(&destinationAddress), sizeof(destinationAddress));
 
         if(connectResult == -1)
         {
-            std::cout << "bad forwarding connection\n";
-            return 1;
+            status = Proxy::Status(Proxy::Status::Error::BadBindSocketToAddress);
+            Proxy::PrintStatusAndExit(status);
         }
 
-
+        return status;
     }
 
 

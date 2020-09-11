@@ -17,6 +17,15 @@ namespace Proxy
             BadDestinationPortConversion = -3,
             BadListeningSocketInitializaton = -4,
             BadConnectionFromListeningSocket = -5,
+            BadProcessFork = -6,
+            BadDestinationHost = -7,
+            BadForwardingSocketCreation = -8,
+            BadBindSocketToAddress = -9,
+            BadBindListeningPortToSocket = -10,
+            BadDataWrittenOnForwarding = -11,
+            MarkSocketPassive = - 12,
+            NoDataReadFromSocket = -13,
+
         };
 
     public:
