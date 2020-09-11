@@ -12,30 +12,24 @@
 #include <cerrno>
 #include <iostream>
 
+#include "Status.hpp"
+
 namespace Proxy
 {
-    enum class Status : uint8_t
-    {
-        IncorrectInputArguments = 0xff,
-        BadListeningPortConversion = 0xfe,
-        BadDestinationPortConversion = 0xfd,
-        BadListeningSocketInitializaton = 0xfc,
-    };
-
     struct ForwardingData
     {
-        uint16_t listeningPort   {}; // what  to listen
+        uint16_t serverPort   {}; // what  to listen
         uint16_t destinationPort {}; // where to forward
         std::string hostName = "coolsite.io";
     };
 
-    void InitForwardingData(int argc, char **argv, ForwardingData &fwd, Status &status) noexcept;
+    Status InitForwardingData(char **argv, ForwardingData &fwd) noexcept;
     void TransferData(int32_t sourceSocket, int32_t destinationSocket) noexcept;
 
-    int32_t CreateSocketForForwarding(uint16_t destinationPort, const char* hostName) noexcept;
-    int32_t CreateSocketOnListeningPort(uint16_t listeningPort, Status &status) noexcept;
+    Status CreateSocketForForwarding(int32_t& socketForForwarding, uint16_t destinationPort, const char *hostName) noexcept;
+    Status CreateSocketOnListeningPort(int32_t &listeningPort, uint16_t serverPort) noexcept;
 
-
+    void PrintStatusAndExit(const Status& status) noexcept;
 }
 
 namespace Proxy::ExtensionA

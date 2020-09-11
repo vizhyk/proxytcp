@@ -3,70 +3,74 @@
 namespace Proxy
 {
 
-    void InitForwardingData(int argc, char **argv, ForwardingData &fwd, Status &status) noexcept
+    Status InitForwardingData(char **argv, ForwardingData &fwd) noexcept
     {
-        if(argc < 3)
-        {
-            status = Status::IncorrectInputArguments;
-            return;
-        }
+//        if(argc < 3)
+//        {
+//            status = Status::IncorrectInputArguments;
+//            return;
+//        }
+//
+//        if(strcmp(argv[1],argv[2]) == 0)
+//        {
+//            status = Status::IncorrectInputArguments;
+//            return;
+//        }
 
-        if(strcmp(argv[1],argv[2]) == 0)
-        {
-            status = Status::IncorrectInputArguments;
-            return;
-        }
 
-        fwd.listeningPort = std::strtoul(argv[1], nullptr, 10);
 
-        if(fwd.listeningPort == 0L || errno == ERANGE)
-        {
-            status = Status::BadListeningPortConversion;
-            return;
-        }
+//        if(fwd.serverPort == 0L || errno == ERANGE)
+//        {
+//            status = Status::BadListeningPortConversion;
+//            return;
+//        }
 
+
+//        if(fwd.destinationPort == 0L || errno == ERANGE)
+//        {
+//            status = Status::BadDestinationPortConversion;
+//            return;
+//        }
         fwd.destinationPort = std::strtoul(argv[2], nullptr, 10);
-
-        if(fwd.destinationPort == 0L || errno == ERANGE)
-        {
-            status = Status::BadDestinationPortConversion;
-            return;
-        }
+        fwd.serverPort = std::strtoul(argv[1], nullptr, 10);
+        std::cout << "[destination port = " << fwd.destinationPort << "]\n";
+        std::cout << "[server port = " << fwd.serverPort << "]\n";
 
     }
 
-    int32_t CreateSocketOnListeningPort(uint16_t listeningPort, Status &status) noexcept
+    Status CreateSocketOnListeningPort(int32_t &listeningPort, uint16_t serverPort) noexcept
     {
         sockaddr_in socketData {};
-        int32_t  listeningSocket {};
+        int32_t  serverSocket {};
 
-        listeningSocket = socket(AF_INET, SOCK_STREAM, 0);
+        listeningPort = socket(AF_INET, SOCK_STREAM, 0);
 
-        if(listeningSocket == -1)
+        if(listeningPort == -1)
         {
-            status = Status::BadListeningSocketInitializaton;
-            return -1;
+            status = Status::BadserverSocketInitializaton;
+            exit(1);
+            //return -1;
         }
 
         memset(reinterpret_cast<char*>(&socketData),0,sizeof(socketData));
-
+//        bzero((char *) &socketData, sizeof(socketData));
         socketData.sin_family = AF_INET;
         socketData.sin_addr.s_addr = INADDR_ANY;
-        socketData.sin_port = htons(listeningSocket);
+        socketData.sin_port = htons(serverPort);
 
-        if(bind(listeningSocket,reinterpret_cast<sockaddr*>(&socketData),sizeof(socketData)) == -1)
+        if(bind(listeningPort, reinterpret_cast<sockaddr*>(&socketData), sizeof(socketData)) == -1)
         {
             std::cout << "bad binding\n";
             exit(1);
         }
 
-        if(listen(listeningSocket, 40) == -1)
+        if(listen(listeningPort, 40) == -1)
         {
-            std::cout << "bad listening\n";
+            std::cout << "bad server\n";
             exit(1);
         }
 
-        return listeningSocket;
+        return serverSocket;
     }
 
     void TransferData(int32_t sourceSocket, int32_t destinationSocket) noexcept
@@ -77,12 +81,9 @@ namespace Proxy
         int32_t bytesWritten {};
         int32_t bytesRead {};
 
-        //bytesRead = read(sourceSocket, buffer, BUFFER_SIZE);
-
         while((bytesRead = read(sourceSocket, buffer, BUFFER_SIZE)) > 0)
         {
             totalBytesWritten = 0;
-
             while(totalBytesWritten < bytesRead)
             {
                 int32_t writeSize = bytesRead - totalBytesWritten;
@@ -114,9 +115,15 @@ namespace Proxy
 
     }
 
-    int32_t CreateSocketForForwarding(uint16_t destinationPort,const char* hostName) noexcept
+    void PrintStatusAndExit(const Status &status) noexcept
     {
-        int16_t socketForForwarding {};
+        std::cout << "[Status code: " << status.Code() << "]\n";
+        exit(status.Code());
+    }
+
+    Status
+    CreateSocketForForwarding(uint16_t destinationPort, const char *hostName, int32_t &socketForForwarding) noexcept
+    {
         hostent* destinationHost = nullptr;
         sockaddr_in destinationAddress {};
 
@@ -132,8 +139,8 @@ namespace Proxy
 
         destinationAddress.sin_family = AF_INET;
 
-        memcpy(reinterpret_cast<char*>(destinationHost->h_addr),
-               reinterpret_cast<char*>(&destinationAddress.sin_addr.s_addr),
+        memcpy(reinterpret_cast<char*>(&destinationAddress.sin_addr.s_addr),
+               reinterpret_cast<char*>(destinationHost->h_addr),
                destinationHost->h_length);
 
         destinationAddress.sin_port = htons(destinationPort);
@@ -155,7 +162,7 @@ namespace Proxy
             return 1;
         }
 
-        return socketForForwarding;
+
     }
 
 

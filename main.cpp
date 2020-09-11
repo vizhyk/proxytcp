@@ -9,68 +9,66 @@ int main(int argc, char** argv)
     Proxy::Status status {};
     Proxy::ForwardingData fwd {};
 
-    int32_t clientSocket {};
-    int32_t serverSocket {};
+    int32_t listeningSocket {};
 
-    pid_t parentPID {};
+    status = Proxy::InitForwardingData(argv, fwd);
+    if(status.Failed()) { Proxy::PrintStatusAndExit(status); }
 
-    Proxy::InitForwardingData(argc,argv,fwd,status);
+    status = Proxy::CreateSocketOnListeningPort(listeningSocket, fwd.serverPort);
+    if(status.Failed()) { Proxy::PrintStatusAndExit(status); }
 
-    if(status == Proxy::Status::IncorrectInputArguments ||
-       status == Proxy::Status::BadListeningPortConversion ||
-       status == Proxy::Status::BadDestinationPortConversion)
+    bool waitingForConnection { true };
+
+    while(waitingForConnection)
     {
-        std::cout << "err step1\n";
-        exit(1);
-    }
+        int32_t clientSocket {};
+        pid_t parentPID {};
 
-    serverSocket = Proxy::CreateSocketOnListeningPort(fwd.listeningPort, status);
-
-
-    clientSocket = accept(serverSocket, nullptr , nullptr);
-
-    if(clientSocket == -1)
-    {
-        std::cout << "Bad creating client Socket\n";
-        exit(1);
-    }
-
-    parentPID = fork();
-
-    if(parentPID == -1)
-    {
-        std::cout << "bad parent pid\n";
-        exit(1);
-    }
-
-    if(parentPID == 0)
-    {
-        int32_t forwardingSocket {};
-        pid_t childPID {};
-
-        forwardingSocket = Proxy::CreateSocketForForwarding(fwd.destinationPort, fwd.hostName.c_str());
-
-        childPID = fork();
-
-        if(childPID == -1)
+        clientSocket = accept(listeningSocket, nullptr , nullptr);
+        if(clientSocket == -1)
         {
-            std::cout << "bad child PID\n";
+            status = Proxy::Status(Proxy::Status::Error::BadConnectionFromListeningSocket);
+            Proxy::PrintStatusAndExit(status);
+        }
+
+        parentPID = fork();
+        if(parentPID == -1)
+        {
+
             exit(1);
         }
 
-        if(childPID == 0)
+        if(parentPID == 0)
         {
-            Proxy::TransferData(forwardingSocket, clientSocket);
-        }
-        else
-        {
-            Proxy::TransferData(clientSocket, forwardingSocket);
+            int32_t forwardingSocket {};
+            pid_t childPID {};
+
+            forwardingSocket = Proxy::CreateSocketForForwarding(fwd.destinationPort, fwd.hostName.c_str(),
+                                                                <#initializer#>);
+
+            childPID = fork();
+            if(childPID == -1)
+            {
+                std::cout << "bad child PID\n";
+                exit(1);
+            }
+
+            if(childPID == 0)
+            {
+                Proxy::TransferData(forwardingSocket, clientSocket);
+            }
+            else
+            {
+                Proxy::TransferData(clientSocket, forwardingSocket);
+            }
+
+            exit(0);
         }
 
-        exit(0);
+        close(clientSocket);
     }
 
-    close(clientSocket);
+
 
     return 0;
 }
