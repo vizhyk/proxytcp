@@ -40,15 +40,14 @@ namespace Proxy
         return status;
     }
 
-    Status CreateSocketOnListeningPort(int32_t &listeningPort, uint16_t serverPort) noexcept
+    Status CreateSocketOnListeningPort(int32_t &listeningSocket, int32_t listeningPort) noexcept
     {
         Status status {};
 
         sockaddr_in socketData {};
-        int32_t  serverSocket {};
 
-        listeningPort = socket(AF_INET, SOCK_STREAM, 0);
-        if(listeningPort == -1)
+        listeningSocket = socket(AF_INET, SOCK_STREAM, 0);
+        if(listeningSocket == -1)
         {
             status = Status(Status::Error::BadListeningSocketInitializaton);
             return status;
@@ -58,15 +57,15 @@ namespace Proxy
 
         socketData.sin_family = AF_INET;
         socketData.sin_addr.s_addr = INADDR_ANY;
-        socketData.sin_port = htons(serverPort);
+        socketData.sin_port = htons(listeningPort);
 
-        if(bind(listeningPort, reinterpret_cast<sockaddr*>(&socketData), sizeof(socketData)) == -1)
+        if(bind(listeningSocket, reinterpret_cast<sockaddr*>(&socketData), sizeof(socketData)) == -1)
         {
             status = Status(Status::Error::BadBindListeningPortToSocket);
             return status;
         }
 
-        if(listen(listeningPort, 40) == -1)
+        if(listen(listeningSocket, 40) == -1)
         {
             status = Status(Status::Error::MarkSocketPassive);
             return status;
@@ -124,7 +123,7 @@ namespace Proxy
         exit(status.Code());
     }
 
-    Status CreateSocketForForwarding(int32_t &socketForForwarding, uint16_t destinationPort, const char *hostName) noexcept
+    Status CreateSocketForForwarding(int32_t &socketForForwarding, int32_t destinationPort, const char *hostName) noexcept
     {
         Status status {};
 

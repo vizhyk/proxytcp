@@ -25,7 +25,6 @@ namespace Proxy
             BadDataWrittenOnForwarding = -11,
             MarkSocketPassive = - 12,
             NoDataReadFromSocket = -13,
-
         };
 
     public:
