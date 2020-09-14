@@ -2,9 +2,9 @@
 /*      Quick Reference:
  *
  *      There're 3 modes according to the task:
- *          - Forwarding(3)
- *          - Tracking(4. Bonus A)
- *          - Ban(5. Bonus B)
+ *          - Forwarding(item 3)
+ *          - Tracking(item 4. Bonus A)
+ *          - Ban(item 5. Bonus B)
  *
  *      There're following LONG options:
  *      --mode [0-2]
