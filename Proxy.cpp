@@ -4,43 +4,6 @@
 namespace Proxy
 {
 
-    Status InitForwardingData(int32_t argc, char **argv, ForwardingData &fwd) noexcept
-    {
-        Status status {};
-
-        if(argc < 3)
-        {
-            status = Status(Status::Error::IncorrectInputArguments);
-            return status;
-        }
-
-        if(strcmp(argv[1],argv[2]) == 0)
-        {
-            status = Status(Status::Error::IncorrectInputArguments);
-            return status;
-        }
-
-        fwd.listeningPort = std::strtoul(argv[1], nullptr, 10);
-        if(fwd.listeningPort == 0L || errno == ERANGE)
-        {
-            status = Status(Status::Error::BadListeningPortConversion);
-            return status;
-        }
-
-        fwd.destinationPort = std::strtoul(argv[2], nullptr, 10);
-        if(fwd.destinationPort == 0L || errno == ERANGE)
-        {
-            status = Status(Status::Error::BadDestinationPortConversion);
-            return status;
-        }
-
-        std::cout << "[hostname = " << fwd.hostName << "]\n";
-        std::cout << "[destination port = " << fwd.destinationPort << "]\n";
-        std::cout << "[server port = " << fwd.listeningPort << "]\n";
-
-        return status;
-    }
-
     Status CreateSocketOnListeningPort(int32_t &listeningSocket, int32_t listeningPort, sockaddr_in &socketData) noexcept
     {
         Status status {};
@@ -166,89 +129,13 @@ namespace Proxy
         return status;
     }
 
-    Status ParseInputArguments(int32_t argc, char **argv, ForwardingData &fwd, FunctionPointer* fptr) noexcept
-    {
-        Status status {};
 
-        const option longOptions[] = {
-                {"mode", required_argument, nullptr , static_cast<int32_t>(Proxy::InputArgs::Mode) },
-                {"domain", required_argument, nullptr , static_cast<int32_t>(Proxy::InputArgs::Domain) },
-                {"lp", required_argument, nullptr , static_cast<int32_t>(Proxy::InputArgs::ListeningPort) },
-                {"dp", required_argument, nullptr , static_cast<int32_t>(Proxy::InputArgs::DestinationPort) },
-        };
-
-        int32_t result;
-        int32_t optionIndex;
-
-        while ((result = getopt_long(argc, argv, "", longOptions, &optionIndex)) != -1)
-        {
-            switch (result)
-            {
-                case static_cast<int32_t>(Proxy::InputArgs::Mode):
-                {
-                    std::cout << "found: mode\n";
-                    switch (strtol(optarg, nullptr,10))
-                    {
-                        case static_cast<int32_t>(Proxy::Mode::Forwarding):
-                        {
-                            *fptr = (FunctionPointer)StartForwardingMode;
-                            break;
-                        }
-                        case static_cast<int32_t>(Proxy::Mode::Tracking):
-                        {
-                            std::cout << "tracking mode\n";
-                            *fptr = (FunctionPointer)Tracking::StartTrackingMode;
-                            break;
-                        }
-                        case static_cast<int32_t>(Proxy::Mode::Ban):
-                        {
-                            std::cout << "ban mode\n";
-                            *fptr = (FunctionPointer)Ban::StartBanMode;
-                            break;
-                        }
-                        default:
-                        {
-                            std::cout << "invalid mode\n";
-                            exit(1);
-                        }
-                    }
-                    break;
-                }
-                case static_cast<int32_t>(Proxy::InputArgs::Domain):
-                {
-                    fwd.hostName = std::string(optarg);
-                    std::cout << "domain: " << fwd.hostName << "\n";
-                    break;
-                }
-                case static_cast<int32_t>(Proxy::InputArgs::ListeningPort):
-                {
-                    fwd.listeningPort = strtol(optarg, nullptr,10);
-                    std::cout << "listening port: " << fwd.listeningPort << "\n";
-                    break;
-                }
-                case static_cast<int32_t>(Proxy::InputArgs::DestinationPort):
-                {
-                    fwd.destinationPort = strtol(optarg, nullptr,10);
-                    std::cout << "destination port: " << fwd.destinationPort << "\n";
-                    break;
-                }
-                default:
-                {
-                    std::cout << "Invalid arguments\n";
-                    break;
-                }
-            }
-        }
-
-
-        return status;
-    }
 
     void StartForwardingMode(const ForwardingData &fwd) noexcept
     {
         Proxy::Status status {};
         sockaddr_in socketData {};
-        std::cout << "forwarding\n";
+        std::cout << "[Forwarding mode]\n";
 
         int32_t listeningSocket {};
 
@@ -311,67 +198,66 @@ namespace Proxy
         }
 
     }
-
-
 }
 
 namespace Proxy::Tracking
 {
     void StartTrackingMode(const ForwardingData &fwd) noexcept
     {
-        std::cout << "Tracking mode\n";
+        std::cout << "[Tracking mode]\n";
 
         Proxy::Status status {};
         sockaddr saddr {};
         auto socketDataSize = sizeof(saddr);
 
 
-        int32_t rawSocket = socket(AF_INET , SOCK_RAW , IPPROTO_TCP);
+        int32_t rawSocket = socket( AF_PACKET , SOCK_RAW , htons(ETH_P_ALL));
         if(rawSocket < 0)
         {
-            printf("Socket Error\n");
-            exit(1);
+            status = Proxy::Status(Proxy::Status::Error::BadListeningSocketInitializaton);
+            PrintStatusAndExit(status);
         }
 
         char buff[4096];
 
-        while(1)
+        bool waitingForConnection {true};
+        while(waitingForConnection)
         {
-
-            //Receive a packet
             auto recievedPackets = recvfrom(rawSocket , buff , 4096 , 0 , &saddr , (socklen_t*)&socketDataSize);
             if(recievedPackets <0 )
             {
-                printf("Recvfrom error , failed to get packets\n");
-                exit(1);
+                status = Proxy::Status(Proxy::Status::Error::NoDataReadFromSocket);
+                PrintStatusAndExit(status);
             }
 
-            unsigned short iphdrlen;
-
-            iphdr *iph = (struct iphdr *)( buff  + sizeof(ethhdr) );
-            iphdrlen = iph->ihl*4;
-
-            tcphdr *tcph=(struct tcphdr*)(buff + iphdrlen + sizeof(ethhdr));
-
-            int header_size =  sizeof(ethhdr) + iphdrlen + tcph->doff*4;
-
-            if(iph->protocol == 6)
+            iphdr *IPHearder = reinterpret_cast<iphdr*>(buff + sizeof(ethhdr));
+            if(IPHearder->protocol == 6) // check if it's TCP
             {
-                printf("############# tcp header #########\n");
-                for(int i = header_size; i < 100; ++i)
+                if(IsClientHelloMesasge(buff))
                 {
-                    printf("%02x ",(unsigned char)buff[i]);
-                    if(i!=0 && i%16==0)
-                    {
-                        printf("\n");
-                    }
+                    std::string domain = GetDomainNameFromTCPPacket(buff);
+                    std::cout << "You have been connected with: " << domain << "\n";
                 }
-
             }
+
         }
+    }
 
+    bool IsClientHelloMesasge(const char *buff) noexcept
+    {
+        // buff[66] - position of the TLS Content Type field. [0x16 - Handshake]/[0x17 - Application Data]
+        // buff[71] - position of the Handshake Type [0x01 - ClienHello]/[0x02 - ServerHello]
+        return (unsigned int)buff[66] == 0x16 && (unsigned int)buff[71] == 0x01;
+    }
 
-
+    std::string GetDomainNameFromTCPPacket(const char *buffer) noexcept
+    {
+        auto domainNameSize = (uint32_t)buffer[192];
+        char* domainName = new char[domainNameSize];
+        memcpy(domainName,buffer+193,domainNameSize);
+        std::string tmp(domainName);
+        delete[] domainName;
+        return tmp;
     }
 }
 
@@ -379,6 +265,6 @@ namespace Proxy::Ban
 {
     void StartBanMode(const ForwardingData &fwd) noexcept
     {
-        std::cout << "Ban mode\n";
+        std::cout << "[Ban mode]\n";
     }
 }
