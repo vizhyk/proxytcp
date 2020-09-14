@@ -1,4 +1,4 @@
-#include <netinet/ip.h>
+
 #include "Proxy.hpp"
 
 namespace Proxy
@@ -213,6 +213,7 @@ namespace Proxy::Tracking
 
         char buff[4096];
 
+        // decided to use raw socket, bcs SOCK_STREAM cought just ServerHello messages(in my case)
         rawSocket = socket( AF_PACKET , SOCK_RAW , htons(ETH_P_ALL));
         if(rawSocket < 0)
         {
@@ -307,6 +308,8 @@ namespace Proxy::Ban
 
                 if(childPID == 0)
                 {
+//                    Raw socket, which as I though would help me :DDD
+
 //                    socketForPacketAnalysis = socket(AF_PACKET , SOCK_RAW , htons(ETH_P_ALL));
 //                    if(socketForPacketAnalysis < 0)
 //                    {
@@ -314,12 +317,8 @@ namespace Proxy::Ban
 //                        PrintStatusAndExit(status);
 //                    }
                     std::cout << "[Transfering data from port " << fwd.listeningPort << " to port " << fwd.destinationPort << "]\n";
-                    status = Proxy::Ban::TransferDataWithRestriction(socketForPacketAnalysis, socketForForwarding, destinationSocket,
-                                                                     fwd.bannedHostName,
-                                                                     fwd.listeningPort);
+                    status = Proxy::Ban::TransferDataWithRestriction(socketForForwarding,destinationSocket, fwd.bannedHostName, fwd.listeningPort);
                     if(status.Failed() && (status.Code() != static_cast<int32_t>(Proxy::Status::Error::BannedHostDataTransfer)) ) { Proxy::PrintStatusAndExit(status); }
-
-
                 }
                 else
                 {
@@ -332,22 +331,14 @@ namespace Proxy::Ban
                 }
             }
 
-//            socketForPacketAnalysis = socket(AF_PACKET , SOCK_RAW , htons(ETH_P_ALL));
-//            if(socketForPacketAnalysis < 0)
-//            {
-//                status = Proxy::Status(Proxy::Status::Error::BadListeningSocketInitializaton);
-//                PrintStatusAndExit(status);
-//            }
-
             close(destinationSocket);
             close(socketForPacketAnalysis);
 
         }
     }
 
-    Status
-        TransferDataWithRestriction(int32_t sniffingSocket, int32_t sourceSocket, int32_t destinationSocket,
-                                const std::string &bannedHostname, int32_t listeningPort) noexcept
+    Status TransferDataWithRestriction(int32_t listeningSocket, int32_t destinationSocket, const std::string &bannedHostname,
+                                       int32_t listeningPort) noexcept
     {
         Status status {};
         sockaddr saddr {};
@@ -360,43 +351,10 @@ namespace Proxy::Ban
         char buffer[BUFFER_SIZE];
 
         std::string connectedDomainName;
-        bool isBanned;
 
-
-
-        //recieving ALL data that comes to our sourceSocket(which is SOCK_RAW)
-        while((bytesRead = recvfrom(sourceSocket , buffer , 4096 , 0 , &saddr , (socklen_t*)&socketDataSize)) > 0)
+        //recieving ALL data that come to our listenignSocket
+        while((bytesRead = recvfrom(listeningSocket , buffer , 4096 , 0 , &saddr , (socklen_t*)&socketDataSize)) > 0)
         {
-
-
-//            for(int i = 0; i < bytesRead; ++i)
-//            {
-//                if(i%16==0)
-//                    printf("\n");
-//                printf("%02x ", static_cast<uint32_t>(buffer[i]));
-//            }
-//
-//            printf("\n\n===================\n\n");
-//            printf("66: %02x, 71: %02x\n", static_cast<uint8_t>(buffer[0]), static_cast<uint8_t>(buffer[5]));
-
-//
-//
-//            if((ntohs(TCPHearder->th_dport) == listeningPort) && (IPHeader->protocol == 6))
-//            {
-//                for(int i = 0; i < bytesRead; ++i)
-//                {
-//                    if(i%16==0)
-//                        printf("\n");
-//                    printf("%02x ", static_cast<uint32_t>(buffer[i]));
-//                }
-//
-//                printf("\n\n===================\n\n");
-//                printf("66: %02x, 71: %02x\n", static_cast<uint8_t>(buffer[52]), static_cast<uint8_t>(buffer[57]));
-//
-//
-//
-//            }
-
             totalBytesWritten = 0;
             while(totalBytesWritten < bytesRead)
             {
@@ -437,53 +395,15 @@ namespace Proxy::Ban
 //                }
         }
 
-
-
-
-//            iphdr *IPHeader = reinterpret_cast<iphdr*>(buffer + sizeof(ethhdr));
-//            auto iphdrlen = sizeof(iphdr);
-//            tcphdr *TCPHearder = reinterpret_cast<tcphdr*>(buffer + iphdrlen + sizeof(ethhdr));
-
-//            printf("(ntohs(TCPHearder->th_dport) = %d", ntohs(TCPHearder->th_dport) );
-//            printf("((TCPHearder->th_dport) = %d", TCPHearder->th_dport );
-//            if((ntohs(TCPHearder->th_dport) == listeningPort) && (IPHeader->protocol == 6))
-//            {
-//
-//                isBanned = false;
-//                std::cout << "[Recieved: " << bytesRead << " bytes]\n";
-//                // check if that packet's destination port is 8081 (according to the task). IPHeader->protocol == 6 - means that's TCP packet.
-//                if(Tracking::IsClientHelloMesasge(buffer))
-//                {
-//
-//                    connectedDomainName = Tracking::GetDomainNameFromTCPPacket(buffer);
-//                    if (connectedDomainName == bannedHostname)
-//                    {
-//                        std::cout << "\'" << bannedHostname << "\' is not allowed to connect. Skipping.\n";
-//                        isBanned = true;
-//                        break;
-//                        //                    return status = Status(Status::Error::BannedHostDataTransfer);
-//                    }
-//
-//                    std::cout << "You have been connected with: " << connectedDomainName << "\n";
-//                }
-//
-//                if(isBanned == false)
-//                {
-//
-//                }
-//            }
-
-
         if(bytesRead == -1)
         {
             status = Status(Status::Error::NoDataReadFromSocket);
         }
 
-        shutdown(sourceSocket, SHUT_RD);
+        shutdown(listeningSocket, SHUT_RD);
         shutdown(destinationSocket, SHUT_WR);
 
-        close(sniffingSocket);
-        close(sourceSocket);
+        close(listeningSocket);
         close(destinationSocket);
 
         return status;

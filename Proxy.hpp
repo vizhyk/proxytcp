@@ -1,19 +1,21 @@
 #pragma once
 
 #include <cstdio>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <cstring>
+
 #include <cstdlib>
 #include <netdb.h>
 #include <csignal>
 #include <zconf.h>
 #include <cerrno>
 #include <iostream>
+#include <cstring>
 #include <getopt.h>
-#include <netinet/tcp.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <net/ethernet.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <netinet/ip.h>
 
 #include "Status.hpp"
 
@@ -25,7 +27,7 @@ namespace Proxy
         Domain = 1,
         ListeningPort = 2,
         DestinationPort = 3,
-        BanDomain = 4,
+        BannedDomain = 4,
     };
 
     enum class Mode : int32_t
@@ -43,11 +45,12 @@ namespace Proxy
         std::string bannedHostName = "badsite.io"; // may be changed to map/unordered_map
     };
 
-    typedef void (*FunctionPointer)(const ForwardingData& fwd);
+    // function pointer that used to chose the function that depends on --mode arg.
+    typedef void (*ModeFunctionPointer)(const ForwardingData& fwd);
 
     void StartForwardingMode(const ForwardingData &fwd) noexcept;
 
-
+    // socket that will forward data to the destination
     Status CreateSocketForForwarding(int32_t& socketForForwarding, int32_t destinationPort, const char *hostName) noexcept;
     Status CreateSocketOnListeningPort(int32_t &listeningSocket, int32_t listeningPort, sockaddr_in &socketData) noexcept;
     Status TransferData(int32_t sourceSocket, int32_t destinationSocket) noexcept;
@@ -69,10 +72,5 @@ namespace Proxy::Tracking
 namespace Proxy::Ban
 {
     void StartBanMode(const ForwardingData &fwd) noexcept;
-    Status
-    TransferDataWithRestriction(int32_t sniffingSocket, int32_t sourceSocket, int32_t destinationSocket,
-                                const std::string &bannedHostname, int32_t listeningPort) noexcept;
-
-    bool IsServerHelloMesasge(const char *buff) noexcept;
-    std::string GetDomainNameFromServerHello(const char* buffer) noexcept;
+    Status TransferDataWithRestriction(int32_t listeningSocket, int32_t destinationSocket, const std::string &bannedHostname, int32_t listeningPort) noexcept;
 }
