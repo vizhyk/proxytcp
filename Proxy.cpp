@@ -8,7 +8,7 @@ namespace Proxy
     {
         Status status {};
 
-        listeningSocket = socket(AF_INET, SOCK_STREAM, 0);
+        listeningSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
         if(listeningSocket == -1)
         {
             status = Status(Status::Error::BadListeningSocketInitializaton);
@@ -307,11 +307,18 @@ namespace Proxy::Ban
 
                 if(childPID == 0)
                 {
+//                    socketForPacketAnalysis = socket(AF_PACKET , SOCK_RAW , htons(ETH_P_ALL));
+//                    if(socketForPacketAnalysis < 0)
+//                    {
+//                        status = Proxy::Status(Proxy::Status::Error::BadListeningSocketInitializaton);
+//                        PrintStatusAndExit(status);
+//                    }
                     std::cout << "[Transfering data from port " << fwd.listeningPort << " to port " << fwd.destinationPort << "]\n";
                     status = Proxy::Ban::TransferDataWithRestriction(socketForPacketAnalysis, socketForForwarding, destinationSocket,
                                                                      fwd.bannedHostName,
                                                                      fwd.listeningPort);
                     if(status.Failed() && (status.Code() != static_cast<int32_t>(Proxy::Status::Error::BannedHostDataTransfer)) ) { Proxy::PrintStatusAndExit(status); }
+
 
                 }
                 else
@@ -355,24 +362,82 @@ namespace Proxy::Ban
         std::string connectedDomainName;
         bool isBanned;
 
+
+
         //recieving ALL data that comes to our sourceSocket(which is SOCK_RAW)
         while((bytesRead = recvfrom(sourceSocket , buffer , 4096 , 0 , &saddr , (socklen_t*)&socketDataSize)) > 0)
         {
+
+
+//            for(int i = 0; i < bytesRead; ++i)
+//            {
+//                if(i%16==0)
+//                    printf("\n");
+//                printf("%02x ", static_cast<uint32_t>(buffer[i]));
+//            }
+//
+//            printf("\n\n===================\n\n");
+//            printf("66: %02x, 71: %02x\n", static_cast<uint8_t>(buffer[0]), static_cast<uint8_t>(buffer[5]));
+
+//
+//
+//            if((ntohs(TCPHearder->th_dport) == listeningPort) && (IPHeader->protocol == 6))
+//            {
+//                for(int i = 0; i < bytesRead; ++i)
+//                {
+//                    if(i%16==0)
+//                        printf("\n");
+//                    printf("%02x ", static_cast<uint32_t>(buffer[i]));
+//                }
+//
+//                printf("\n\n===================\n\n");
+//                printf("66: %02x, 71: %02x\n", static_cast<uint8_t>(buffer[52]), static_cast<uint8_t>(buffer[57]));
+//
+//
+//
+//            }
+
             totalBytesWritten = 0;
             while(totalBytesWritten < bytesRead)
             {
                 int32_t writingSize = bytesRead - totalBytesWritten;
                 bytesWritten = write(destinationSocket, buffer + totalBytesWritten, writingSize);
-                std::cout << "[Sended: " << bytesWritten << "]\n";
                 if(bytesWritten == - 1)
                 {
-                    std::cout << "debug: " << totalBytesWritten << " | " << writingSize << " | " << bytesRead << "\n";
+                    printf("sending someting \n");
                     status = Status(Status::Error::BadDataWrittenOnForwarding);
                     printf("Oh dear, something went wrong with write()! %s | %d \n", strerror(errno) ,errno);
                     return status;
                 }
                 totalBytesWritten += bytesWritten;
             }
+
+
+//            This code as I thought would work if I use Raw socket,
+//            but in my case if I sniff traffic with the RawSocket - i'm not able to send reply trought SOCK_STREAM
+//
+//            iphdr *IPHeader = reinterpret_cast<iphdr*>(buffer + sizeof(ethhdr));
+//            tcphdr *TCPHearder = reinterpret_cast<tcphdr*>(buffer + sizeof(iphdr) + sizeof(ethhdr));
+//            if((ntohs(TCPHearder->th_dport) == listeningPort) && (IPHeader->protocol == 6))
+//            {
+//                printf("Port = %d\n", ntohs(TCPHearder->th_dport));
+//                if(bytesRead > 71)
+//                    printf("66: %d, 71: %d",static_cast<uint32_t>(buffer[66]),static_cast<uint32_t>(buffer[71]));
+//                if(Tracking::IsClientHelloMesasge(buffer))
+//                {
+//                    connectedDomainName = Tracking::GetDomainNameFromTCPPacket(buffer);
+//                    if (connectedDomainName == bannedHostname)
+//                    {
+//                        std::cout << "\'" << bannedHostname << "\' is not allowed to connect. Skipping.\n";
+//                        isBanned = true;
+//                        break;
+//                        //                    return status = Status(Status::Error::BannedHostDataTransfer);
+//                    }
+//                    std::cout << "You have been connected with: " << connectedDomainName << "\n";
+//                }
+        }
+
+
 
 
 //            iphdr *IPHeader = reinterpret_cast<iphdr*>(buffer + sizeof(ethhdr));
@@ -408,10 +473,6 @@ namespace Proxy::Ban
 //                }
 //            }
 
-        }
-
-
-
 
         if(bytesRead == -1)
         {
@@ -426,6 +487,23 @@ namespace Proxy::Ban
         close(destinationSocket);
 
         return status;
+    }
+
+    bool IsServerHelloMesasge(const char *buff) noexcept
+    {
+        // buff[66] - position of the TLS Content Type field. [0x16 - Handshake]/[0x17 - Application Data]
+        // buff[71] - position of the Handshake Type [0x01 - ClienHello]/[0x02 - ServerHello]
+        return ( static_cast<uint32_t>(buff[0]) == 0x16 ) && ( static_cast<uint32_t>(buff[5]) == 0x02 );
+    }
+
+    std::string GetDomainNameFromServerHello(const char *buffer) noexcept
+    {
+        auto domainNameSize = static_cast<uint32_t>(buffer[0x156]);
+        char* domainName = new char[domainNameSize];
+        memcpy(domainName,buffer+0x157,domainNameSize);
+        std::string tmp(domainName);
+        delete[] domainName;
+        return tmp;
     }
 
 }

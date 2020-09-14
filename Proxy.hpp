@@ -72,4 +72,7 @@ namespace Proxy::Ban
     Status
     TransferDataWithRestriction(int32_t sniffingSocket, int32_t sourceSocket, int32_t destinationSocket,
                                 const std::string &bannedHostname, int32_t listeningPort) noexcept;
+
+    bool IsServerHelloMesasge(const char *buff) noexcept;
+    std::string GetDomainNameFromServerHello(const char* buffer) noexcept;
 }
