@@ -8,7 +8,7 @@ int main(int argc, char** argv)
 {
     Proxy::ForwardingData fwd {};
 
-    // it holds address of a function that depends on mode choosen by user.[forwarding/tracking(extension A)/Ban(Extension B)
+    // it holds address of a function that depends on mode chosen by user.[forwarding/tracking(extension A)/Ban(Extension B)
     Proxy::FunctionPointer fptr = nullptr;
 
     ParseInputArguments(argc,argv,fwd,&fptr);
@@ -19,6 +19,8 @@ int main(int argc, char** argv)
     return 0;
 }
 
+
+
 void ParseInputArguments(int32_t argc, char **argv, Proxy::ForwardingData &fwd, Proxy::FunctionPointer* fptr) noexcept
 {
     const option longOptions[] = {
@@ -26,6 +28,7 @@ void ParseInputArguments(int32_t argc, char **argv, Proxy::ForwardingData &fwd, 
             {"domain", required_argument, nullptr , static_cast<int32_t>(Proxy::InputArgs::Domain) },
             {"lp", required_argument, nullptr , static_cast<int32_t>(Proxy::InputArgs::ListeningPort) },
             {"dp", required_argument, nullptr , static_cast<int32_t>(Proxy::InputArgs::DestinationPort) },
+            {"ban", required_argument, nullptr , static_cast<int32_t>(Proxy::InputArgs::BanDomain) },
     };
 
     int32_t result;
@@ -71,6 +74,12 @@ void ParseInputArguments(int32_t argc, char **argv, Proxy::ForwardingData &fwd, 
                 std::cout << "domain: " << fwd.hostName << "\n";
                 break;
             }
+            case static_cast<int32_t>(Proxy::InputArgs::BanDomain):
+            {
+                fwd.bannedHostName = std::string(optarg);
+                std::cout << "banned: " << fwd.bannedHostName << "\n";
+                break;
+            }
             case static_cast<int32_t>(Proxy::InputArgs::ListeningPort):
             {
                 fwd.listeningPort = strtol(optarg, nullptr,10);
@@ -90,7 +99,4 @@ void ParseInputArguments(int32_t argc, char **argv, Proxy::ForwardingData &fwd, 
             }
         }
     }
-
-
-    return status;
 }

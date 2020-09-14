@@ -12,8 +12,8 @@
 #include <cerrno>
 #include <iostream>
 #include <getopt.h>
-#include<netinet/tcp.h>
-#include<net/ethernet.h>
+#include <netinet/tcp.h>
+#include <net/ethernet.h>
 
 #include "Status.hpp"
 
@@ -25,6 +25,7 @@ namespace Proxy
         Domain = 1,
         ListeningPort = 2,
         DestinationPort = 3,
+        BanDomain = 4,
     };
 
     enum class Mode : int32_t
@@ -39,6 +40,7 @@ namespace Proxy
         int32_t listeningPort   {}; // what  to listen
         int32_t destinationPort {}; // where to forward
         std::string hostName = "coolsite.io";
+        std::string bannedHostName = "badsite.io"; // may be changed to map/unordered_map
     };
 
     typedef void (*FunctionPointer)(const ForwardingData& fwd);
@@ -67,4 +69,7 @@ namespace Proxy::Tracking
 namespace Proxy::Ban
 {
     void StartBanMode(const ForwardingData &fwd) noexcept;
+    Status
+    TransferDataWithRestriction(int32_t sniffingSocket, int32_t sourceSocket, int32_t destinationSocket,
+                                const std::string &bannedHostname, int32_t listeningPort) noexcept;
 }
