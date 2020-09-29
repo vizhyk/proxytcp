@@ -248,6 +248,11 @@ namespace Proxy::Tracking
 
     bool IsClientHelloMesasge(const char* buff, int32_t offset = 0) noexcept
     {
+        // offset is used for compatibility with raw sockets.
+        // - raw sockets track data from 2 layer OSI
+        // - tcp sockets track data from 4 layer OSI
+        //      66 is the beginning of the tls packet.
+
         // buff[66] - position of the TLS Content Type field. [0x16 - Handshake]/[0x17 - Application Data]
         // buff[71] - position of the Handshake Type [0x01 - ClienHello]/[0x02 - ServerHello]
         return ( static_cast<uint32_t>(buff[66-offset]) == 0x16 ) && ( static_cast<uint32_t>(buff[71-offset]) == 0x01 );
