@@ -83,7 +83,7 @@ namespace Proxy
 
     void PrintStatusAndExit(const Status &status) noexcept
     {
-        std::cout << "[Status code: " << status.Code() << "\t | " << strerror(errno) << "]\n";
+        std::cout << "[Status code: " << status.Code() << " | " << strerror(errno) << "]\n";
         exit(status.Code());
     }
 
@@ -236,7 +236,7 @@ namespace Proxy::Tracking
             iphdr *IPHeader = reinterpret_cast<iphdr*>(buff + sizeof(ethhdr));
             if(IPHeader->protocol == 6) // check if it's TCP
             {
-                if(IsClientHelloMesasge(buff))
+                if(IsClientHelloMesasge(buff, 0))
                 {
                     std::string domain = GetDomainNameFromTCPPacket(buff, 0);
                     std::cout << "You have been connected with: " << domain << "\n";
@@ -246,11 +246,11 @@ namespace Proxy::Tracking
         }
     }
 
-    bool IsClientHelloMesasge(const char *buff) noexcept
+    bool IsClientHelloMesasge(const char* buff, int32_t offset = 0) noexcept
     {
         // buff[66] - position of the TLS Content Type field. [0x16 - Handshake]/[0x17 - Application Data]
         // buff[71] - position of the Handshake Type [0x01 - ClienHello]/[0x02 - ServerHello]
-        return ( static_cast<uint32_t>(buff[66]) == 0x16 ) && ( static_cast<uint32_t>(buff[71]) == 0x01 );
+        return ( static_cast<uint32_t>(buff[66-offset]) == 0x16 ) && ( static_cast<uint32_t>(buff[71-offset]) == 0x01 );
     }
 
     std::string GetDomainNameFromTCPPacket(const char* buffer, uint32_t offset = 0) noexcept
@@ -274,7 +274,9 @@ namespace Proxy::Ban
         sockaddr_in socketData {};
 
         int32_t listeningSocket {};
+        int32_t newConnectionSocket {};
 
+        pid_t parentPID;
 
         // listening on 8081
         status = Proxy::CreateSocketOnListeningPort(listeningSocket, fwd.listeningPort, socketData);
@@ -283,12 +285,6 @@ namespace Proxy::Ban
         bool waitingForConnection { true };
         while(waitingForConnection)
         {
-            int32_t newConnectionSocket {};
-            int32_t socketForPacketAnalysis {};
-            int32_t socketForForwarding;
-            pid_t parentPID {};
-
-
             newConnectionSocket = accept(listeningSocket, nullptr , nullptr);
             if(newConnectionSocket == -1)
             {
@@ -297,14 +293,10 @@ namespace Proxy::Ban
             }
 
             parentPID = fork();
+
             if(parentPID == 0)
             {
                 pid_t childPID {};
-                // change this to connect
-//                status = Proxy::CreateSocketForForwarding(socketForForwarding, fwd.destinationPort,fwd.hostName.c_str());
-
-
-
                 childPID = fork();
                 if(childPID == -1)
                 {
@@ -314,37 +306,19 @@ namespace Proxy::Ban
 
                 if(childPID == 0)
                 {
-//                    Raw socket, which as I though would help me :DDD
-
-//                    socketForPacketAnalysis = socket(AF_PACKET , SOCK_RAW , htons(ETH_P_ALL));
-//                    if(socketForPacketAnalysis < 0)
-//                    {
-//                        status = Proxy::Status(Proxy::Status::Error::BadListeningSocketInitializaton);
-//                        PrintStatusAndExit(status);
-//                    }
                     std::cout << "[Transfering data from port " << fwd.listeningPort << " to port " << fwd.destinationPort << "]\n";
-                    status = Proxy::Ban::TransferDataWithRestriction(newConnectionSocket, newConnectionSocket, fwd.bannedHostName, fwd.listeningPort);
-                    if(status.Failed() && (status.Code() != static_cast<int32_t>(Proxy::Status::Error::BannedHostDataTransfer)) ) { Proxy::PrintStatusAndExit(status); }
-                }
-                else
-                {
-                    if(status.Code() != static_cast<int32_t>(Proxy::Status::Error::BannedHostDataTransfer))
-                    {
-                        std::cout << "[Transfering data from port " << fwd.destinationPort << " to port " << fwd.listeningPort << "]\n";
-                        status = Proxy::TransferData(newConnectionSocket, socketForForwarding);
-                        if(status.Failed()) { Proxy::PrintStatusAndExit(status); }
-                    }
+
+                    status = Proxy::Ban::TransferDataWithRestriction(newConnectionSocket, fwd.bannedHostName, fwd.listeningPort);
+                    if (status.Failed() && (status.Code() != static_cast<int32_t>(Proxy::Status::Error::BannedHostDataTransfer))) { Proxy::PrintStatusAndExit(status); }
                 }
             }
 
             close(newConnectionSocket);
-            close(socketForPacketAnalysis);
-
         }
+
     }
 
-    Status TransferDataWithRestriction(int32_t listeningSocket, int32_t destinationSocket, const std::string &bannedHostname,
-                                       int32_t listeningPort) noexcept
+    Status TransferDataWithRestriction(int32_t listeningSocket, const std::string& bannedHostname, int32_t listeningPort) noexcept
     {
         const int32_t BUFFER_SIZE = 4096;
         char  buffer [BUFFER_SIZE];
@@ -352,10 +326,11 @@ namespace Proxy::Ban
         Status status {};
         sockaddr saddr {};
 
+        int32_t destinationSocket {};
         int32_t socketDataSize = sizeof(saddr);
-        int32_t bytesWritten {};
+        int32_t bytesSended {};
         int32_t bytesRead {};
-        uint32_t totalBytesWritten {};
+        uint32_t totalBytesSended {};
 
         bool connectionIsAllowed = false;
 
@@ -364,42 +339,54 @@ namespace Proxy::Ban
         //recieving ALL data that come to our listenignSocket
         while((bytesRead = recvfrom(listeningSocket , buffer , 4096 , 0 , &saddr , (socklen_t*)&socketDataSize)) > 0)
         {
-            if(Tracking::IsClientHelloMesasge(buffer))
+            if(Tracking::IsClientHelloMesasge(buffer, 66))
             {
                 connectedHostDomainName = Tracking::GetDomainNameFromTCPPacket(buffer, 66);
                 if( connectedHostDomainName == bannedHostname)
                 {
+                    std::cout << "Connection refused!\n";
                     status = Status::Success::BannedHostConnectionRefused;
                     return status;
                 }
 
-                std::cout << "ClientHello message from: " << connectedHostDomainName << "\n";
+                std::cout << "[ClientHello message from: " << connectedHostDomainName << "]\n";
                 // if host is not banned - allow connection
                 connectionIsAllowed = true;
+
+                status = CreateSocketForForwarding(destinationSocket, 8080, connectedHostDomainName.c_str());
+                if(status.Failed()) { PrintStatusAndExit(status); }
             }
 
             if(connectionIsAllowed)
             {
-                int32_t dst {};
-
-                status = CreateSocketForForwarding(dst, 8080, connectedHostDomainName.c_str());
-
-                totalBytesWritten = 0;
-                while(totalBytesWritten < bytesRead)
+                totalBytesSended = 0;
+                while(totalBytesSended < bytesRead)
                 {
-                    int32_t writingSize = bytesRead - totalBytesWritten;
-                    bytesWritten = write(dst, buffer + totalBytesWritten, writingSize);
-                    if(bytesWritten == - 1)
+                    int32_t writingSize = bytesRead - totalBytesSended;
+                    bytesSended = send(destinationSocket, buffer, writingSize, 0);
+                    if(bytesSended == - 1)
                     {
-                        printf("sending someting \n");
                         status = Status(Status::Error::BadDataWrittenOnForwarding);
-                        printf("Oh dear, something went wrong with write()! %s | %d \n", strerror(errno) ,errno);
                         return status;
                     }
-                    totalBytesWritten += bytesWritten;
-                }
 
-                close(dst);
+                    totalBytesSended += bytesSended;
+
+                    auto recievedFromServer = recv(destinationSocket, buffer, 4096, 0);
+                    if(recievedFromServer == -1)
+                    {
+                        status = Status(Status::Error::BadRecievingDataFromSocket);
+                        return status;
+                    }
+
+                    auto sendedFromServer = send(listeningSocket, buffer, recievedFromServer, 0);
+                    if(sendedFromServer == -1)
+                    {
+                        status = Status(Status::Error::BadSendingDataToServer);
+                        return status;
+                    }
+
+                }
             }
         }
 
@@ -409,11 +396,9 @@ namespace Proxy::Ban
         }
 
         shutdown(listeningSocket, SHUT_RD);
-        shutdown(destinationSocket, SHUT_WR);
 
         close(listeningSocket);
         close(destinationSocket);
-
         return status;
     }
 
@@ -430,23 +415,6 @@ namespace Proxy::Ban
 
             printf("%02x ", static_cast<uint8_t>(buffer[i]));
         }
-    }
-
-    bool IsServerHelloMesasge(const char *buff) noexcept
-    {
-        // buff[66] - position of the TLS Content Type field. [0x16 - Handshake]/[0x17 - Application Data]
-        // buff[71] - position of the Handshake Type [0x01 - ClienHello]/[0x02 - ServerHello]
-        return ( static_cast<uint32_t>(buff[0]) == 0x16 ) && ( static_cast<uint32_t>(buff[5]) == 0x02 );
-    }
-
-    std::string GetDomainNameFromServerHello(const char *buffer) noexcept
-    {
-        auto domainNameSize = static_cast<uint32_t>(buffer[0x156]);
-        char* domainName = new char[domainNameSize];
-        memcpy(domainName,buffer+0x157,domainNameSize);
-        std::string tmp(domainName);
-        delete[] domainName;
-        return tmp;
     }
 
 }

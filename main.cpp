@@ -25,17 +25,14 @@
  *
  *     Run ./compile.sh
  *     Forwarding:
- *          ./run --mode 0 --domain coolsite.io --lp 8081 --dp 8080
+ *          ./proxytcp --mode 0 --domain coolsite.io --lp 8081 --dp 8080
  *
  *     Tracking:
- *          ./run --mode 1
+ *          ./proxytcp --mode 1
  *          Then surf
  *
  *     Ban:
- *          ./run --mode 2 --domain coolsite.io --ban badsite.io --lp 8081 --dp 8080
- *          currently is developed :)
- *
- *
+ *          ./proxytcp --mode 2 --domain coolsite.io --ban badsite.io --lp 8081 --dp 8080
  *
  */
 

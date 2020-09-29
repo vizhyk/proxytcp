@@ -28,6 +28,8 @@ namespace Proxy
             NoDataReadFromSocket = -13,
             BannedHostDataTransfer = -14,
             BadConnectionSocketToAddress = -15,
+            BadRecievingDataFromSocket = -16,
+            BadSendingDataToServer = -17,
         };
 
     public:
