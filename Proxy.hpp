@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <netdb.h>
 #include <csignal>
-#include <zconf.h>
+
 #include <cerrno>
 #include <iostream>
 #include <cstring>
@@ -16,6 +16,7 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <netinet/ip.h>
+#include <unistd.h>
 
 #include "Status.hpp"
 
@@ -66,11 +67,12 @@ namespace Proxy::Tracking
 
     //string may be replaced with std::string_view due to huge assembly instruction decrease
     // but i'm not sure :)
-    std::string GetDomainNameFromTCPPacket(const char* buffer) noexcept;
+    std::string GetDomainNameFromTCPPacket(const char* buffer, uint32_t offset) noexcept;
 }
 
 namespace Proxy::Ban
 {
+    void PrintRecievedData(const char* buffer,uint32_t size) noexcept;
     void StartBanMode(const ForwardingData &fwd) noexcept;
     Status TransferDataWithRestriction(int32_t listeningSocket, int32_t destinationSocket, const std::string &bannedHostname, int32_t listeningPort) noexcept;
 }

@@ -88,11 +88,11 @@ void ParseInputArguments(int32_t argc, char **argv, Proxy::ForwardingData &fwd, 
                         break;
                     }
 //                    Currenlty struggling with this mode :C. mode(Extension B)
-//                    case static_cast<int32_t>(Proxy::Mode::Ban):
-//                    {
-//                        *fptr = (Proxy::ModeFunctionPointer)Proxy::Ban::StartBanMode;
-//                        break;
-//                    }
+                    case static_cast<int32_t>(Proxy::Mode::Ban):
+                    {
+                        *fptr = (Proxy::ModeFunctionPointer)Proxy::Ban::StartBanMode;
+                        break;
+                    }
                     default:
                     {
                         std::cout << "[invalid mode]\n";

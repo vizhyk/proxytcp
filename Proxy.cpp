@@ -46,6 +46,8 @@ namespace Proxy
         int32_t bytesWritten {};
         int32_t bytesRead {};
 
+
+
         while((bytesRead = read(sourceSocket, buffer, BUFFER_SIZE)) > 0)
         {
             totalBytesWritten = 0;
@@ -81,7 +83,7 @@ namespace Proxy
 
     void PrintStatusAndExit(const Status &status) noexcept
     {
-        std::cout << "[Status code: " << status.Code() << "]\n";
+        std::cout << "[Status code: " << status.Code() << "\t | " << strerror(errno) << "]\n";
         exit(status.Code());
     }
 
@@ -122,7 +124,7 @@ namespace Proxy
 
         if(connectResult == -1)
         {
-            status = Proxy::Status(Proxy::Status::Error::BadBindSocketToAddress);
+            status = Proxy::Status(Proxy::Status::Error::BadConnectionSocketToAddress);
             Proxy::PrintStatusAndExit(status);
         }
 
@@ -236,7 +238,7 @@ namespace Proxy::Tracking
             {
                 if(IsClientHelloMesasge(buff))
                 {
-                    std::string domain = GetDomainNameFromTCPPacket(buff);
+                    std::string domain = GetDomainNameFromTCPPacket(buff, 0);
                     std::cout << "You have been connected with: " << domain << "\n";
                 }
             }
@@ -251,11 +253,11 @@ namespace Proxy::Tracking
         return ( static_cast<uint32_t>(buff[66]) == 0x16 ) && ( static_cast<uint32_t>(buff[71]) == 0x01 );
     }
 
-    std::string GetDomainNameFromTCPPacket(const char *buffer) noexcept
+    std::string GetDomainNameFromTCPPacket(const char* buffer, uint32_t offset = 0) noexcept
     {
-        auto domainNameSize = static_cast<uint32_t>(buffer[192]);
+        auto domainNameSize = static_cast<uint32_t>(buffer[192 - offset]);
         char* domainName = new char[domainNameSize];
-        memcpy(domainName,buffer+193,domainNameSize);
+        memcpy(domainName,buffer+193-offset,domainNameSize);
         std::string tmp(domainName);
         delete[] domainName;
         return tmp;
@@ -273,20 +275,22 @@ namespace Proxy::Ban
 
         int32_t listeningSocket {};
 
+
+        // listening on 8081
         status = Proxy::CreateSocketOnListeningPort(listeningSocket, fwd.listeningPort, socketData);
         if(status.Failed()) { Proxy::PrintStatusAndExit(status); }
 
         bool waitingForConnection { true };
         while(waitingForConnection)
         {
-            int32_t destinationSocket {};
+            int32_t newConnectionSocket {};
             int32_t socketForPacketAnalysis {};
             int32_t socketForForwarding;
             pid_t parentPID {};
 
 
-            destinationSocket = accept(listeningSocket, nullptr , nullptr);
-            if(destinationSocket == -1)
+            newConnectionSocket = accept(listeningSocket, nullptr , nullptr);
+            if(newConnectionSocket == -1)
             {
                 status = Proxy::Status(Proxy::Status::Error::BadConnectionFromListeningSocket);
                 Proxy::PrintStatusAndExit(status);
@@ -296,8 +300,10 @@ namespace Proxy::Ban
             if(parentPID == 0)
             {
                 pid_t childPID {};
-                status = Proxy::CreateSocketForForwarding(socketForForwarding, fwd.destinationPort,
-                                                          fwd.hostName.c_str());
+                // change this to connect
+//                status = Proxy::CreateSocketForForwarding(socketForForwarding, fwd.destinationPort,fwd.hostName.c_str());
+
+
 
                 childPID = fork();
                 if(childPID == -1)
@@ -317,7 +323,7 @@ namespace Proxy::Ban
 //                        PrintStatusAndExit(status);
 //                    }
                     std::cout << "[Transfering data from port " << fwd.listeningPort << " to port " << fwd.destinationPort << "]\n";
-                    status = Proxy::Ban::TransferDataWithRestriction(socketForForwarding,destinationSocket, fwd.bannedHostName, fwd.listeningPort);
+                    status = Proxy::Ban::TransferDataWithRestriction(newConnectionSocket, newConnectionSocket, fwd.bannedHostName, fwd.listeningPort);
                     if(status.Failed() && (status.Code() != static_cast<int32_t>(Proxy::Status::Error::BannedHostDataTransfer)) ) { Proxy::PrintStatusAndExit(status); }
                 }
                 else
@@ -325,13 +331,13 @@ namespace Proxy::Ban
                     if(status.Code() != static_cast<int32_t>(Proxy::Status::Error::BannedHostDataTransfer))
                     {
                         std::cout << "[Transfering data from port " << fwd.destinationPort << " to port " << fwd.listeningPort << "]\n";
-                        status = Proxy::TransferData(destinationSocket, socketForForwarding);
+                        status = Proxy::TransferData(newConnectionSocket, socketForForwarding);
                         if(status.Failed()) { Proxy::PrintStatusAndExit(status); }
                     }
                 }
             }
 
-            close(destinationSocket);
+            close(newConnectionSocket);
             close(socketForPacketAnalysis);
 
         }
@@ -340,59 +346,61 @@ namespace Proxy::Ban
     Status TransferDataWithRestriction(int32_t listeningSocket, int32_t destinationSocket, const std::string &bannedHostname,
                                        int32_t listeningPort) noexcept
     {
+        const int32_t BUFFER_SIZE = 4096;
+        char  buffer [BUFFER_SIZE];
+
         Status status {};
         sockaddr saddr {};
-        const int32_t BUFFER_SIZE = 4096;
-        uint32_t totalBytesWritten {};
+
+        int32_t socketDataSize = sizeof(saddr);
         int32_t bytesWritten {};
         int32_t bytesRead {};
-        int32_t socketDataSize = sizeof(saddr);
+        uint32_t totalBytesWritten {};
 
-        char buffer[BUFFER_SIZE];
+        bool connectionIsAllowed = false;
 
-        std::string connectedDomainName;
+        std::string connectedHostDomainName;
 
         //recieving ALL data that come to our listenignSocket
         while((bytesRead = recvfrom(listeningSocket , buffer , 4096 , 0 , &saddr , (socklen_t*)&socketDataSize)) > 0)
         {
-            totalBytesWritten = 0;
-            while(totalBytesWritten < bytesRead)
+            if(Tracking::IsClientHelloMesasge(buffer))
             {
-                int32_t writingSize = bytesRead - totalBytesWritten;
-                bytesWritten = write(destinationSocket, buffer + totalBytesWritten, writingSize);
-                if(bytesWritten == - 1)
+                connectedHostDomainName = Tracking::GetDomainNameFromTCPPacket(buffer, 66);
+                if( connectedHostDomainName == bannedHostname)
                 {
-                    printf("sending someting \n");
-                    status = Status(Status::Error::BadDataWrittenOnForwarding);
-                    printf("Oh dear, something went wrong with write()! %s | %d \n", strerror(errno) ,errno);
+                    status = Status::Success::BannedHostConnectionRefused;
                     return status;
                 }
-                totalBytesWritten += bytesWritten;
+
+                std::cout << "ClientHello message from: " << connectedHostDomainName << "\n";
+                // if host is not banned - allow connection
+                connectionIsAllowed = true;
             }
 
+            if(connectionIsAllowed)
+            {
+                int32_t dst {};
 
-//            This code as I thought would work if I use Raw socket,
-//            but in my case if I sniff traffic with the RawSocket - i'm not able to send reply trought SOCK_STREAM
-//
-//            iphdr *IPHeader = reinterpret_cast<iphdr*>(buffer + sizeof(ethhdr));
-//            tcphdr *TCPHearder = reinterpret_cast<tcphdr*>(buffer + sizeof(iphdr) + sizeof(ethhdr));
-//            if((ntohs(TCPHearder->th_dport) == listeningPort) && (IPHeader->protocol == 6))
-//            {
-//                printf("Port = %d\n", ntohs(TCPHearder->th_dport));
-//                if(bytesRead > 71)
-//                    printf("66: %d, 71: %d",static_cast<uint32_t>(buffer[66]),static_cast<uint32_t>(buffer[71]));
-//                if(Tracking::IsClientHelloMesasge(buffer))
-//                {
-//                    connectedDomainName = Tracking::GetDomainNameFromTCPPacket(buffer);
-//                    if (connectedDomainName == bannedHostname)
-//                    {
-//                        std::cout << "\'" << bannedHostname << "\' is not allowed to connect. Skipping.\n";
-//                        isBanned = true;
-//                        break;
-//                        //                    return status = Status(Status::Error::BannedHostDataTransfer);
-//                    }
-//                    std::cout << "You have been connected with: " << connectedDomainName << "\n";
-//                }
+                status = CreateSocketForForwarding(dst, 8080, connectedHostDomainName.c_str());
+
+                totalBytesWritten = 0;
+                while(totalBytesWritten < bytesRead)
+                {
+                    int32_t writingSize = bytesRead - totalBytesWritten;
+                    bytesWritten = write(dst, buffer + totalBytesWritten, writingSize);
+                    if(bytesWritten == - 1)
+                    {
+                        printf("sending someting \n");
+                        status = Status(Status::Error::BadDataWrittenOnForwarding);
+                        printf("Oh dear, something went wrong with write()! %s | %d \n", strerror(errno) ,errno);
+                        return status;
+                    }
+                    totalBytesWritten += bytesWritten;
+                }
+
+                close(dst);
+            }
         }
 
         if(bytesRead == -1)
@@ -407,6 +415,21 @@ namespace Proxy::Ban
         close(destinationSocket);
 
         return status;
+    }
+
+    void PrintRecievedData(const char *buffer, uint32_t size) noexcept
+    {
+        printf("\n\n=============\n\n");
+        for(int32_t i = 0; i < size; ++i)
+        {
+            if( (i%8 == 0) && (i%16!=0) )
+                printf("\t");
+
+            if(i%16 == 0)
+                printf("\n");
+
+            printf("%02x ", static_cast<uint8_t>(buffer[i]));
+        }
     }
 
     bool IsServerHelloMesasge(const char *buff) noexcept

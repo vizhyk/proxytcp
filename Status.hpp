@@ -9,6 +9,7 @@ namespace Proxy
         enum class Success : int32_t
         {
             Success = 0,
+            BannedHostConnectionRefused = 1,
         };
         enum class Error : int32_t
         {
@@ -26,6 +27,7 @@ namespace Proxy
             MarkSocketPassive = - 12,
             NoDataReadFromSocket = -13,
             BannedHostDataTransfer = -14,
+            BadConnectionSocketToAddress = -15,
         };
 
     public:
