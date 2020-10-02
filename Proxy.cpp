@@ -131,7 +131,7 @@ namespace Proxy
         return status;
     }
 
-    void StartForwardingMode(const ForwardingData &fwd) noexcept
+    void ForwardingMode(const ForwardingData &fwd) noexcept
     {
         std::cout << "[Forwarding mode]\n";
 
@@ -199,11 +199,12 @@ namespace Proxy
         }
 
     }
-}
+
+} // namespace Proxy
 
 namespace Proxy::Tracking
 {
-    void StartTrackingMode(const ForwardingData &fwd) noexcept
+    void TrackingMode(const ForwardingData &fwd) noexcept
     {
         std::cout << "[Tracking mode]\n";
 
@@ -267,11 +268,12 @@ namespace Proxy::Tracking
         delete[] domainName;
         return tmp;
     }
-}
+
+} //namespace Proxy::Tracking
 
 namespace Proxy::Ban
 {
-    void StartBanMode(const ForwardingData &fwd) noexcept
+    void BanMode(const ForwardingData &fwd) noexcept
     {
         std::cout << "[Ban mode]\n";
 
@@ -422,5 +424,5 @@ namespace Proxy::Ban
         }
     }
 
-}
+} //namespace Proxy::Ban
 

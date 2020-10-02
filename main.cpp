@@ -35,6 +35,7 @@
  *          ./proxytcp --mode 2 --domain coolsite.io --ban badsite.io --lp 8081 --dp 8080
  *
  */
+//asdsad
 
 void ParseInputArguments(int32_t argc, char **argv, Proxy::ForwardingData &fwd, Proxy::ModeFunctionPointer* fptr) noexcept;
 
@@ -76,18 +77,18 @@ void ParseInputArguments(int32_t argc, char **argv, Proxy::ForwardingData &fwd, 
                 {
                     case static_cast<int32_t>(Proxy::Mode::Forwarding):
                     {
-                        *fptr = (Proxy::ModeFunctionPointer)Proxy::StartForwardingMode;
+                        *fptr = (Proxy::ModeFunctionPointer)Proxy::ForwardingMode;
                         break;
                     }
                     case static_cast<int32_t>(Proxy::Mode::Tracking):
                     {
-                        *fptr = (Proxy::ModeFunctionPointer)Proxy::Tracking::StartTrackingMode;
+                        *fptr = (Proxy::ModeFunctionPointer)Proxy::Tracking::TrackingMode;
                         break;
                     }
 //                    Currenlty struggling with this mode :C. mode(Extension B)
                     case static_cast<int32_t>(Proxy::Mode::Ban):
                     {
-                        *fptr = (Proxy::ModeFunctionPointer)Proxy::Ban::StartBanMode;
+                        *fptr = (Proxy::ModeFunctionPointer)Proxy::Ban::BanMode;
                         break;
                     }
                     default:

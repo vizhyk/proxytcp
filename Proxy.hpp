@@ -54,25 +54,23 @@ namespace Proxy
     Status CreateSocketOnListeningPort(int32_t& listeningSocket, int32_t listeningPort, sockaddr_in& socketData) noexcept;
     Status TransferData(int32_t sourceSocket, int32_t destinationSocket) noexcept;
 
-    void StartForwardingMode(const ForwardingData& fwd) noexcept;
+    void ForwardingMode(const ForwardingData& fwd) noexcept;
     void PrintStatusAndExit(const Status& status) noexcept;
 }
 
 namespace Proxy::Tracking
 {
-    void StartTrackingMode(const ForwardingData& fwd) noexcept;
+    void TrackingMode(const ForwardingData& fwd) noexcept;
 
     bool IsClientHelloMesasge(const char* buff, int32_t offset) noexcept;
 
-    //string may be replaced with std::string_view due to huge assembly instruction decrease
-    // but i'm not sure :)
     std::string GetDomainNameFromTCPPacket(const char* buffer, uint32_t offset) noexcept;
 }
 
 namespace Proxy::Ban
 {
     void PrintRecievedData(const char* buffer, uint32_t size) noexcept;
-    void StartBanMode(const ForwardingData& fwd) noexcept;
+    void BanMode(const ForwardingData& fwd) noexcept;
 
     Status TransferDataWithRestriction(int32_t listeningSocket, const std::string& bannedHostname, int32_t listeningPort) noexcept;
 }
