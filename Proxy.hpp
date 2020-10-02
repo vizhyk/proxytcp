@@ -1,24 +1,25 @@
-#pragma once
+#ifndef PROXYTCP_PROXY_HPP
+#define PROXYTCP_PROXY_HPP
+
+#include "Status.hpp"
+#include "Offsets.hpp"
 
 #include <cstdio>
-
 #include <cstdlib>
-#include <netdb.h>
 #include <csignal>
-
+#include <cstring>
 #include <cerrno>
 #include <iostream>
-#include <cstring>
 #include <getopt.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netdb.h>
 #include <net/ethernet.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <netinet/ip.h>
 #include <unistd.h>
 
-#include "Status.hpp"
 
 namespace Proxy
 {
@@ -74,3 +75,5 @@ namespace Proxy::Ban
 
     Status TransferDataWithRestriction(int32_t listeningSocket, const std::string& bannedHostname, int32_t listeningPort) noexcept;
 }
+
+#endif // PROXYTCP_PROXY_HPP

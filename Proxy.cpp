@@ -249,23 +249,24 @@ namespace Proxy::Tracking
 
     bool IsClientHelloMesasge(const char* buff, int32_t offset = 0) noexcept
     {
-        // offset is used for compatibility with raw sockets.
-        // - raw sockets track data from 2 layer OSI
-        // - tcp sockets track data from 4 layer OSI
-        //      66 is the beginning of the tls packet.
+        // offset is used for compatibility with raw sockets when they need.
 
         // buff[66] - position of the TLS Content Type field. [0x16 - Handshake]/[0x17 - Application Data]
         // buff[71] - position of the Handshake Type [0x01 - ClienHello]/[0x02 - ServerHello]
-        return ( static_cast<uint32_t>(buff[66-offset]) == 0x16 ) && ( static_cast<uint32_t>(buff[71-offset]) == 0x01 );
+        return ( static_cast<uint32_t>(buff[Offsets::TLS::MESSAGE_TYPE - offset]) == 0x16 ) &&
+               ( static_cast<uint32_t>(buff[Offsets::TLS::HANDSHAKE_TYPE - offset]) == 0x01 );
     }
 
     std::string GetDomainNameFromTCPPacket(const char* buffer, uint32_t offset = 0) noexcept
     {
-        auto domainNameSize = static_cast<uint32_t>(buffer[192 - offset]);
-        char* domainName = new char[domainNameSize];
-        memcpy(domainName,buffer+193-offset,domainNameSize);
+        auto domainNameSize = static_cast<uint32_t>(buffer[Offsets::TLS::SNI_SIZE - offset]);
+        auto domainName = new char[domainNameSize];
+
+        memcpy(domainName,buffer + (Offsets::TLS::SNI - offset), domainNameSize);
+
         std::string tmp(domainName);
         delete[] domainName;
+
         return tmp;
     }
 
@@ -346,9 +347,9 @@ namespace Proxy::Ban
         //recieving ALL data that come to our listenignSocket
         while((bytesRead = recvfrom(listeningSocket , buffer , 4096 , 0 , &saddr , (socklen_t*)&socketDataSize)) > 0)
         {
-            if(Tracking::IsClientHelloMesasge(buffer, 66))
+            if(Tracking::IsClientHelloMesasge(buffer, Offsets::TLS::TLS_DATA))
             {
-                connectedHostDomainName = Tracking::GetDomainNameFromTCPPacket(buffer, 66);
+                connectedHostDomainName = Tracking::GetDomainNameFromTCPPacket(buffer, Offsets::TLS::TLS_DATA);
                 if( connectedHostDomainName == bannedHostname)
                 {
                     std::cout << "Connection refused!\n";
@@ -414,7 +415,7 @@ namespace Proxy::Ban
         printf("\n\n=============\n\n");
         for(int32_t i = 0; i < size; ++i)
         {
-            if( (i%8 == 0) && (i%16!=0) )
+            if( (i%8 == 0) && (i%16 !=0) )
                 printf("\t");
 
             if(i%16 == 0)

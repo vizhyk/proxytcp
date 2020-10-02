@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PROXYTCP_STATUS_HPP
+#define PROXYTCP_STATUS_HPP
+
 #include <iostream>
 
 namespace Proxy
@@ -54,3 +56,5 @@ namespace Proxy
     };
 
 } //namespace Proxy
+
+#endif // PROXYTCP_STATUS_HPP
