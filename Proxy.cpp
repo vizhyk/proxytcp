@@ -27,7 +27,7 @@ namespace Proxy
             return status;
         }
 
-        if(listen(listeningSocket, 40) == -1)
+        if(listen(listeningSocket, 5) == -1)
         {
             status = Status(Status::Error::MarkSocketPassive);
             return status;
@@ -98,8 +98,8 @@ namespace Proxy
 
         if(destinationHost == nullptr)
         {
-            status = Proxy::Status(Proxy::Status::Error::BadDestinationHost);
-            Proxy::PrintStatusAndExit(status);
+            status =  Status( Status::Error::BadDestinationHost);
+             PrintStatusAndExit(status);
         }
 
         memset(&destinationAddress, 0, sizeof(destinationAddress));
@@ -116,16 +116,16 @@ namespace Proxy
 
         if(socketForForwarding == -1)
         {
-            status = Proxy::Status(Proxy::Status::Error::BadForwardingSocketCreation);
-            Proxy::PrintStatusAndExit(status);
+            status =  Status( Status::Error::BadForwardingSocketCreation);
+             PrintStatusAndExit(status);
         }
 
         auto connectResult = connect(socketForForwarding, reinterpret_cast<sockaddr*>(&destinationAddress), sizeof(destinationAddress));
 
         if(connectResult == -1)
         {
-            status = Proxy::Status(Proxy::Status::Error::BadConnectionSocketToAddress);
-            Proxy::PrintStatusAndExit(status);
+            status =  Status( Status::Error::BadConnectionSocketToAddress);
+             PrintStatusAndExit(status);
         }
 
         return status;
@@ -135,13 +135,13 @@ namespace Proxy
     {
         std::cout << "[Forwarding mode]\n";
 
-        Proxy::Status status {};
+        Status status {};
         sockaddr_in socketData {};
 
         int32_t listeningSocket {};
 
-        status = Proxy::CreateSocketOnListeningPort(listeningSocket, fwd.listeningPort, socketData);
-        if(status.Failed()) { Proxy::PrintStatusAndExit(status); }
+        status =  CreateSocketOnListeningPort(listeningSocket, fwd.listeningPort, socketData);
+        if(status.Failed()) {  PrintStatusAndExit(status); }
 
         bool waitingForConnection { true };
         while(waitingForConnection)
@@ -152,15 +152,15 @@ namespace Proxy
             destinationSocket = accept(listeningSocket, nullptr , nullptr);
             if(destinationSocket == -1)
             {
-                status = Proxy::Status(Proxy::Status::Error::BadConnectionFromListeningSocket);
-                Proxy::PrintStatusAndExit(status);
+                status =  Status( Status::Error::BadConnectionFromListeningSocket);
+                 PrintStatusAndExit(status);
             }
 
             parentPID = fork();
             if(parentPID == -1)
             {
-                status = Proxy::Status(Proxy::Status::Error::BadProcessFork);
-                Proxy::PrintStatusAndExit(status);
+                status =  Status( Status::Error::BadProcessFork);
+                 PrintStatusAndExit(status);
             }
 
             if(parentPID == 0)
@@ -168,31 +168,31 @@ namespace Proxy
                 int32_t forwardingSocket {};
                 pid_t childPID {};
 
-                status = Proxy::CreateSocketForForwarding( forwardingSocket, fwd.destinationPort, fwd.hostName.c_str());
+                status =  CreateSocketForForwarding( forwardingSocket, fwd.destinationPort, fwd.hostName.c_str());
 
                 // child process forward traffic to the client,
                 // parent process forward traffic to the destination[port]
                 childPID = fork();
                 if(childPID == -1)
                 {
-                    status = Proxy::Status(Proxy::Status::Error::BadProcessFork);
-                    Proxy::PrintStatusAndExit(status);
+                    status =  Status( Status::Error::BadProcessFork);
+                     PrintStatusAndExit(status);
                 }
 
                 if(childPID == 0)
                 {
                     std::cout << "[Transfering data from port " << fwd.listeningPort << " to port " << fwd.destinationPort << "]\n";
-                    status = Proxy::TransferData(forwardingSocket, destinationSocket);
-                    if(status.Failed()) { Proxy::PrintStatusAndExit(status); }
+                    status =  TransferData(forwardingSocket, destinationSocket);
+                    if(status.Failed()) {  PrintStatusAndExit(status); }
                 }
                 else
                 {
                     std::cout << "[Transfering data from port " << fwd.destinationPort << " to port " << fwd.listeningPort << "]\n";
-                    status = Proxy::TransferData(destinationSocket, forwardingSocket);
-                    if(status.Failed()) { Proxy::PrintStatusAndExit(status); }
+                    status =  TransferData(destinationSocket, forwardingSocket);
+                    if(status.Failed()) {  PrintStatusAndExit(status); }
                 }
 
-                exit(static_cast<int32_t>(Proxy::Status::Success::Success));
+                exit(static_cast<int32_t>( Status::Success::Success));
             }
 
             close(destinationSocket);
@@ -200,54 +200,79 @@ namespace Proxy
 
     }
 
+    void PrintRecievedData(const char *buffer, uint32_t size) noexcept
+    {
+        printf("\n\n=============\n\n");
+        for(int32_t i = 0; i < size; ++i)
+        {
+            if( (i%8 == 0) && (i%16 !=0) )
+                printf("\t");
+
+            if(i%16 == 0)
+                printf("\n");
+
+            printf("%02x ", static_cast<uint8_t>(buffer[i]));
+        }
+        printf("\n\n=============\n\n");
+    }
+
 } // namespace Proxy
 
-namespace Proxy::Tracking
+namespace  Proxy::Tracking
 {
     void TrackingMode(const ForwardingData &fwd) noexcept
     {
         std::cout << "[Tracking mode]\n";
 
-        Proxy::Status status {};
-        sockaddr saddr {};
+        Status status {};
+        sockaddr_in socketData {};
 
-        int32_t socketDataSize = sizeof(saddr);
-        int32_t rawSocket;
+        int32_t socketDataSize = sizeof(socketData);
+        int32_t listeningSocket {};
 
-        char buff[4096];
+        int32_t recievedData {};
 
-        // decided to use raw socket, bcs SOCK_STREAM cought just ServerHello messages(in my case)
-        rawSocket = socket( AF_PACKET , SOCK_RAW , htons(ETH_P_ALL));
-        if(rawSocket < 0)
-        {
-            status = Proxy::Status(Proxy::Status::Error::BadListeningSocketInitializaton);
-            PrintStatusAndExit(status);
-        }
+        const int32_t BUFFER_SIZE = 4096;
+        char  buffer [BUFFER_SIZE];
+
+        status = CreateSocketOnListeningPort(listeningSocket, fwd.listeningPort, socketData);
+        if(status.Failed()) {  PrintStatusAndExit(status); }
 
         bool waitingForConnection {true};
         while(waitingForConnection)
         {
-            auto recievedPackets = recvfrom(rawSocket , buff , 4096 , 0 , &saddr , (socklen_t*)&socketDataSize);
-            if(recievedPackets <0 )
+            int32_t newConnectionSocket {};
+
+            newConnectionSocket = accept(listeningSocket, nullptr, nullptr);
+
+            if(newConnectionSocket == -1)
             {
-                status = Proxy::Status(Proxy::Status::Error::NoDataReadFromSocket);
+                status = Status(Status::Error::BadConnectionFromListeningSocket);
                 PrintStatusAndExit(status);
             }
+            std::cout << "new connection found.\n";
 
-            iphdr *IPHeader = reinterpret_cast<iphdr*>(buff + sizeof(ethhdr));
-            if(IPHeader->protocol == 6) // check if it's TCP
+            while((recievedData = read(newConnectionSocket,buffer,BUFFER_SIZE)) > 0)
             {
-                if(IsClientHelloMesasge(buff, 0))
+                PrintRecievedData(buffer,75);
+
+                if(IsClientHelloMesasge(buffer, Offsets::TLS::TLS_DATA))
                 {
-                    std::string domain = GetDomainNameFromTCPPacket(buff, 0);
+                    std::string domain = GetDomainNameFromTCPPacket(buffer, Offsets::TLS::TLS_DATA);
                     std::cout << "You have been connected with: " << domain << "\n";
                 }
+            }
+
+            if(recievedData == -1)
+            {
+                status = Status(Status::Error::BadRecievingDataFromSocket);
+                PrintStatusAndExit(status);
             }
 
         }
     }
 
-    bool IsClientHelloMesasge(const char* buff, int32_t offset = 0) noexcept
+    bool IsClientHelloMesasge(const char* buff, int32_t offset ) noexcept
     {
         // offset is used for compatibility with raw sockets when they need.
 
@@ -257,7 +282,7 @@ namespace Proxy::Tracking
                ( static_cast<uint32_t>(buff[Offsets::TLS::HANDSHAKE_TYPE - offset]) == 0x01 );
     }
 
-    std::string GetDomainNameFromTCPPacket(const char* buffer, uint32_t offset = 0) noexcept
+    std::string GetDomainNameFromTCPPacket(const char* buffer, uint32_t offset) noexcept
     {
         auto domainNameSize = static_cast<uint32_t>(buffer[Offsets::TLS::SNI_SIZE - offset]);
         auto domainName = new char[domainNameSize];
@@ -270,15 +295,15 @@ namespace Proxy::Tracking
         return tmp;
     }
 
-} //namespace Proxy::Tracking
+} //namespace  Proxy::Tracking
 
-namespace Proxy::Ban
+namespace  Proxy::Ban
 {
     void BanMode(const ForwardingData &fwd) noexcept
     {
         std::cout << "[Ban mode]\n";
 
-        Proxy::Status status {};
+         Status status {};
         sockaddr_in socketData {};
 
         int32_t listeningSocket {};
@@ -287,8 +312,8 @@ namespace Proxy::Ban
         pid_t parentPID;
 
         // listening on 8081
-        status = Proxy::CreateSocketOnListeningPort(listeningSocket, fwd.listeningPort, socketData);
-        if(status.Failed()) { Proxy::PrintStatusAndExit(status); }
+        status =  CreateSocketOnListeningPort(listeningSocket, fwd.listeningPort, socketData);
+        if(status.Failed()) {  PrintStatusAndExit(status); }
 
         bool waitingForConnection { true };
         while(waitingForConnection)
@@ -296,8 +321,8 @@ namespace Proxy::Ban
             newConnectionSocket = accept(listeningSocket, nullptr , nullptr);
             if(newConnectionSocket == -1)
             {
-                status = Proxy::Status(Proxy::Status::Error::BadConnectionFromListeningSocket);
-                Proxy::PrintStatusAndExit(status);
+                status = Status(Status::Error::BadConnectionFromListeningSocket);
+                PrintStatusAndExit(status);
             }
 
             parentPID = fork();
@@ -308,16 +333,16 @@ namespace Proxy::Ban
                 childPID = fork();
                 if(childPID == -1)
                 {
-                    status = Proxy::Status(Proxy::Status::Error::BadProcessFork);
-                    Proxy::PrintStatusAndExit(status);
+                    status = Status(Status::Error::BadProcessFork);
+                    PrintStatusAndExit(status);
                 }
 
                 if(childPID == 0)
                 {
                     std::cout << "[Transfering data from port " << fwd.listeningPort << " to port " << fwd.destinationPort << "]\n";
 
-                    status = Proxy::Ban::TransferDataWithRestriction(newConnectionSocket, fwd.bannedHostName, fwd.listeningPort);
-                    if (status.Failed() && (status.Code() != static_cast<int32_t>(Proxy::Status::Error::BannedHostDataTransfer))) { Proxy::PrintStatusAndExit(status); }
+                    status = Ban::TransferDataWithRestriction(newConnectionSocket, fwd.bannedHostName, fwd.destinationPort);
+                    if (status.Failed() && (status.Code() != static_cast<int32_t>(Status::Error::BannedHostDataTransfer))) { PrintStatusAndExit(status); }
                 }
             }
 
@@ -326,16 +351,14 @@ namespace Proxy::Ban
 
     }
 
-    Status TransferDataWithRestriction(int32_t listeningSocket, const std::string& bannedHostname, int32_t listeningPort) noexcept
+    Status TransferDataWithRestriction(int32_t listeningSocket, const std::string& bannedHostname, int32_t destinationPort) noexcept
     {
         const int32_t BUFFER_SIZE = 4096;
         char  buffer [BUFFER_SIZE];
 
         Status status {};
-        sockaddr saddr {};
 
         int32_t destinationSocket {};
-        int32_t socketDataSize = sizeof(saddr);
         int32_t bytesSended {};
         int32_t bytesRead {};
         uint32_t totalBytesSended {};
@@ -345,11 +368,11 @@ namespace Proxy::Ban
         std::string connectedHostDomainName;
 
         //recieving ALL data that come to our listenignSocket
-        while((bytesRead = recvfrom(listeningSocket , buffer , 4096 , 0 , &saddr , (socklen_t*)&socketDataSize)) > 0)
+        while( (bytesRead = recv(listeningSocket , buffer , BUFFER_SIZE , 0)) > 0 )
         {
-            if(Tracking::IsClientHelloMesasge(buffer, Offsets::TLS::TLS_DATA))
+            if(Tracking::IsClientHelloMesasge(buffer))
             {
-                connectedHostDomainName = Tracking::GetDomainNameFromTCPPacket(buffer, Offsets::TLS::TLS_DATA);
+                connectedHostDomainName = Tracking::GetDomainNameFromTCPPacket(buffer);
                 if( connectedHostDomainName == bannedHostname)
                 {
                     std::cout << "Connection refused!\n";
@@ -361,7 +384,7 @@ namespace Proxy::Ban
                 // if host is not banned - allow connection
                 connectionIsAllowed = true;
 
-                status = CreateSocketForForwarding(destinationSocket, 8080, connectedHostDomainName.c_str());
+                status = CreateSocketForForwarding(destinationSocket, destinationPort, connectedHostDomainName.c_str());
                 if(status.Failed()) { PrintStatusAndExit(status); }
             }
 
@@ -380,7 +403,7 @@ namespace Proxy::Ban
 
                     totalBytesSended += bytesSended;
 
-                    auto recievedFromServer = recv(destinationSocket, buffer, 4096, 0);
+                    auto recievedFromServer = recv(destinationSocket, buffer, BUFFER_SIZE, 0);
                     if(recievedFromServer == -1)
                     {
                         status = Status(Status::Error::BadRecievingDataFromSocket);
@@ -410,20 +433,7 @@ namespace Proxy::Ban
         return status;
     }
 
-    void PrintRecievedData(const char *buffer, uint32_t size) noexcept
-    {
-        printf("\n\n=============\n\n");
-        for(int32_t i = 0; i < size; ++i)
-        {
-            if( (i%8 == 0) && (i%16 !=0) )
-                printf("\t");
 
-            if(i%16 == 0)
-                printf("\n");
 
-            printf("%02x ", static_cast<uint8_t>(buffer[i]));
-        }
-    }
-
-} //namespace Proxy::Ban
+} //namespace  Proxy::Ban
 

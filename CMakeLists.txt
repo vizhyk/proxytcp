@@ -9,4 +9,4 @@ add_executable(proxytcp
         main.cpp
         Proxy.cpp
         Proxy.hpp
-        Status.hpp Offsets.hpp)
+        Status.hpp Offsets.hpp Ports.hpp)

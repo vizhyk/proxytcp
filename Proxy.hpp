@@ -3,14 +3,16 @@
 
 #include "Status.hpp"
 #include "Offsets.hpp"
+#include "Ports.hpp"
 
 #include <cstdio>
 #include <cstdlib>
 #include <csignal>
 #include <cstring>
 #include <cerrno>
-#include <iostream>
+#include <fcntl.h>
 #include <getopt.h>
+#include <iostream>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -44,7 +46,7 @@ namespace Proxy
         int32_t listeningPort{}; // what  to listen
         int32_t destinationPort{}; // where to forward
         std::string hostName = "coolsite.io";
-        std::string bannedHostName = "badsite.io"; // may be changed to map/unordered_map
+        std::string bannedHostName = "badsite.io";
     };
 
     // function pointer that used to chose the function that depends on --mode arg.
@@ -57,23 +59,24 @@ namespace Proxy
 
     void ForwardingMode(const ForwardingData& fwd) noexcept;
     void PrintStatusAndExit(const Status& status) noexcept;
+    void PrintRecievedData(const char* buffer, uint32_t size) noexcept;
+
 }
 
 namespace Proxy::Tracking
 {
     void TrackingMode(const ForwardingData& fwd) noexcept;
 
-    bool IsClientHelloMesasge(const char* buff, int32_t offset) noexcept;
+    bool IsClientHelloMesasge(const char* buff, int32_t offset = 0) noexcept;
 
-    std::string GetDomainNameFromTCPPacket(const char* buffer, uint32_t offset) noexcept;
+    std::string GetDomainNameFromTCPPacket(const char* buffer, uint32_t offset = 0) noexcept;
 }
 
 namespace Proxy::Ban
 {
-    void PrintRecievedData(const char* buffer, uint32_t size) noexcept;
     void BanMode(const ForwardingData& fwd) noexcept;
 
-    Status TransferDataWithRestriction(int32_t listeningSocket, const std::string& bannedHostname, int32_t listeningPort) noexcept;
+    Status TransferDataWithRestriction(int32_t listeningSocket, const std::string& bannedHostname, int32_t destinationPort) noexcept;
 }
 
 #endif // PROXYTCP_PROXY_HPP

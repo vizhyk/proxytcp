@@ -28,7 +28,7 @@
  *          ./proxytcp --mode 0 --domain coolsite.io --lp 8081 --dp 8080
  *
  *     Tracking:
- *          ./proxytcp --mode 1
+ *          ./proxytcp --mode 1 --lp 8080
  *          Then surf
  *
  *     Ban:
@@ -85,7 +85,6 @@ void ParseInputArguments(int32_t argc, char **argv, Proxy::ForwardingData &fwd, 
                         *fptr = (Proxy::ModeFunctionPointer)Proxy::Tracking::TrackingMode;
                         break;
                     }
-//                    Currenlty struggling with this mode :C. mode(Extension B)
                     case static_cast<int32_t>(Proxy::Mode::Ban):
                     {
                         *fptr = (Proxy::ModeFunctionPointer)Proxy::Ban::BanMode;
