@@ -329,21 +329,11 @@ namespace  Proxy::Ban
 
             if(parentPID == 0)
             {
-                pid_t childPID {};
-                childPID = fork();
-                if(childPID == -1)
-                {
-                    status = Status(Status::Error::BadProcessFork);
-                    PrintStatusAndExit(status);
-                }
+                std::cout << "[Transfering data from port " << fwd.listeningPort << " to port " << fwd.destinationPort << "]\n";
 
-                if(childPID == 0)
-                {
-                    std::cout << "[Transfering data from port " << fwd.listeningPort << " to port " << fwd.destinationPort << "]\n";
+                status = Ban::TransferDataWithRestriction(newConnectionSocket, fwd.bannedHostName, fwd.destinationPort);
+                if (status.Failed() && (status.Code() != static_cast<int32_t>(Status::Error::BannedHostDataTransfer))) { PrintStatusAndExit(status); }
 
-                    status = Ban::TransferDataWithRestriction(newConnectionSocket, fwd.bannedHostName, fwd.destinationPort);
-                    if (status.Failed() && (status.Code() != static_cast<int32_t>(Status::Error::BannedHostDataTransfer))) { PrintStatusAndExit(status); }
-                }
             }
 
             close(newConnectionSocket);
@@ -370,9 +360,9 @@ namespace  Proxy::Ban
         //recieving ALL data that come to our listenignSocket
         while( (bytesRead = recv(listeningSocket , buffer , BUFFER_SIZE , 0)) > 0 )
         {
-            if(Tracking::IsClientHelloMesasge(buffer))
+            if(Tracking::IsClientHelloMesasge(buffer, Offsets::TLS::TLS_DATA))
             {
-                connectedHostDomainName = Tracking::GetDomainNameFromTCPPacket(buffer);
+                connectedHostDomainName = Tracking::GetDomainNameFromTCPPacket(buffer, Offsets::TLS::TLS_DATA);
                 if( connectedHostDomainName == bannedHostname)
                 {
                     std::cout << "Connection refused!\n";
