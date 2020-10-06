@@ -81,7 +81,7 @@ namespace Proxy
 
     }
 
-    void PrintStatusAndExit(const Status &status) noexcept
+    void PrintStatusAndTerminateProcess(const Status &status) noexcept
     {
         std::cout << "[Status code: " << status.Code() << " | " << strerror(errno) << "]\n";
         exit(status.Code());
@@ -99,7 +99,7 @@ namespace Proxy
         if(destinationHost == nullptr)
         {
             status =  Status( Status::Error::BadDestinationHost);
-             PrintStatusAndExit(status);
+            PrintStatusAndTerminateProcess(status);
         }
 
         memset(&destinationAddress, 0, sizeof(destinationAddress));
@@ -117,7 +117,7 @@ namespace Proxy
         if(socketForForwarding == -1)
         {
             status =  Status( Status::Error::BadForwardingSocketCreation);
-             PrintStatusAndExit(status);
+            PrintStatusAndTerminateProcess(status);
         }
 
         auto connectResult = connect(socketForForwarding, reinterpret_cast<sockaddr*>(&destinationAddress), sizeof(destinationAddress));
@@ -125,13 +125,13 @@ namespace Proxy
         if(connectResult == -1)
         {
             status =  Status( Status::Error::BadConnectionSocketToAddress);
-             PrintStatusAndExit(status);
+            PrintStatusAndTerminateProcess(status);
         }
 
         return status;
     }
 
-    void ForwardingMode(const ForwardingData &fwd) noexcept
+    void ForwardingMode(const ConnectionInfo &info) noexcept
     {
         std::cout << "[Forwarding mode]\n";
 
@@ -140,8 +140,8 @@ namespace Proxy
 
         int32_t listeningSocket {};
 
-        status =  CreateSocketOnListeningPort(listeningSocket, fwd.listeningPort, socketData);
-        if(status.Failed()) {  PrintStatusAndExit(status); }
+        status =  CreateSocketOnListeningPort(listeningSocket, info.listeningPort, socketData);
+        if(status.Failed()) { PrintStatusAndTerminateProcess(status); }
 
         bool waitingForConnection { true };
         while(waitingForConnection)
@@ -153,14 +153,14 @@ namespace Proxy
             if(destinationSocket == -1)
             {
                 status =  Status( Status::Error::BadConnectionFromListeningSocket);
-                 PrintStatusAndExit(status);
+                PrintStatusAndTerminateProcess(status);
             }
 
             parentPID = fork();
             if(parentPID == -1)
             {
                 status =  Status( Status::Error::BadProcessFork);
-                 PrintStatusAndExit(status);
+                PrintStatusAndTerminateProcess(status);
             }
 
             if(parentPID == 0)
@@ -168,7 +168,7 @@ namespace Proxy
                 int32_t forwardingSocket {};
                 pid_t childPID {};
 
-                status =  CreateSocketForForwarding( forwardingSocket, fwd.destinationPort, fwd.hostName.c_str());
+                status =  CreateSocketForForwarding( forwardingSocket, info.destinationPort, info.hostName.c_str());
 
                 // child process forward traffic to the client,
                 // parent process forward traffic to the destination[port]
@@ -176,20 +176,20 @@ namespace Proxy
                 if(childPID == -1)
                 {
                     status =  Status( Status::Error::BadProcessFork);
-                     PrintStatusAndExit(status);
+                    PrintStatusAndTerminateProcess(status);
                 }
 
                 if(childPID == 0)
                 {
-                    std::cout << "[Transfering data from port " << fwd.listeningPort << " to port " << fwd.destinationPort << "]\n";
+                    std::cout << "[Transfering data from port " << info.listeningPort << " to port " << info.destinationPort << "]\n";
                     status =  TransferData(forwardingSocket, destinationSocket);
-                    if(status.Failed()) {  PrintStatusAndExit(status); }
+                    if(status.Failed()) { PrintStatusAndTerminateProcess(status); }
                 }
                 else
                 {
-                    std::cout << "[Transfering data from port " << fwd.destinationPort << " to port " << fwd.listeningPort << "]\n";
+                    std::cout << "[Transfering data from port " << info.destinationPort << " to port " << info.listeningPort << "]\n";
                     status =  TransferData(destinationSocket, forwardingSocket);
-                    if(status.Failed()) {  PrintStatusAndExit(status); }
+                    if(status.Failed()) { PrintStatusAndTerminateProcess(status); }
                 }
 
                 exit(static_cast<int32_t>( Status::Success::Success));
@@ -220,7 +220,7 @@ namespace Proxy
 
 namespace  Proxy::Tracking
 {
-    void TrackingMode(const ForwardingData &fwd) noexcept
+    void TrackingMode(const ConnectionInfo &info) noexcept
     {
         std::cout << "[Tracking mode]\n";
 
@@ -235,8 +235,8 @@ namespace  Proxy::Tracking
         const int32_t BUFFER_SIZE = 4096;
         char  buffer [BUFFER_SIZE];
 
-        status = CreateSocketOnListeningPort(listeningSocket, fwd.listeningPort, socketData);
-        if(status.Failed()) {  PrintStatusAndExit(status); }
+        status = CreateSocketOnListeningPort(listeningSocket, info.listeningPort, socketData);
+        if(status.Failed()) { PrintStatusAndTerminateProcess(status); }
 
         bool waitingForConnection {true};
         while(waitingForConnection)
@@ -248,12 +248,12 @@ namespace  Proxy::Tracking
             if(newConnectionSocket == -1)
             {
                 status = Status(Status::Error::BadConnectionFromListeningSocket);
-                PrintStatusAndExit(status);
+                PrintStatusAndTerminateProcess(status);
             }
             std::cout << "new connection found.\n";
 
             while((recievedData = read(newConnectionSocket,buffer,BUFFER_SIZE)) > 0)
-            {
+            { close(newConnectionSocket);
                 PrintRecievedData(buffer,75);
 
                 if(IsClientHelloMesasge(buffer, Offsets::TLS::TLS_DATA))
@@ -266,7 +266,7 @@ namespace  Proxy::Tracking
             if(recievedData == -1)
             {
                 status = Status(Status::Error::BadRecievingDataFromSocket);
-                PrintStatusAndExit(status);
+                PrintStatusAndTerminateProcess(status);
             }
 
         }
@@ -299,7 +299,7 @@ namespace  Proxy::Tracking
 
 namespace  Proxy::Ban
 {
-    void BanMode(const ForwardingData &fwd) noexcept
+    void BanMode(const ConnectionInfo &info) noexcept
     {
         std::cout << "[Ban mode]\n";
 
@@ -312,31 +312,45 @@ namespace  Proxy::Ban
         pid_t parentPID;
 
         // listening on 8081
-        status =  CreateSocketOnListeningPort(listeningSocket, fwd.listeningPort, socketData);
-        if(status.Failed()) {  PrintStatusAndExit(status); }
+        status =  CreateSocketOnListeningPort(listeningSocket, info.listeningPort, socketData);
+        if(status.Failed()) { PrintStatusAndTerminateProcess(status); }
 
         bool waitingForConnection { true };
         while(waitingForConnection)
         {
+
             newConnectionSocket = accept(listeningSocket, nullptr , nullptr);
             if(newConnectionSocket == -1)
             {
                 status = Status(Status::Error::BadConnectionFromListeningSocket);
-                PrintStatusAndExit(status);
+                PrintStatusAndTerminateProcess(status);
             }
 
             parentPID = fork();
+            if(parentPID == -1)
+            {
+                status = Status(Status::Error::BadProcessFork);
+                PrintStatusAndTerminateProcess(status);
+            }
+
 
             if(parentPID == 0)
             {
-                std::cout << "[Transfering data from port " << fwd.listeningPort << " to port " << fwd.destinationPort << "]\n";
+                std::cout << "[Transfering data from port " << info.listeningPort << " to port " << info.destinationPort << "]\n";
 
-                status = Ban::TransferDataWithRestriction(newConnectionSocket, fwd.bannedHostName, fwd.destinationPort);
-                if (status.Failed() && (status.Code() != static_cast<int32_t>(Status::Error::BannedHostDataTransfer))) { PrintStatusAndExit(status); }
+                status = Ban::TransferDataWithRestriction(newConnectionSocket, info.bannedHostName, info.destinationPort);
+                if (status.Failed() && (status.Code() != static_cast<int32_t>(Status::Error::BannedHostDataTransfer)))
+                { PrintStatusAndTerminateProcess(status); }
 
+                std::cout << "Child ended.\n";
+                close(newConnectionSocket);
+            }
+            else
+            {
+                std::cout << "Parent ended.\n";
             }
 
-            close(newConnectionSocket);
+//            close(newConnectionSocket);
         }
 
     }
@@ -375,7 +389,7 @@ namespace  Proxy::Ban
                 connectionIsAllowed = true;
 
                 status = CreateSocketForForwarding(destinationSocket, destinationPort, connectedHostDomainName.c_str());
-                if(status.Failed()) { PrintStatusAndExit(status); }
+                if(status.Failed()) { PrintStatusAndTerminateProcess(status); }
             }
 
             if(connectionIsAllowed)
@@ -410,6 +424,8 @@ namespace  Proxy::Ban
                 }
             }
         }
+
+        std::cout << "[All data has been sended. Closing socket]\n";
 
         if(bytesRead == -1)
         {

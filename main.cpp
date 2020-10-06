@@ -37,11 +37,11 @@
  */
 //asdsad
 
-void ParseInputArguments(int32_t argc, char **argv, Proxy::ForwardingData &fwd, Proxy::ModeFunctionPointer* fptr) noexcept;
+void ParseInputArguments(int32_t argc, char **argv, Proxy::ConnectionInfo &fwd, Proxy::ModeFunctionPointer* fptr) noexcept;
 
 int main(int argc, char** argv)
 {
-    Proxy::ForwardingData fwd {};
+    Proxy::ConnectionInfo fwd {};
 
     // it holds address of a function that depends on mode chosen by user.[forwarding/tracking(extension A)/ban(Extension B)
     Proxy::ModeFunctionPointer fptr = nullptr;
@@ -53,7 +53,7 @@ int main(int argc, char** argv)
     return 0;
 }
 
-void ParseInputArguments(int32_t argc, char **argv, Proxy::ForwardingData &fwd, Proxy::ModeFunctionPointer* fptr) noexcept
+void ParseInputArguments(int32_t argc, char **argv, Proxy::ConnectionInfo &fwd, Proxy::ModeFunctionPointer* fptr) noexcept
 {
     const option longOptions[] = {
             {"mode", required_argument, nullptr , static_cast<int32_t>(Proxy::InputArgs::Mode) },
@@ -75,17 +75,17 @@ void ParseInputArguments(int32_t argc, char **argv, Proxy::ForwardingData &fwd, 
                 std::cout << "[found: mode]\n";
                 switch (strtol(optarg, nullptr,10))
                 {
-                    case static_cast<int32_t>(Proxy::Mode::Forwarding):
+                    case static_cast<int32_t>(Proxy::ModeType::Forwarding):
                     {
                         *fptr = (Proxy::ModeFunctionPointer)Proxy::ForwardingMode;
                         break;
                     }
-                    case static_cast<int32_t>(Proxy::Mode::Tracking):
+                    case static_cast<int32_t>(Proxy::ModeType::Tracking):
                     {
                         *fptr = (Proxy::ModeFunctionPointer)Proxy::Tracking::TrackingMode;
                         break;
                     }
-                    case static_cast<int32_t>(Proxy::Mode::Ban):
+                    case static_cast<int32_t>(Proxy::ModeType::Ban):
                     {
                         *fptr = (Proxy::ModeFunctionPointer)Proxy::Ban::BanMode;
                         break;
