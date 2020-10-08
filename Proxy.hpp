@@ -21,6 +21,8 @@
 #include <netinet/tcp.h>
 #include <netinet/ip.h>
 #include <unistd.h>
+#include <thread>
+#include <vector>
 
 
 namespace Proxy

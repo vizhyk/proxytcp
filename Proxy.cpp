@@ -303,14 +303,15 @@ namespace  Proxy::Ban
     {
         std::cout << "[Ban mode]\n";
 
-         Status status {};
+        Status status {};
         sockaddr_in socketData {};
 
         int32_t listeningSocket {};
-        int32_t newConnectionSocket {};
+//        int32_t newConnectionSocket {};
 
         pid_t parentPID;
 
+        std::vector<std::thread> threads;
         // listening on 8081
         status =  CreateSocketOnListeningPort(listeningSocket, info.listeningPort, socketData);
         if(status.Failed()) { PrintStatusAndTerminateProcess(status); }
@@ -319,37 +320,46 @@ namespace  Proxy::Ban
         while(waitingForConnection)
         {
 
-            newConnectionSocket = accept(listeningSocket, nullptr , nullptr);
+            int32_t newConnectionSocket = accept(listeningSocket, nullptr , nullptr);
             if(newConnectionSocket == -1)
             {
                 status = Status(Status::Error::BadConnectionFromListeningSocket);
                 PrintStatusAndTerminateProcess(status);
             }
 
-            parentPID = fork();
-            if(parentPID == -1)
-            {
-                status = Status(Status::Error::BadProcessFork);
-                PrintStatusAndTerminateProcess(status);
-            }
+            std::thread newConnectionThread ([newConnectionSocket, &info = std::as_const(info)] () {
+
+              std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << info.listeningPort << "->" << info.destinationPort << "]\n";
+
+              Status transferStatus = Ban::TransferDataWithRestriction(newConnectionSocket, info.bannedHostName, info.destinationPort);
+              if (transferStatus.Failed() && (transferStatus.Code() != static_cast<int32_t>(Status::Error::BannedHostDataTransfer)))
+              { PrintStatusAndTerminateProcess(transferStatus); }
+
+              close(newConnectionSocket);
+
+            });
+
+            threads.emplace_back(std::move(newConnectionThread));
 
 
-            if(parentPID == 0)
-            {
-                std::cout << "[Transfering data from port " << info.listeningPort << " to port " << info.destinationPort << "]\n";
-
-                status = Ban::TransferDataWithRestriction(newConnectionSocket, info.bannedHostName, info.destinationPort);
-                if (status.Failed() && (status.Code() != static_cast<int32_t>(Status::Error::BannedHostDataTransfer)))
-                { PrintStatusAndTerminateProcess(status); }
-
-                std::cout << "Child ended.\n";
-                close(newConnectionSocket);
-            }
-            else
-            {
-                std::cout << "Parent ended.\n";
-            }
-
+//            parentPID = fork();
+//            if(parentPID == -1)
+//            {
+//                status = Status(Status::Error::BadProcessFork);
+//                PrintStatusAndTerminateProcess(status);
+//            }
+//
+//
+//            if(parentPID == 0)
+//            {
+//                std::cout << "[" << info.listeningPort << "->" << info.destinationPort << "]\n";
+//
+//                status = Ban::TransferDataWithRestriction(newConnectionSocket, info.bannedHostName, info.destinationPort);
+//                if (status.Failed() && (status.Code() != static_cast<int32_t>(Status::Error::BannedHostDataTransfer)))
+//                { PrintStatusAndTerminateProcess(status); }
+//
+//                close(newConnectionSocket);
+//            }
 //            close(newConnectionSocket);
         }
 
@@ -374,7 +384,8 @@ namespace  Proxy::Ban
         //recieving ALL data that come to our listenignSocket
         while( (bytesRead = recv(listeningSocket , buffer , BUFFER_SIZE , 0)) > 0 )
         {
-            if(Tracking::IsClientHelloMesasge(buffer, Offsets::TLS::TLS_DATA))
+            std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << bytesRead << "b Client->Server]\n";
+            if(Tracking::IsClientHelloMesasge(buffer, Offsets::TLS::TLS_DATA) && bytesRead > 6)
             {
                 connectedHostDomainName = Tracking::GetDomainNameFromTCPPacket(buffer, Offsets::TLS::TLS_DATA);
                 if( connectedHostDomainName == bannedHostname)
@@ -384,7 +395,7 @@ namespace  Proxy::Ban
                     return status;
                 }
 
-                std::cout << "[ClientHello message from: " << connectedHostDomainName << "]\n";
+                std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[ClientHello: " << connectedHostDomainName << "]\n";
                 // if host is not banned - allow connection
                 connectionIsAllowed = true;
 
@@ -414,12 +425,17 @@ namespace  Proxy::Ban
                         return status;
                     }
 
+                    std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << recievedFromServer << "b Server->Proxy]\n";
+
                     auto sendedFromServer = send(listeningSocket, buffer, recievedFromServer, 0);
                     if(sendedFromServer == -1)
                     {
                         status = Status(Status::Error::BadSendingDataToServer);
                         return status;
                     }
+
+                    std::cout << "[Thread " << std::this_thread::get_id() << "]" <<"\t\t[" << sendedFromServer << "b Proxy->Client]\n";
+
 
                 }
             }
@@ -430,11 +446,12 @@ namespace  Proxy::Ban
         if(bytesRead == -1)
         {
             status = Status(Status::Error::NoDataReadFromSocket);
+            close(destinationSocket);
         }
 
-        shutdown(listeningSocket, SHUT_RD);
-
-        close(listeningSocket);
+//        shutdown(listeningSocket, SHUT_RD);
+//
+//        close(listeningSocket);
         close(destinationSocket);
         return status;
     }
