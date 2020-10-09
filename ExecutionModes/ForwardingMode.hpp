@@ -5,12 +5,14 @@
 
 namespace Proxy::ExecutionModes
 {
+
     class ForwardingMode : public ExecutionMode
     {
     public:
-        Utilities::Status Run(const ConnectionInfo& info) const noexcept override;
+        int32_t Run(const ConnectionInfo& info) const noexcept override;
 
     };
+
 } //namespace Proxy::ExecutionModes
 
 

@@ -35,7 +35,7 @@
  *          ./proxytcp --mode 2 --domain coolsite.io --ban badsite.io --lp 8081 --dp 8080
  *
  */
-//asdsad
+
 
 void ParseInputArguments(int32_t argc, char **argv, Proxy::ConnectionInfo &fwd, Proxy::ModeFunctionPointer* fptr) noexcept;
 

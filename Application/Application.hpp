@@ -16,6 +16,12 @@ namespace Proxy
     {
     public:
         Application(ExecutionModes::ExecutionModeType, const ConnectionInfo&) noexcept;
+
+        Application(Application&& rhs) = delete;
+        Application(const Application& rhs) = delete;
+        Application& operator=(Application&& rhs) = delete;
+        Application& operator=(const Application& rhs) = delete;
+
         ~Application() noexcept { delete executionMode_; }
 
     public:

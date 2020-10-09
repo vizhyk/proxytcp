@@ -4,7 +4,7 @@
 namespace Proxy::ExecutionModes
 {
 
-    Utilities::Status BanMode::Run(const ConnectionInfo& info) const noexcept
+    int32_t BanMode::Run(const ConnectionInfo& info) const noexcept
     {
         std::cout << "[Ban mode]\n";
 
@@ -57,9 +57,9 @@ namespace Proxy::ExecutionModes
 //
 //            if(parentPID == 0)
 //            {
-//                std::cout << "[" << info.listeningPort << "->" << info.destinationPort << "]\n";
+//                std::cout << "[" << info.listeningPort_ << "->" << info.destinationPort_ << "]\n";
 //
-//                status = Ban::TransferDataWithRestriction(newConnectionSocket, info.bannedHostName, info.destinationPort);
+//                status = Ban::TransferDataWithRestriction(newConnectionSocket, info.bannedHostName_, info.destinationPort_);
 //                if (status.Failed() && (status.Code() != static_cast<int32_t>(Status::Error::BannedHostDataTransfer)))
 //                { PrintStatusAndTerminateProcess(status); }
 //

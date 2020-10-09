@@ -28,7 +28,7 @@ namespace Proxy::ExecutionModes
 
     public:
         virtual ~ExecutionMode() = default;
-        virtual Utilities::Status Run(const ConnectionInfo& info) const noexcept = 0;
+        virtual int32_t Run(const ConnectionInfo& info) const noexcept = 0;
 
         Utilities::Status CreateSocketForForwarding(int32_t& socketForForwarding, int32_t destinationPort, const char* hostName) const noexcept;
         Utilities::Status CreateSocketOnListeningPort(int32_t& listeningSocket, int32_t listeningPort, sockaddr_in& socketData) const noexcept;

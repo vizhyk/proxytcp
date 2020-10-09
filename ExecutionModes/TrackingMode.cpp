@@ -3,7 +3,7 @@
 namespace Proxy::ExecutionModes
 {
 
-    Utilities::Status TrackingMode::Run(const ConnectionInfo& info) const noexcept
+    int32_t TrackingMode::Run(const ConnectionInfo& info) const noexcept
     {
         std::cout << "[Tracking mode]\n";
 
