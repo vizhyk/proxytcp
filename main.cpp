@@ -42,13 +42,12 @@
 
 int main(int argc, char** argv)
 {
-    Proxy::CommandLineOptions cmdLineOptions(argc,argv);
+//    Proxy::CommandLineOptions cmdLineOptions(argc,argv);
 
-    const Proxy::ExecutionModes::ExecutionModeType mode = cmdLineOptions.GetExecutionModeType();
-    const Proxy::ConnectionInfo info = cmdLineOptions.GetConnectionInfo();
+//    const Proxy::ExecutionModes::ExecutionModeType mode = cmdLineOptions.GetExecutionModeType();
+//    const Proxy::ConnectionInfo info = cmdLineOptions.GetConnectionInfo();
 
-
-    Proxy::Application application(mode, info);
+    Proxy::Application application(Proxy::ExecutionModes::ExecutionModeType::Ban , {8080,8081,"coolsite.io","badsite.io"});
 
     return application.Run();
 }

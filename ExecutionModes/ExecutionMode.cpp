@@ -142,7 +142,7 @@ namespace Proxy::ExecutionModes
 
         bool connectionIsAllowed = false;
 
-        std::string connectedHostDomainName;
+//        std::string connectedHostDomainName {};
 
         //recieving ALL data that come to our listenignSocket
         while( (bytesRead = recv(listeningSocket , buffer , BUFFER_SIZE , 0)) > 0 )
@@ -150,7 +150,7 @@ namespace Proxy::ExecutionModes
             std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << bytesRead << "b Client->Server]\n";
             if(IsClientHelloMesasge(buffer, Utilities::Offsets::TLS::TLS_DATA) && bytesRead > 6)
             {
-                connectedHostDomainName = GetDomainNameFromTCPPacket(buffer, Utilities::Offsets::TLS::TLS_DATA);
+                std::string connectedHostDomainName = GetDomainNameFromTCPPacket(buffer, Utilities::Offsets::TLS::TLS_DATA);
                 if( connectedHostDomainName == bannedHostname)
                 {
                     std::cout << "Connection refused!\n";
@@ -201,6 +201,9 @@ namespace Proxy::ExecutionModes
                 }
             }
         }
+
+        return status;
+
     }
 
     std::string ExecutionMode::GetDomainNameFromTCPPacket
@@ -208,6 +211,8 @@ namespace Proxy::ExecutionModes
     {
         auto domainNameSize = static_cast<uint32_t>(buffer[Utilities::Offsets::TLS::SNI_SIZE - offset]);
         auto domainName = new char[domainNameSize];
+
+        std::cout << "[domain size: " << domainNameSize << "\n";
 
         memcpy(domainName,buffer + (Utilities::Offsets::TLS::SNI - offset), domainNameSize);
 

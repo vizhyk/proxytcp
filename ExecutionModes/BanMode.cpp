@@ -44,7 +44,11 @@ namespace Proxy::ExecutionModes
 
             });
 
-            threads.emplace_back(std::move(newConnectionThread));
+            newConnectionThread.join();
+
+//            threads.emplace_back(std::move(newConnectionThread));
+
+
 
 
 //            parentPID = fork();
