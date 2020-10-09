@@ -11,7 +11,6 @@
 
 namespace Proxy
 {
-
     class Application
     {
     public:

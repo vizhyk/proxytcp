@@ -68,6 +68,6 @@ namespace Proxy::ExecutionModes
 //            close(newConnectionSocket);
         }
 
-        return status;
+        return 0;
     }
 } //namespace Proxy::ExecutionModes

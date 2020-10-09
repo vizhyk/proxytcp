@@ -23,8 +23,8 @@ namespace Proxy
     public:
         CommandLineOptions(uint32_t argc, char** argv) noexcept;
     public:
-        ConnectionInfo GetConnectionInfo() const noexcept;
-        ExecutionModes::ExecutionModeType GetExecutionModeType() const noexcept;
+        ConnectionInfo GetConnectionInfo() const noexcept { return info; };
+        ExecutionModes::ExecutionModeType GetExecutionModeType() const noexcept { return modeType; };
 
 
     private:

@@ -1,4 +1,3 @@
-#include "Proxy.hpp"
 /*      Quick Reference:
  *
  *      There're 3 modes according to the task:
@@ -36,97 +35,22 @@
  *
  */
 
-
-void ParseInputArguments(int32_t argc, char **argv, Proxy::ConnectionInfo &fwd, Proxy::ModeFunctionPointer* fptr) noexcept;
+#include "CommandLineOptions/CommandLineOptions.hpp"
+#include "Application/Application.hpp"
+#include "ExecutionModes/ExecutionMode.hpp"
+#include "ConnectionInfo/ConnectionInfo.hpp"
 
 int main(int argc, char** argv)
 {
-    Proxy::ConnectionInfo fwd {};
+    Proxy::CommandLineOptions cmdLineOptions(argc,argv);
 
-    // it holds address of a function that depends on mode chosen by user.[forwarding/tracking(extension A)/ban(Extension B)
-    Proxy::ModeFunctionPointer fptr = nullptr;
+    const Proxy::ExecutionModes::ExecutionModeType mode = cmdLineOptions.GetExecutionModeType();
+    const Proxy::ConnectionInfo info = cmdLineOptions.GetConnectionInfo();
 
-    ParseInputArguments(argc,argv,fwd,&fptr);
 
-    fptr(fwd);
+    Proxy::Application application(mode, info);
 
-    return 0;
+    return application.Run();
 }
 
-void ParseInputArguments(int32_t argc, char **argv, Proxy::ConnectionInfo &fwd, Proxy::ModeFunctionPointer* fptr) noexcept
-{
-    const option longOptions[] = {
-            {"mode", required_argument, nullptr , static_cast<int32_t>(Proxy::InputArgs::Mode) },
-            {"domain", required_argument, nullptr , static_cast<int32_t>(Proxy::InputArgs::Domain) },
-            {"lp", required_argument, nullptr , static_cast<int32_t>(Proxy::InputArgs::ListeningPort) },
-            {"dp", required_argument, nullptr , static_cast<int32_t>(Proxy::InputArgs::DestinationPort) },
-            {"ban", required_argument, nullptr , static_cast<int32_t>(Proxy::InputArgs::BannedDomain) },
-    };
 
-    int32_t result;
-    int32_t optionIndex;
-
-    while ((result = getopt_long(argc, argv, "", longOptions, &optionIndex)) != -1)
-    {
-        switch (result)
-        {
-            case static_cast<int32_t>(Proxy::InputArgs::Mode):
-            {
-                std::cout << "[found: mode]\n";
-                switch (strtol(optarg, nullptr,10))
-                {
-                    case static_cast<int32_t>(Proxy::ModeType::Forwarding):
-                    {
-                        *fptr = (Proxy::ModeFunctionPointer)Proxy::ForwardingMode;
-                        break;
-                    }
-                    case static_cast<int32_t>(Proxy::ModeType::Tracking):
-                    {
-                        *fptr = (Proxy::ModeFunctionPointer)Proxy::Tracking::TrackingMode;
-                        break;
-                    }
-                    case static_cast<int32_t>(Proxy::ModeType::Ban):
-                    {
-                        *fptr = (Proxy::ModeFunctionPointer)Proxy::Ban::BanMode;
-                        break;
-                    }
-                    default:
-                    {
-                        std::cout << "[invalid mode]\n";
-                        exit(1);
-                    }
-                }
-                break;
-            }
-            case static_cast<int32_t>(Proxy::InputArgs::Domain):
-            {
-                fwd.hostName = std::string(optarg);
-                std::cout << "domain: " << fwd.hostName << "\n";
-                break;
-            }
-            case static_cast<int32_t>(Proxy::InputArgs::BannedDomain):
-            {
-                fwd.bannedHostName = std::string(optarg);
-                std::cout << "banned: " << fwd.bannedHostName << "\n";
-                break;
-            }
-            case static_cast<int32_t>(Proxy::InputArgs::ListeningPort):
-            {
-                fwd.listeningPort = strtol(optarg, nullptr,10);
-                std::cout << "listening port: " << fwd.listeningPort << "\n";
-                break;
-            }
-            case static_cast<int32_t>(Proxy::InputArgs::DestinationPort):
-            {
-                fwd.destinationPort = strtol(optarg, nullptr,10);
-                std::cout << "destination port: " << fwd.destinationPort << "\n";
-                break;
-            }
-            default:
-            {
-                std::cout << "Invalid arguments\n";
-                break;
-            }
-        }
-    }
-}

@@ -9,7 +9,6 @@ namespace Proxy::ExecutionModes
     {
     public:
         int32_t Run(const ConnectionInfo& info) const noexcept override;
-
     };
 } //namespace Proxy::ExecutionModes
 

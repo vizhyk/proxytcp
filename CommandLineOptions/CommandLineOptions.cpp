@@ -13,8 +13,13 @@ namespace Proxy
                 {"ban", required_argument, nullptr , static_cast<int32_t>(InputArgs::BannedDomain) },
         };
 
-        int32_t result;
-        int32_t optionIndex;
+        int32_t result {};
+        int32_t optionIndex {};
+
+        uint32_t tmpListeningPort {};
+        uint32_t tmpDestinationPort {};
+        std::string tmpHostName {};
+        std::string tmpBannedHostName {};
 
         while ((result = getopt_long(argc, argv, "", longOptions, &optionIndex)) != -1)
         {
@@ -47,26 +52,26 @@ namespace Proxy
                 }
                 case static_cast<int32_t>(InputArgs::Domain):
                 {
-                    .hostName = std::string(optarg);
-                    std::cout << "domain: " << fwd.hostName_ << "\n";
+                    tmpHostName = std::string(optarg);
+                    std::cout << "domain: " << tmpHostName << "\n";
                     break;
                 }
                 case static_cast<int32_t>(InputArgs::BannedDomain):
                 {
-                    fwd.bannedHostName_ = std::string(optarg);
-                    std::cout << "banned: " << fwd.bannedHostName_ << "\n";
+                    tmpBannedHostName = std::string(optarg);
+                    std::cout << "banned: " << tmpBannedHostName << "\n";
                     break;
                 }
                 case static_cast<int32_t>(InputArgs::ListeningPort):
                 {
-                    fwd.listeningPort_ = strtol(optarg, nullptr, 10);
-                    std::cout << "listening port: " << fwd.listeningPort_ << "\n";
+                    tmpListeningPort = strtol(optarg, nullptr, 10);
+                    std::cout << "listening port: " << tmpListeningPort << "\n";
                     break;
                 }
                 case static_cast<int32_t>(InputArgs::DestinationPort):
                 {
-                    fwd.destinationPort_ = strtol(optarg, nullptr, 10);
-                    std::cout << "destination port: " << fwd.destinationPort_ << "\n";
+                    tmpDestinationPort = strtol(optarg, nullptr, 10);
+                    std::cout << "destination port: " << tmpDestinationPort << "\n";
                     break;
                 }
                 default:
@@ -76,6 +81,8 @@ namespace Proxy
                 }
             }
         }
+
+        info = ConnectionInfo{tmpDestinationPort,tmpListeningPort,tmpHostName,tmpBannedHostName};
 
     }
 }

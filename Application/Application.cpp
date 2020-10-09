@@ -21,6 +21,9 @@ namespace Proxy
             case ExecutionModes::ExecutionModeType::Ban:
                 executionMode_ = new ExecutionModes::ForwardingMode;
             default:
+                executionMode_ = nullptr;
+                std::cout << "Incorrect execution mode option.\n";
+                exit(-1);
 
 
 
