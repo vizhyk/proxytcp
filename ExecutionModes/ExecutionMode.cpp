@@ -5,14 +5,14 @@ namespace Proxy::ExecutionModes
 {
 
     Utilities::Status ExecutionMode::CreateSocketForForwarding
-    (int32_t& socketForForwarding, int32_t destinationPort, const char* hostName) const noexcept
+    (int32_t& socketForForwarding, int32_t destinationPort, const std::string& hostName) const noexcept
     {
         Utilities::Status status {};
 
         hostent* destinationHost = nullptr;
         sockaddr_in destinationAddress {};
 
-        destinationHost = gethostbyname(hostName);
+        destinationHost = gethostbyname(hostName.c_str());
 
         if(destinationHost == nullptr)
         {
@@ -147,10 +147,10 @@ namespace Proxy::ExecutionModes
         //recieving ALL data that come to our listenignSocket
         while( (bytesRead = recv(listeningSocket , buffer , BUFFER_SIZE , 0)) > 0 )
         {
-            std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << bytesRead << "b Client->Server]\n";
+            std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << bytesRead << "b Client->Proxy]\n";
             if(IsClientHelloMesasge(buffer, Utilities::Offsets::TLS::TLS_DATA) && bytesRead > 6)
             {
-                std::string connectedHostDomainName = GetDomainNameFromTCPPacket(buffer, Utilities::Offsets::TLS::TLS_DATA);
+                const std::string connectedHostDomainName = GetDomainNameFromTCPPacket(buffer, Utilities::Offsets::TLS::TLS_DATA);
                 if( connectedHostDomainName == bannedHostname)
                 {
                     std::cout << "Connection refused!\n";
@@ -162,7 +162,7 @@ namespace Proxy::ExecutionModes
                 // if host is not banned - allow connection
                 connectionIsAllowed = true;
 
-                status = CreateSocketForForwarding(destinationSocket, destinationPort, connectedHostDomainName.c_str());
+                status = CreateSocketForForwarding(destinationSocket, destinationPort, connectedHostDomainName);
                 if(status.Failed()) { PrintStatusAndTerminateProcess(status); }
             }
 
@@ -178,6 +178,8 @@ namespace Proxy::ExecutionModes
                         status = Utilities::Status(Utilities::Status::Error::BadDataWrittenOnForwarding);
                         return status;
                     }
+
+                    std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << bytesSended << "b Proxy->Server]\n";
 
                     totalBytesSended += bytesSended;
 
@@ -209,14 +211,13 @@ namespace Proxy::ExecutionModes
     std::string ExecutionMode::GetDomainNameFromTCPPacket
     (const char* buffer, uint32_t offset) const noexcept
     {
-        auto domainNameSize = static_cast<uint32_t>(buffer[Utilities::Offsets::TLS::SNI_SIZE - offset]);
-        auto domainName = new char[domainNameSize];
+        const uint32_t domainNameSize = static_cast<uint32_t>(buffer[Utilities::Offsets::TLS::SNI_SIZE - offset]) + 1;
+        char* domainName = new char[domainNameSize];
 
-        std::cout << "[domain size: " << domainNameSize << "\n";
-
-        memcpy(domainName,buffer + (Utilities::Offsets::TLS::SNI - offset), domainNameSize);
+        memcpy(domainName,buffer + Utilities::Offsets::TLS::SNI - offset, domainNameSize);
 
         std::string tmp(domainName);
+
         delete[] domainName;
 
         return tmp;

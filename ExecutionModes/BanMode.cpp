@@ -37,7 +37,7 @@ namespace Proxy::ExecutionModes
                 std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << info.GetListeningPort() << "->" << info.GetDestinationPort() << "]\n";
 
                 Utilities::Status transferStatus = TransferDataWithRestriction(newConnectionSocket, info.GetBannedHostName(), info.GetDestinationPort());
-                if (transferStatus.Failed() && (transferStatus.Code() != static_cast<int32_t>(Utilities::Status::Error::BannedHostDataTransfer)))
+                if (transferStatus.Failed())
                 { PrintStatusAndTerminateProcess(transferStatus); }
 
                 close(newConnectionSocket);
@@ -46,9 +46,7 @@ namespace Proxy::ExecutionModes
 
             newConnectionThread.join();
 
-//            threads.emplace_back(std::move(newConnectionThread));
-
-
+            threads.emplace_back(std::move(newConnectionThread));
 
 
 //            parentPID = fork();

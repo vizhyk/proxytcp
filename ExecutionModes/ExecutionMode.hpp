@@ -30,7 +30,7 @@ namespace Proxy::ExecutionModes
         virtual ~ExecutionMode() = default;
         virtual int32_t Run(const ConnectionInfo& info) const noexcept = 0;
 
-        Utilities::Status CreateSocketForForwarding(int32_t& socketForForwarding, int32_t destinationPort, const char* hostName) const noexcept;
+        Utilities::Status CreateSocketForForwarding(int32_t& socketForForwarding, int32_t destinationPort, const std::string& hostName) const noexcept;
         Utilities::Status CreateSocketOnListeningPort(int32_t& listeningSocket, int32_t listeningPort, sockaddr_in& socketData) const noexcept;
         Utilities::Status TransferData(int32_t sourceSocket, int32_t destinationSocket) const noexcept;
         Utilities::Status TransferDataWithRestriction(int32_t listeningSocket, const std::string& bannedHostname, int32_t destinationPort) const noexcept;
