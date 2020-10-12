@@ -13,6 +13,7 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <thread>
+#include <vector>
 
 namespace Proxy::ExecutionModes
 {
@@ -32,13 +33,14 @@ namespace Proxy::ExecutionModes
 
         Utilities::Status CreateSocketForForwarding(int32_t& socketForForwarding, int32_t destinationPort, const std::string& hostName) const noexcept;
         Utilities::Status CreateSocketOnListeningPort(int32_t& listeningSocket, int32_t listeningPort, sockaddr_in& socketData) const noexcept;
-        Utilities::Status TransferData(int32_t sourceSocket, int32_t destinationSocket) const noexcept;
+        Utilities::Status TransferData(int32_t listeningSocket, int32_t destinationSocket) const noexcept;
         Utilities::Status TransferDataWithRestriction(int32_t listeningSocket, const std::string& bannedHostname, int32_t destinationPort) const noexcept;
 
         std::string GetDomainNameFromTCPPacket(const char* buffer, uint32_t offset = 0) const noexcept;
 
         bool IsClientHelloMesasge(const char* buff, int32_t offset = 0) const noexcept;
 
+        void PrintStatus(const Utilities::Status& status) const noexcept;
         void PrintStatusAndTerminateProcess(const Utilities::Status& status) const noexcept;
         void PrintRecievedData(const char* buffer, uint32_t size) const noexcept;
 

@@ -1,4 +1,3 @@
-#include <vector>
 #include "BanMode.hpp"
 
 namespace Proxy::ExecutionModes
@@ -12,7 +11,6 @@ namespace Proxy::ExecutionModes
         sockaddr_in socketData {};
 
         int32_t listeningSocket {};
-//        int32_t newConnectionSocket {};
 
         pid_t parentPID;
 
@@ -36,38 +34,15 @@ namespace Proxy::ExecutionModes
 
                 std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << info.GetListeningPort() << "->" << info.GetDestinationPort() << "]\n";
 
-                Utilities::Status transferStatus = TransferDataWithRestriction(newConnectionSocket, info.GetBannedHostName(), info.GetDestinationPort());
-                if (transferStatus.Failed())
+                const Utilities::Status transferStatus = TransferDataWithRestriction(newConnectionSocket, info.GetBannedHostName(), info.GetDestinationPort());
+                if(transferStatus.Failed() && transferStatus != Utilities::Status::Error::BadConnectionHostDomainName)
                 { PrintStatusAndTerminateProcess(transferStatus); }
 
                 close(newConnectionSocket);
 
             });
 
-            newConnectionThread.join();
-
             threads.emplace_back(std::move(newConnectionThread));
-
-
-//            parentPID = fork();
-//            if(parentPID == -1)
-//            {
-//                status = Status(Status::Error::BadProcessFork);
-//                PrintStatusAndTerminateProcess(status);
-//            }
-//
-//
-//            if(parentPID == 0)
-//            {
-//                std::cout << "[" << info.listeningPort_ << "->" << info.destinationPort_ << "]\n";
-//
-//                status = Ban::TransferDataWithRestriction(newConnectionSocket, info.bannedHostName_, info.destinationPort_);
-//                if (status.Failed() && (status.Code() != static_cast<int32_t>(Status::Error::BannedHostDataTransfer)))
-//                { PrintStatusAndTerminateProcess(status); }
-//
-//                close(newConnectionSocket);
-//            }
-//            close(newConnectionSocket);
         }
 
         return 0;

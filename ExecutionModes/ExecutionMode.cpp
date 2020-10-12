@@ -83,33 +83,54 @@ namespace Proxy::ExecutionModes
     }
 
     Utilities::Status ExecutionMode::TransferData
-    (int32_t sourceSocket, int32_t destinationSocket) const noexcept
+    (int32_t listeningSocket, int32_t destinationSocket) const noexcept
     {
         Utilities::Status status {};
 
         const int32_t BUFFER_SIZE = 4096;
         char buffer[BUFFER_SIZE];
         uint32_t totalBytesWritten {};
-        int32_t bytesWritten {};
+        int32_t bytesSended {};
         int32_t bytesRead {};
 
 
 
-        while((bytesRead = read(sourceSocket, buffer, BUFFER_SIZE)) > 0)
+        while((bytesRead = recv(listeningSocket, buffer, BUFFER_SIZE, 0)) > 0)
         {
+            std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << bytesRead << "b Client->Proxy]\n";
             totalBytesWritten = 0;
             while(totalBytesWritten < bytesRead)
             {
                 int32_t writingSize = bytesRead - totalBytesWritten;
-                bytesWritten = write(destinationSocket, buffer + totalBytesWritten, writingSize );
+                bytesSended = send(destinationSocket, buffer + totalBytesWritten, writingSize, 0 );
 
-                if(bytesWritten == - 1)
+                if(bytesSended == - 1)
                 {
                     status = Utilities::Status(Utilities::Status::Error::BadDataWrittenOnForwarding);
                     return status;
                 }
 
-                totalBytesWritten += bytesWritten;
+                std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << bytesSended << "b Proxy->Server]\n";
+
+                totalBytesWritten += bytesSended;
+
+                auto recievedFromServer = recv(destinationSocket, buffer, BUFFER_SIZE, 0);
+                if(recievedFromServer == -1)
+                {
+                    status = Utilities::Status(Utilities::Status::Error::BadRecievingDataFromSocket);
+                    return status;
+                }
+
+                std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << recievedFromServer << "b Server->Proxy]\n";
+
+                auto sendedFromServer = send(listeningSocket, buffer, recievedFromServer, 0);
+                if(sendedFromServer == -1)
+                {
+                    status = Utilities::Status(Utilities::Status::Error::BadSendingDataToServer);
+                    return status;
+                }
+
+                std::cout << "[Thread " << std::this_thread::get_id() << "]" <<"\t\t[" << sendedFromServer << "b Proxy->Client]\n";
             }
         }
 
@@ -118,10 +139,10 @@ namespace Proxy::ExecutionModes
             status = Utilities::Status(Utilities::Status::Error::NoDataReadFromSocket);
         }
 
-        shutdown(sourceSocket, SHUT_RD);
+        shutdown(listeningSocket, SHUT_RD);
         shutdown(destinationSocket, SHUT_WR);
 
-        close(sourceSocket);
+        close(listeningSocket);
         close(destinationSocket);
 
         return status;
@@ -142,18 +163,24 @@ namespace Proxy::ExecutionModes
 
         bool connectionIsAllowed = false;
 
-//        std::string connectedHostDomainName {};
-
-        //recieving ALL data that come to our listenignSocket
+        //recieving ALL data that come to our listening Socket
         while( (bytesRead = recv(listeningSocket , buffer , BUFFER_SIZE , 0)) > 0 )
         {
             std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << bytesRead << "b Client->Proxy]\n";
             if(IsClientHelloMesasge(buffer, Utilities::Offsets::TLS::TLS_DATA) && bytesRead > 6)
             {
                 const std::string connectedHostDomainName = GetDomainNameFromTCPPacket(buffer, Utilities::Offsets::TLS::TLS_DATA);
+                if(connectedHostDomainName.empty())
+                {
+//                    status = Utilities::Status::Success::IgnoredBadConnectionHostDomainName;
+                    status = Utilities::Status::Error::BadConnectionHostDomainName;
+                    return status;
+                }
+
                 if( connectedHostDomainName == bannedHostname)
                 {
-                    std::cout << "Connection refused!\n";
+                    std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[ClientHello: " << connectedHostDomainName << "]\n";
+                    std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Connection Refused!]\n";
                     status = Utilities::Status::Success::BannedHostConnectionRefused;
                     return status;
                 }
@@ -234,10 +261,16 @@ namespace Proxy::ExecutionModes
                ( static_cast<uint32_t>(buff[Utilities::Offsets::TLS::HANDSHAKE_TYPE - offset]) == 0x01 );
     }
 
+    void ExecutionMode::PrintStatus
+    (const Utilities::Status& status) const noexcept
+    {
+        std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Status code: " << status.Code() << " | " << strerror(errno) << "]\n";
+    }
+
     void ExecutionMode::PrintStatusAndTerminateProcess
     (const Utilities::Status& status) const noexcept
     {
-        std::cout << "[Status code: " << status.Code() << " | " << strerror(errno) << "]\n";
+        std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Status code: " << status.Code() << " | " << strerror(errno) << "]\n";
         exit(status.Code());
     }
 
@@ -257,4 +290,6 @@ namespace Proxy::ExecutionModes
         }
         printf("\n\n=============\n\n");
     }
+
+
 } //namespace Proxy::ExecutionModes

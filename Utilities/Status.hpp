@@ -8,12 +8,15 @@ namespace Proxy::Utilities
     class Status
     {
     public:
-        enum class Success : int32_t
+        using CodeType = int32_t;
+
+        enum class Success : CodeType
         {
             Success = 0,
             BannedHostConnectionRefused = 1,
+            IgnoredBadConnectionHostDomainName = 2,
         };
-        enum class Error : int32_t
+        enum class Error : CodeType
         {
             IncorrectInputArguments = -1000000001,
             BadListeningPortConversion = -2,
@@ -32,29 +35,45 @@ namespace Proxy::Utilities
             BadConnectionSocketToAddress = -15,
             BadRecievingDataFromSocket = -16,
             BadSendingDataToServer = -17,
+            BadConnectionHostDomainName = -18,
         };
 
     public:
-        Status() noexcept : code_{0} {};
-        explicit Status(int32_t code) noexcept : code_{code} {}
-        explicit Status(Error   code) noexcept : Status{static_cast<int32_t>(code)} {}
-        explicit Status(Success code) noexcept : Status{static_cast<int32_t>(code)} {}
+        constexpr Status() noexcept : code_{ 0 } {};
+        explicit constexpr Status(int32_t code) noexcept : code_{code} {}
+        explicit constexpr Status(Error   code) noexcept : Status{static_cast<int32_t>(code)} {}
+        explicit constexpr Status(Success code) noexcept : Status{static_cast<int32_t>(code)} {}
         ~Status() noexcept = default;
 
-        explicit operator bool() const noexcept { return code_ == static_cast<int32_t>(Success::Success); }
+        explicit constexpr operator bool() const noexcept { return code_ == static_cast<int32_t>(Success::Success); }
 
-        Status& operator=(Error code) noexcept { return *this = Status{ code }; }
-        Status& operator=(Success code) noexcept { return *this = Status{ code }; }
+        constexpr Status& operator=(Error code) noexcept { return *this = Status{ code }; }
+        constexpr Status& operator=(Success code) noexcept { return *this = Status{ code }; }
 
-        int32_t Code() const noexcept { return code_; }
+        constexpr CodeType Code() const noexcept { return code_; }
 
-        bool Succeed() const noexcept { return code_ == static_cast<int32_t>(Success::Success); }
-        bool Failed()  const noexcept { return code_ < static_cast<int32_t>(Success::Success); }
+        constexpr bool Succeed() const noexcept { return code_ == static_cast<int32_t>(Success::Success); }
+        constexpr bool Failed()  const noexcept { return code_ < static_cast<int32_t>(Success::Success); }
 
     private:
-        int32_t code_;
+        CodeType code_;
     };
 
+    constexpr bool operator==(Status lhs, Status rhs) noexcept { return lhs.Code() == rhs.Code(); }
+    constexpr bool operator==(Status lhs, Status::Error   rhs) noexcept { return lhs == Status { rhs }; }
+    constexpr bool operator==(Status lhs, Status::Success rhs) noexcept { return lhs == Status { rhs }; }
+    constexpr bool operator==(Status::Error   lhs, Status rhs) noexcept { return Status { lhs } == rhs; }
+    constexpr bool operator==(Status::Success lhs, Status rhs) noexcept { return Status { lhs } == rhs; }
+
+    constexpr bool operator!=(Status lhs, Status rhs) noexcept { return !(lhs == rhs); }
+    constexpr bool operator!=(Status lhs, Status::Error   rhs) noexcept { return !(lhs == Status { rhs }); }
+    constexpr bool operator!=(Status lhs, Status::Success rhs) noexcept { return !(lhs == Status { rhs }); }
+    constexpr bool operator!=(Status::Error   lhs, Status rhs) noexcept { return !(Status { lhs } == rhs); }
+    constexpr bool operator!=(Status::Success lhs, Status rhs) noexcept { return !(Status { lhs } == rhs); }
+
 } //namespace Proxy
+
+
+
 
 #endif // PROXYTCP_STATUS_HPP
