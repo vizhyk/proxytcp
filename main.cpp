@@ -47,7 +47,7 @@ int main(int argc, char** argv)
 //    const Proxy::ExecutionModes::ExecutionModeType mode = cmdLineOptions.GetExecutionModeType();
 //    const Proxy::ConnectionInfo info = cmdLineOptions.GetConnectionInfo();
 
-    Proxy::Application application(Proxy::ExecutionModes::ExecutionModeType::Forwarding , {8080,8081,"coolsite.io","badsite.io"});
+    Proxy::Application application(Proxy::ExecutionModes::ExecutionModeType::Ban , {8080,8081,"coolsite.io","badsite.io"});
 
     return application.Run();
 }

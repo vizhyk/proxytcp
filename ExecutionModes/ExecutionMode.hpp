@@ -36,6 +36,9 @@ namespace Proxy::ExecutionModes
         Utilities::Status TransferData(int32_t listeningSocket, int32_t destinationSocket) const noexcept;
         Utilities::Status TransferDataWithRestriction(int32_t listeningSocket, const std::string& bannedHostname, int32_t destinationPort) const noexcept;
 
+        uint16_t GetUint16FromNetworkData(const char* buff) const noexcept;
+        uint32_t GetUint32FromNetworkData(const char* buff) const noexcept;
+
         std::string GetDomainNameFromTCPPacket(const char* buffer, uint32_t offset = 0) const noexcept;
 
         bool IsClientHelloMesasge(const char* buff, int32_t offset = 0) const noexcept;

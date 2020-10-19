@@ -61,6 +61,14 @@ namespace Proxy::ExecutionModes
             return status;
         }
 
+        int32_t enable {1};
+        if (setsockopt(listeningSocket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
+        {
+            status = Utilities::Status(Utilities::Status::Error::BadListeningSocketInitializaton);
+            return status;
+        }
+
+
         memset(reinterpret_cast<char*>(&socketData),0,sizeof(socketData));
 
         socketData.sin_family = AF_INET;
@@ -238,16 +246,51 @@ namespace Proxy::ExecutionModes
     std::string ExecutionMode::GetDomainNameFromTCPPacket
     (const char* buffer, uint32_t offset) const noexcept
     {
-        const uint32_t domainNameSize = static_cast<uint32_t>(buffer[Utilities::Offsets::TLS::SNI_SIZE - offset]) + 1;
-        char* domainName = new char[domainNameSize];
+//        const uint32_t domainNameSize = static_cast<uint32_t>(buffer[Utilities::Offsets::TLS::SNI_SIZE - offset]) + 1;
+//        char* domainName = new char[domainNameSize];
+//        memcpy(domainName,buffer + Utilities::Offsets::TLS::SNI - offset, domainNameSize);
+        uint16_t extensionsDataSize = GetUint16FromNetworkData(buffer + Utilities::Offsets::TLS::EXTENTIONS_DATA_SIZE - offset);
 
-        memcpy(domainName,buffer + Utilities::Offsets::TLS::SNI - offset, domainNameSize);
+        char* extentionsData = new char[extensionsDataSize];
 
-        std::string tmp(domainName);
+        memcpy(extentionsData,buffer + Utilities::Offsets::TLS::EXTENTIONS_DATA - offset, extensionsDataSize);
 
-        delete[] domainName;
+        std::string domainName {};
 
-        return tmp;
+        uint32_t extensionOffset {};
+        while(extensionOffset < extensionsDataSize)
+        {
+            const uint16_t extenstionType = GetUint16FromNetworkData(extentionsData + extensionOffset);
+
+            const uint16_t extenstionLength = GetUint16FromNetworkData(extentionsData +extensionOffset + sizeof(extenstionType));
+
+            extensionOffset+= sizeof(extenstionType) + sizeof(extenstionLength);
+
+            if(extenstionType == 0)
+            {
+                extensionOffset += 3;
+                const uint16_t domainNameSize = GetUint16FromNetworkData(extentionsData + extensionOffset) + 1;
+                extensionOffset += sizeof(domainNameSize);
+
+                char* tmpDomainName = new char[domainNameSize];
+                memcpy(tmpDomainName, extentionsData + extensionOffset, domainNameSize);
+                extensionOffset += domainNameSize;
+
+                domainName = tmpDomainName;
+
+                delete [] tmpDomainName;
+
+                break;
+            }
+            else
+            {
+                extensionOffset += extenstionLength;
+            }
+        }
+
+        delete [] extentionsData;
+
+        return domainName;
     }
 
     bool ExecutionMode::IsClientHelloMesasge
@@ -289,6 +332,20 @@ namespace Proxy::ExecutionModes
             printf("%02x ", static_cast<uint8_t>(buffer[i]));
         }
         printf("\n\n=============\n\n");
+    }
+
+    uint16_t ExecutionMode::GetUint16FromNetworkData(const char* buff) const noexcept
+    {
+        uint16_t tmpValue {};
+        memcpy(&tmpValue, buff , sizeof(uint16_t));
+        tmpValue = ntohs(tmpValue);
+    }
+
+    uint32_t ExecutionMode::GetUint32FromNetworkData(const char* buff) const noexcept
+    {
+        uint32_t tmpValue {};
+        memcpy(&tmpValue, buff , sizeof(uint32_t));
+        tmpValue = ntohl(tmpValue);
     }
 
 

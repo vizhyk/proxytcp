@@ -10,9 +10,8 @@ namespace Proxy::Utilities::Offsets
         const uint32_t TLS_DATA = 66; // start point of the tls data;
         const uint32_t MESSAGE_TYPE = 66;
         const uint32_t HANDSHAKE_TYPE = 71;
-        const uint32_t SNI_SIZE = 192;
-        const uint32_t SNI = 193;
-
+        const uint32_t EXTENTIONS_DATA_SIZE = 178;
+        const uint32_t EXTENTIONS_DATA = 180;
     };
 
     namespace TCP

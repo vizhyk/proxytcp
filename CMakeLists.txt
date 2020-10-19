@@ -30,6 +30,6 @@ add_executable(proxytcp
         CommandLineOptions/CommandLineOptions.cpp
         CommandLineOptions/CommandLineOptions.hpp
         ConnectionInfo/ConnectionInfo.cpp
-        ConnectionInfo/ConnectionInfo.hpp)
+        ConnectionInfo/ConnectionInfo.hpp ThreadManager/ThreadManager.cpp ThreadManager/ThreadManager.hpp Utilities/NonCopyable.hpp)
 
 target_link_libraries(proxytcp pthread)
