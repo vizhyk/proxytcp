@@ -15,21 +15,13 @@ add_executable(proxytcp
 #        Offsets.hpp
 #        Ports.hpp
         Application/Application.cpp
-        Application/Application.hpp
         ExecutionModes/ExecutionMode.cpp
-        ExecutionModes/ExecutionMode.hpp
         ExecutionModes/ForwardingMode.cpp
-        ExecutionModes/ForwardingMode.hpp
         ExecutionModes/TrackingMode.cpp
-        ExecutionModes/TrackingMode.hpp
         ExecutionModes/BanMode.cpp
-        ExecutionModes/BanMode.hpp
-        Utilities/Offsets.hpp
-        Utilities/Ports.hpp
-        Utilities/Status.hpp
         CommandLineOptions/CommandLineOptions.cpp
-        CommandLineOptions/CommandLineOptions.hpp
         ConnectionInfo/ConnectionInfo.cpp
-        ConnectionInfo/ConnectionInfo.hpp ThreadManager/ThreadManager.cpp ThreadManager/ThreadManager.hpp Utilities/NonCopyable.hpp)
+        ThreadManager/ThreadPool.cpp
+        )
 
 target_link_libraries(proxytcp pthread)

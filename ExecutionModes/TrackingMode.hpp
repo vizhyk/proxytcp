@@ -7,7 +7,7 @@ namespace Proxy::ExecutionModes
 {
     class TrackingMode : public ExecutionMode
     {
-        int32_t Run(const ConnectionInfo& info) const noexcept override;
+        int32_t Run(const ConnectionInfo& info, ThreadPool<std::function<void()>>& threadPool) const noexcept override;
     };
 } //namespace Proxy::ExecutionModes
 

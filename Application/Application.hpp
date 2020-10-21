@@ -6,6 +6,7 @@
 #include "ExecutionModes/ExecutionMode.hpp"
 #include "ExecutionModes/ForwardingMode.hpp"
 #include "ConnectionInfo/ConnectionInfo.hpp"
+#include "ThreadManager/ThreadPool.hpp"
 
 #include <cstdint>
 
@@ -24,10 +25,11 @@ namespace Proxy
         ~Application() noexcept { delete executionMode_; }
 
     public:
-        int32_t Run() const noexcept { return executionMode_ ? executionMode_->Run(info_) : -1; }
+        int32_t Run() noexcept { return executionMode_ ? executionMode_->Run(info_, threadPool_) : -1; }
     private:
         ConnectionInfo info_;
         ExecutionModes::ExecutionMode* executionMode_;
+        ThreadPool<std::function<void()>> threadPool_;
     };
 
 } //namespace Proxy

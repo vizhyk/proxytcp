@@ -3,7 +3,7 @@
 namespace Proxy::ExecutionModes
 {
 
-    int32_t TrackingMode::Run(const ConnectionInfo& info) const noexcept
+    int32_t TrackingMode::Run(const ConnectionInfo& info, ThreadPool<std::function<void()>>& threadPool) const noexcept
     {
         std::cout << "[Tracking mode]\n";
 

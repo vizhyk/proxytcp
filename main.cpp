@@ -39,7 +39,6 @@
 #include "Application/Application.hpp"
 #include "ExecutionModes/ExecutionMode.hpp"
 #include "ConnectionInfo/ConnectionInfo.hpp"
-
 int main(int argc, char** argv)
 {
 //    Proxy::CommandLineOptions cmdLineOptions(argc,argv);
@@ -47,7 +46,7 @@ int main(int argc, char** argv)
 //    const Proxy::ExecutionModes::ExecutionModeType mode = cmdLineOptions.GetExecutionModeType();
 //    const Proxy::ConnectionInfo info = cmdLineOptions.GetConnectionInfo();
 
-    Proxy::Application application(Proxy::ExecutionModes::ExecutionModeType::Ban , {8080,8081,"coolsite.io","badsite.io"});
+    Proxy::Application application(Proxy::ExecutionModes::ExecutionModeType::Ban , {8080,8082,"coolsite.io","badsite.io"});
 
     return application.Run();
 }

@@ -8,7 +8,7 @@ namespace Proxy
 {
 
     Application::Application(ExecutionModes::ExecutionModeType mode, const ConnectionInfo& info) noexcept
-        : info_{info}
+        : info_{info}, threadPool_{}
     {
         switch (mode)
         {
@@ -25,9 +25,6 @@ namespace Proxy
                 executionMode_ = nullptr;
                 std::cout << "Incorrect execution mode option.\n";
                 exit(-1);
-
-
-
         }
     }
 } //namespace Proxy

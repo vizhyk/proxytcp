@@ -3,7 +3,7 @@
 namespace Proxy::ExecutionModes
 {
 
-    int32_t BanMode::Run(const ConnectionInfo& info) const noexcept
+    int32_t BanMode::Run(const ConnectionInfo& info, ThreadPool<std::function<void()>>& threadPool) const noexcept
     {
         std::cout << "[Ban mode]\n";
 
@@ -12,9 +12,6 @@ namespace Proxy::ExecutionModes
 
         int32_t listeningSocket {};
 
-        pid_t parentPID;
-
-        std::vector<std::thread> threads;
         // listening on 8081
         status =  CreateSocketOnListeningPort(listeningSocket, info.GetListeningPort(), socketData);
         if(status.Failed()) { PrintStatusAndTerminateProcess(status); }
@@ -30,19 +27,20 @@ namespace Proxy::ExecutionModes
                 PrintStatusAndTerminateProcess(status);
             }
 
-            std::thread newConnectionThread ([this,newConnectionSocket, &info = std::as_const(info)] () {
+                threadPool.AddWork([this,newConnectionSocket, &info = std::as_const(info), &threadPool] () {
 
-                std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << info.GetListeningPort() << "->" << info.GetDestinationPort() << "]\n";
 
-                const Utilities::Status transferStatus = TransferDataWithRestriction(newConnectionSocket, info.GetBannedHostName(), info.GetDestinationPort());
-                if(transferStatus.Failed() && transferStatus != Utilities::Status::Error::BadConnectionHostDomainName)
-                { PrintStatusAndTerminateProcess(transferStatus); }
+                    std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << info.GetListeningPort() << "->" << info.GetDestinationPort() << "]\n";
 
-                close(newConnectionSocket);
+                    const Utilities::Status transferStatus = TransferDataWithRestriction(newConnectionSocket, info.GetBannedHostName(), info.GetDestinationPort());
+                    if(transferStatus.Failed() && transferStatus != Utilities::Status::Error::BadConnectionHostDomainName)
+                    { PrintStatusAndTerminateProcess(transferStatus); }
 
-            });
+                    close(newConnectionSocket);
 
-            threads.emplace_back(std::move(newConnectionThread));
+                });
+
+
         }
 
         return 0;
