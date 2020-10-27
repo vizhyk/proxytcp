@@ -27,18 +27,18 @@ namespace Proxy::ExecutionModes
                 PrintStatusAndTerminateProcess(status);
             }
 
-                threadPool.AddWork([this,newConnectionSocket, &info = std::as_const(info), &threadPool] () {
+            threadPool.AddWork([this,newConnectionSocket, &info = std::as_const(info), &threadPool] () {
 
 
-                    std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << info.GetListeningPort() << "->" << info.GetDestinationPort() << "]\n";
+                std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << info.GetListeningPort() << "->" << info.GetDestinationPort() << "]\n";
 
-                    const Utilities::Status transferStatus = TransferDataWithRestriction(newConnectionSocket, info.GetBannedHostName(), info.GetDestinationPort());
-                    if(transferStatus.Failed() && transferStatus != Utilities::Status::Error::BadConnectionHostDomainName)
-                    { PrintStatusAndTerminateProcess(transferStatus); }
+                const Utilities::Status transferStatus = TransferDataWithRestriction(newConnectionSocket, info.GetBannedHostName(), info.GetDestinationPort());
+                if(transferStatus.Failed() && transferStatus != Utilities::Status::Error::BadConnectionHostDomainName)
+                { PrintStatusAndTerminateProcess(transferStatus); }
 
-                    close(newConnectionSocket);
+                close(newConnectionSocket);
 
-                });
+            });
 
 
         }

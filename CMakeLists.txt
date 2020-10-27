@@ -22,6 +22,6 @@ add_executable(proxytcp
         CommandLineOptions/CommandLineOptions.cpp
         ConnectionInfo/ConnectionInfo.cpp
         ThreadManager/ThreadPool.cpp
-        )
+        ExecutionModes/SOCKS5Mode.cpp ExecutionModes/SOCKS5Mode.hpp Utilities/SOCKS5.hpp)
 
 target_link_libraries(proxytcp pthread)

@@ -4,7 +4,7 @@
 namespace Proxy::ExecutionModes
 {
 
-    Utilities::Status ExecutionMode::CreateSocketForForwarding
+    Utilities::Status ExecutionMode::CreateForwardingSocketByHostname
     (int32_t& socketForForwarding, int32_t destinationPort, const std::string& hostName) const noexcept
     {
         Utilities::Status status {};
@@ -13,11 +13,12 @@ namespace Proxy::ExecutionModes
         sockaddr_in destinationAddress {};
 
         destinationHost = gethostbyname(hostName.c_str());
+        
 
         if(destinationHost == nullptr)
         {
             status =  Utilities::Status( Utilities::Status::Error::BadDestinationHost);
-            PrintStatusAndTerminateProcess(status);
+            return status;
         }
 
         memset(&destinationAddress, 0, sizeof(destinationAddress));
@@ -35,7 +36,7 @@ namespace Proxy::ExecutionModes
         if(socketForForwarding == -1)
         {
             status =  Utilities::Status( Utilities::Status::Error::BadForwardingSocketCreation);
-            PrintStatusAndTerminateProcess(status);
+            return status;
         }
 
         auto connectResult = connect(socketForForwarding, reinterpret_cast<sockaddr*>(&destinationAddress), sizeof(destinationAddress));
@@ -43,7 +44,66 @@ namespace Proxy::ExecutionModes
         if(connectResult == -1)
         {
             status =  Utilities::Status( Utilities::Status::Error::BadConnectionSocketToAddress);
-            PrintStatusAndTerminateProcess(status);
+            return status;
+        }
+
+        return status;
+    }
+
+    Utilities::Status ExecutionMode::CreateForwardingSocketByIP
+            (int32_t& socketForForwarding, int32_t destinationPort, const std::string& addr) const noexcept
+    {
+        Utilities::Status status {};
+
+        hostent* destinationHost = nullptr;
+        sockaddr_in destinationAddress {};
+
+        char hostName[NI_MAXHOST];
+        char servName[NI_MAXSERV];
+
+        destinationHost = gethostbyaddr(addr.c_str(), addr.size(), AF_INET);
+
+
+        if(destinationHost == nullptr)
+        {
+            status =  Utilities::Status( Utilities::Status::Error::BadDestinationHost);
+            return status;
+        }
+
+        memset(&destinationAddress, 0, sizeof(destinationAddress));
+
+        destinationAddress.sin_family = AF_INET;
+        destinationAddress.sin_port = destinationPort;
+
+        memcpy(reinterpret_cast<char*>(&destinationAddress.sin_addr.s_addr),
+               const_cast<char*>(addr.c_str()),
+               addr.size());
+
+        if(getnameinfo(reinterpret_cast<sockaddr*>(&destinationAddress),sizeof(destinationAddress),
+                       hostName, sizeof(hostName), nullptr, 0, 0) == 0)
+        {
+            std::cout << "::: hostname = " << hostName << " ::: \n";
+        }
+        else
+        {
+            std::cout << strerror(errno) << "\n";
+        }
+
+
+        socketForForwarding = socket(AF_INET, SOCK_STREAM, 0);
+
+        if(socketForForwarding == -1)
+        {
+            status =  Utilities::Status( Utilities::Status::Error::BadForwardingSocketCreation);
+            return status;
+        }
+
+        auto connectResult = connect(socketForForwarding, reinterpret_cast<sockaddr*>(&destinationAddress), sizeof(destinationAddress));
+
+        if(connectResult == -1)
+        {
+            status =  Utilities::Status( Utilities::Status::Error::BadConnectionSocketToAddress);
+            return status;
         }
 
         return status;
@@ -197,7 +257,7 @@ namespace Proxy::ExecutionModes
                 // if host is not banned - allow connection
                 connectionIsAllowed = true;
 
-                status = CreateSocketForForwarding(destinationSocket, destinationPort, connectedHostDomainName);
+                status = CreateForwardingSocketByHostname(destinationSocket, destinationPort, connectedHostDomainName);
                 if(status.Failed()) { PrintStatusAndTerminateProcess(status); }
             }
 
@@ -320,7 +380,7 @@ namespace Proxy::ExecutionModes
     void ExecutionMode::PrintRecievedData
     (const char* buffer, uint32_t size) const noexcept
     {
-        printf("\n\n=============\n\n");
+        printf("\n=============");
         for(int32_t i = 0; i < size; ++i)
         {
             if( (i%8 == 0) && (i%16 !=0) )
@@ -331,7 +391,7 @@ namespace Proxy::ExecutionModes
 
             printf("%02x ", static_cast<uint8_t>(buffer[i]));
         }
-        printf("\n\n=============\n\n");
+        printf("\n=============\n");
     }
 
     uint16_t ExecutionMode::GetUint16FromNetworkData(const char* buff) const noexcept

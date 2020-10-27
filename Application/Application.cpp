@@ -1,7 +1,3 @@
-//
-// Created by ofati on 10/7/20.
-//
-
 #include "Application.hpp"
 
 namespace Proxy
@@ -20,6 +16,9 @@ namespace Proxy
                 break;
             case ExecutionModes::ExecutionModeType::Ban:
                 executionMode_ = new ExecutionModes::BanMode;
+                break;
+            case ExecutionModes::ExecutionModeType::SOCKS5:
+                executionMode_ = new ExecutionModes::SOCKS5Mode;
                 break;
             default:
                 executionMode_ = nullptr;

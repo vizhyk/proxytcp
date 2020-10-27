@@ -29,6 +29,25 @@ namespace Proxy::Utilities::Offsets
 
     };
 
+    namespace SOCKS5
+    {
+        namespace Handshake
+        {
+            namespace Client
+            {
+                const uint8_t IP_ADDRESS = 4;
+                const uint8_t DOMAIN_NAME = 5;
+                const uint8_t DOMAIN_NAME_SIZE = 4;
+            }
+
+            namespace Server
+            {
+
+            }
+
+        }
+    };
+
 } // namespace Proxy::Offsets
 
 

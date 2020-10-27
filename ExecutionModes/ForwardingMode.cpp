@@ -34,7 +34,9 @@ namespace Proxy::ExecutionModes
 
                 int32_t destinationSocket {};
 
-                const Utilities::Status status = CreateSocketForForwarding(destinationSocket, info.GetDestinationPort(), info.GetHostName());
+                const Utilities::Status status = CreateForwardingSocketByHostname(destinationSocket,
+                                                                                  info.GetDestinationPort(),
+                                                                                  info.GetHostName());
                 if(status.Failed())
                 { PrintStatusAndTerminateProcess(status); }
 

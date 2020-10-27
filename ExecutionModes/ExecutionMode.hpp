@@ -22,6 +22,7 @@ namespace Proxy::ExecutionModes
         Forwarding = 0,
         Tracking = 1,
         Ban = 2,
+        SOCKS5 = 5,
     };
 
     class ExecutionMode
@@ -31,7 +32,8 @@ namespace Proxy::ExecutionModes
         virtual ~ExecutionMode() = default;
         virtual int32_t Run(const ConnectionInfo& info, ThreadPool<std::function<void()>> & threadPool) const noexcept = 0;
 
-        Utilities::Status CreateSocketForForwarding(int32_t& socketForForwarding, int32_t destinationPort, const std::string& hostName) const noexcept;
+        Utilities::Status CreateForwardingSocketByHostname(int32_t& socketForForwarding, int32_t destinationPort, const std::string& hostName) const noexcept;
+        Utilities::Status CreateForwardingSocketByIP(int32_t& socketForForwarding, int32_t destinationPort, const std::string& addr) const noexcept;
         Utilities::Status CreateSocketOnListeningPort(int32_t& listeningSocket, int32_t listeningPort, sockaddr_in& socketData) const noexcept;
         Utilities::Status TransferData(int32_t listeningSocket, int32_t destinationSocket) const noexcept;
         Utilities::Status TransferDataWithRestriction(int32_t listeningSocket, const std::string& bannedHostname, int32_t destinationPort) const noexcept;

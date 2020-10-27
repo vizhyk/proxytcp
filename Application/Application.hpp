@@ -5,6 +5,7 @@
 #include "ExecutionModes/TrackingMode.hpp"
 #include "ExecutionModes/ExecutionMode.hpp"
 #include "ExecutionModes/ForwardingMode.hpp"
+#include "ExecutionModes/SOCKS5Mode.hpp"
 #include "ConnectionInfo/ConnectionInfo.hpp"
 #include "ThreadManager/ThreadPool.hpp"
 
