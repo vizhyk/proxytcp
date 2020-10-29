@@ -258,7 +258,7 @@ namespace Proxy::ExecutionModes
                 connectionIsAllowed = true;
 
                 status = CreateForwardingSocketByHostname(destinationSocket, destinationPort, connectedHostDomainName);
-                if(status.Failed()) { PrintStatusAndTerminateProcess(status); }
+                if(status.Failed()) { PrintStatus(status); return status; }
             }
 
             if(connectionIsAllowed)
@@ -380,7 +380,7 @@ namespace Proxy::ExecutionModes
     void ExecutionMode::PrintRecievedData
     (const char* buffer, uint32_t size) const noexcept
     {
-        printf("\n=============");
+        printf("=============");
         for(int32_t i = 0; i < size; ++i)
         {
             if( (i%8 == 0) && (i%16 !=0) )

@@ -18,8 +18,8 @@ namespace Proxy
     public:
         ThreadPool() noexcept
         {
-            const auto availableThreads = std::thread::hardware_concurrency();
-
+//            const auto availableThreads = std::thread::hardware_concurrency();
+            const auto availableThreads = 10;
             workers_.reserve(availableThreads);
             for(int32_t i = 0; i < availableThreads; ++i)
             {

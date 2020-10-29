@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 //    const Proxy::ExecutionModes::ExecutionModeType mode = cmdLineOptions.GetExecutionModeType();
 //    const Proxy::ConnectionInfo info = cmdLineOptions.GetConnectionInfo();
 
-    Proxy::Application application(Proxy::ExecutionModes::ExecutionModeType::SOCKS5 , {8080,8083,"coolsite.io","badsite.io"});
+    Proxy::Application application(Proxy::ExecutionModes::ExecutionModeType::SOCKS5 , {8080,1080,"coolsite.io","badsite.io"});
 
     return application.Run();
 }

@@ -27,7 +27,7 @@ namespace Proxy::ExecutionModes
                 PrintStatusAndTerminateProcess(status);
             }
 
-            threadPool.AddWork([this,newConnectionSocket, &info = std::as_const(info), &threadPool] () {
+            threadPool.AddWork([this,newConnectionSocket, &info = std::as_const(info)] () {
 
 
                 std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[" << info.GetListeningPort() << "->" << info.GetDestinationPort() << "]\n";
