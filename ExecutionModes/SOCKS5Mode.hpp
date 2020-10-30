@@ -16,6 +16,7 @@ namespace Proxy::ExecutionModes
         int8_t GetCommand(const char* buffer, uint32_t bufferSize) const noexcept;
         int8_t GetDestinationAddressType(const char* buffer, uint32_t bufferSize) const noexcept;
         void GetDestinationAddressAndPort(const char* buffer, uint32_t bufferSize, std::string& destinationAddress, uint16_t& port) const noexcept;
+        bool EstablishConnectionWithServer(const char* buffer, uint32_t bufferSize, int32_t& serverSocket, int32_t& newClientSocket) const noexcept;
     };
 
 }

@@ -1,4 +1,5 @@
 #include <csignal>
+#include <fcntl.h>
 #include "SOCKS5Mode.hpp"
 
 namespace Proxy::ExecutionModes
@@ -38,137 +39,94 @@ namespace Proxy::ExecutionModes
             }
 
             threadPool.AddWork([&]() {
-                std::vector<std::thread> fuckthis {};
 
                 bool connectionToTheServerIsEstablished { false };
 
-                while((recievedData = recv(newClientSocket, buff, MAXBUFFERSIZE, 0)) > 0)
+                recievedData = recv(newClientSocket, buff, 3, 0);
+
+                if(IsClientInitiationMessage(buff,recievedData))
                 {
-                    if(IsClientInitiationMessage(buff,recievedData))
+                    char response[2];
+                    response[0] = 0x05;
+                    response[1] = GetClientAuthenticationMethod(buff, recievedData);
+                    if (response[1] == -1)
                     {
-                        char response[2];
-                        response[0] = 0x05;
-                        response[1] = GetClientAuthenticationMethod(buff,recievedData);
-                        if(response[1] == -1)
-                        {
-                            // return error
-                        }
-
-                        auto sendedData = send(newClientSocket, response, sizeof(response), 0);
-                        if(sendedData == -1)
-                        {
-                            std::cout << "error sending\n";
-                        }
-    //                        PrintRecievedData(response,sendedData);
-
-                        recievedData = recv(newClientSocket, buff, MAXBUFFERSIZE, 0);
-                        if(recievedData > 0)
-                        {
-                                PrintRecievedData(buff,recievedData);
-
-                            std::string destinationAddress{};
-                            uint16_t destinationPort{};
-
-                            GetDestinationAddressAndPort(buff, recievedData, destinationAddress, destinationPort);
-                            std::cout << "[Thread " << std::this_thread::get_id() << "]"<< "\t\t[Destination Address/Port: " << destinationAddress << "/" << destinationPort << ".]\n";
-
-
-                            int8_t addressType = GetDestinationAddressType(buff, recievedData);
-
-                            if (addressType == static_cast<uint8_t>(Utilities::SOCKS5::Handshake::AddressType::IPv6) ||
-                                addressType == static_cast<uint8_t>(Utilities::SOCKS5::Handshake::AddressType::IPv4))
-                            {
-                                status = CreateForwardingSocketByIP(serverSocket, destinationPort,destinationAddress);
-                                if (status.Failed()) { PrintStatus(status); continue; }
-                            }
-
-                            if (addressType == static_cast<uint8_t>(Utilities::SOCKS5::Handshake::AddressType::DomainName))
-                            {
-                                status = CreateForwardingSocketByHostname(serverSocket, destinationPort, destinationAddress);
-                                if (status.Failed()) { PrintStatus(status); continue; }
-                            }
-
-                            connectionToTheServerIsEstablished = true;
-
-                            std::cout << "[Thread " << std::this_thread::get_id() << "]"
-                                      << "\t\t[Proxy->Server: Connection is successful.]\n";
-
-                            ////////////////////// TO BE REFACTORED //////////////////////
-                            char* newReply = new char[5 + destinationAddress.size() + 2 + 1];
-                            newReply[0] = 0x05;
-                            newReply[1] = 0x00;
-                            newReply[2] = 0x00;
-                            newReply[3] = addressType;
-
-                            int8_t destinationAddressSize = destinationAddress.size();
-
-                            memcpy(newReply + 4, &destinationAddressSize, sizeof(addressType));
-                            memcpy(newReply + 5, destinationAddress.c_str(), destinationAddress.size());
-
-                            auto htonsPort = htons(destinationPort);
-
-                            memcpy(newReply + 5 + destinationAddress.size(), &htonsPort, 2);
-                            auto replyMessageSize = 5 + destinationAddress.size() + 2;
-                            ////////////////////// end //////////////////////
-
-                            auto reply = send(newClientSocket, newReply, replyMessageSize, 0);
-                            PrintRecievedData(newReply, replyMessageSize);
-                            delete[] newReply;
-                            std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Proxy->Client: " << reply
-                                      << "bytes]\n";
-                            std::cout << "Continuing\n";
-                            continue;
-                        }
+                        // return error
                     }
 
-                    if(connectionToTheServerIsEstablished)
+                    auto sendedData = send(newClientSocket, response, sizeof(response), 0);
+                    if (sendedData == -1)
                     {
+                        std::cout << "error sending\n";
+                    }
+                }
 
+                recievedData = recv(newClientSocket, buff, MAXBUFFERSIZE, 0);
+                if(recievedData > 0)
+                {
+                    // finish SOCKS5 handshake
+                    connectionToTheServerIsEstablished = EstablishConnectionWithServer(buff,recievedData,serverSocket,newClientSocket);
+                }
+
+                fcntl(newClientSocket, F_SETFL, O_NONBLOCK);
+                fcntl(serverSocket, F_SETFL, O_NONBLOCK);
+
+                while(connectionToTheServerIsEstablished)
+                {
+                    recievedData = recv(newClientSocket, buff, MAXBUFFERSIZE, 0);
+                    if(recievedData == -1)
+                    {
+                        std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Client " << strerror(errno) << "]\n";
+                        break;
+                    }
+                    if(recievedData > 0)
+                    {
+                        std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Client->Proxy: " << recievedData << "bytes]\n";
                         if(IsClientHelloMesasge(buff, Utilities::Offsets::TLS::TLS_DATA) && recievedData > 6)
                         {
                             const std::string hostname = GetDomainNameFromTCPPacket(buff, Utilities::Offsets::TLS::TLS_DATA);
                             std::cout << "[" << hostname << "]\n";
-                            hostIsNotBanned = true;
-                        }
-                        else
-                        {
-                            hostIsNotBanned = false;
-                        }
-
-                        if(hostIsNotBanned)
-                        {
-                            int32_t proxyToServerBytes = send(serverSocket, buff, recievedData, MSG_NOSIGNAL);
-                            std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Proxy->Server: " << proxyToServerBytes << "bytes]\n";
-                            if(proxyToServerBytes == -1)
+                            if(hostname == info.GetBannedHostName())
                             {
-                                std::cout << "[CLient " << strerror(errno) << "]\n";
+                                std::cout << "Refused connection from " << hostname << "\n";
+                                close(newClientSocket);
+                                close(serverSocket);
+                                return 0;
                             }
+                        }
 
-                            std::thread threadSendingDataFromServer { [&] () {
+                        int32_t proxyToServerBytes = send(serverSocket, buff, recievedData, MSG_NOSIGNAL);
+                        std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Proxy->Server: " << proxyToServerBytes << "bytes]\n";
+                        if(proxyToServerBytes == -1)
+                        {
+                            std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[CLient " << strerror(errno) << "]\n";
 
-                                while ((serverToProxyBytes = recv(serverSocket, serverDataExchangeBuffer, MAXBUFFERSIZE, 0)) > 0)
-                                {
-                                    std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Server->Proxy: " << serverToProxyBytes << "bytes]\n";
-
-                                    int32_t proxyToClientBytes = send(newClientSocket, serverDataExchangeBuffer, serverToProxyBytes,
-                                                                      MSG_NOSIGNAL);
-                                    std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Proxy->Client: " << proxyToClientBytes << "bytes]\n";
-                                    if (proxyToClientBytes == -1)
-                                    {
-                                        std::cout << "[Server " << strerror(errno) << "]\n";
-                                    }
-                                }
-                            }};
-
-                            fuckthis.emplace_back(std::move(threadSendingDataFromServer));
-
+                            break;
                         }
                     }
 
+                    int32_t serverToProxyBytes = recv(serverSocket, serverDataExchangeBuffer, MAXBUFFERSIZE, 0);
+                    if(recievedData == -1)
+                    {
+                        std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Server " << strerror(errno) << "]\n";
+                        break;
+                    }
+                    if(serverToProxyBytes > 0)
+                    {
+                        std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Server->Proxy: " << serverToProxyBytes << "bytes]\n";
+
+                        int32_t proxyToClientBytes = send(newClientSocket, serverDataExchangeBuffer, serverToProxyBytes,
+                                                          MSG_NOSIGNAL);
+                        std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Proxy->Client: " << proxyToClientBytes << "bytes]\n";
+                        if (proxyToClientBytes == -1)
+                        {
+                            std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Server " << strerror(errno) << "]\n";
+                            break;
+                        }
+                    }
+
+                    usleep(100);
                 }
-
-
-
             });
 
 
@@ -253,6 +211,63 @@ namespace Proxy::ExecutionModes
         }
         destinationAddress = std::string(tmpDestinationAddress,tmpDestinationAddressSize);
         delete[] tmpDestinationAddress;
+    }
+
+    bool SOCKS5Mode::EstablishConnectionWithServer(const char* buffer, uint32_t bufferSize, int32_t& serverSocket, int32_t& newClientSocket) const noexcept
+    {
+        Utilities::Status status{};
+
+        std::string destinationAddress{};
+        uint16_t destinationPort{};
+
+        GetDestinationAddressAndPort(buffer, bufferSize, destinationAddress, destinationPort);
+        std::cout << "[Thread " << std::this_thread::get_id() << "]"<< "\t\t[Destination Address/Port: " << destinationAddress << "/" << destinationPort << ".]\n";
+
+        int8_t addressType = GetDestinationAddressType(buffer, bufferSize);
+
+        if (addressType == static_cast<uint8_t>(Utilities::SOCKS5::Handshake::AddressType::IPv6) ||
+            addressType == static_cast<uint8_t>(Utilities::SOCKS5::Handshake::AddressType::IPv4))
+        {
+            status = CreateForwardingSocketByIP(serverSocket, destinationPort,destinationAddress);
+            if (status.Failed()) { PrintStatus(status); return false; }
+        }
+
+        if (addressType == static_cast<uint8_t>(Utilities::SOCKS5::Handshake::AddressType::DomainName))
+        {
+            status = CreateForwardingSocketByHostname(serverSocket, destinationPort, destinationAddress);
+            if (status.Failed()) { PrintStatus(status); return false; }
+        }
+
+
+        std::cout << "[Thread " << std::this_thread::get_id() << "]"
+                  << "\t\t[Proxy->Server: Connection is successful.]\n";
+
+        ////////////////////// TO BE REFACTORED //////////////////////
+        char* newReply = new char[5 + destinationAddress.size() + 2 + 1];
+        newReply[0] = 0x05;
+        newReply[1] = 0x00;
+        newReply[2] = 0x00;
+        newReply[3] = addressType;
+
+        int8_t destinationAddressSize = destinationAddress.size();
+
+        memcpy(newReply + 4, &destinationAddressSize, sizeof(addressType));
+        memcpy(newReply + 5, destinationAddress.c_str(), destinationAddress.size());
+
+        auto htonsPort = htons(destinationPort);
+
+        memcpy(newReply + 5 + destinationAddress.size(), &htonsPort, 2);
+        auto replyMessageSize = 5 + destinationAddress.size() + 2;
+        ////////////////////// end //////////////////////
+
+        auto reply = send(newClientSocket, newReply, replyMessageSize, 0);
+        PrintRecievedData(newReply, replyMessageSize);
+        delete[] newReply;
+        std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Proxy->Client: " << reply
+                  << "bytes]\n";
+        std::cout << "Continuing\n";
+
+        return true;
     }
 
 
