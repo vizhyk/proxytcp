@@ -7,29 +7,21 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(.)
 
+add_subdirectory(googletest)
+include_directories(googletest/googletest/include)
+
+
 add_executable(proxytcp
-        main.cpp
-#        Proxy.cpp
-#        Proxy.hpp
-#        Status.hpp
-#        Offsets.hpp
-#        Ports.hpp
-        Application/Application.cpp
-        Application/Application.hpp
-        ExecutionModes/ExecutionMode.cpp
-        ExecutionModes/ExecutionMode.hpp
-        ExecutionModes/ForwardingMode.cpp
-        ExecutionModes/ForwardingMode.hpp
-        ExecutionModes/TrackingMode.cpp
-        ExecutionModes/TrackingMode.hpp
-        ExecutionModes/BanMode.cpp
-        ExecutionModes/BanMode.hpp
-        Utilities/Offsets.hpp
-        Utilities/Ports.hpp
-        Utilities/Status.hpp
-        CommandLineOptions/CommandLineOptions.cpp
-        CommandLineOptions/CommandLineOptions.hpp
-        ConnectionInfo/ConnectionInfo.cpp
-        ConnectionInfo/ConnectionInfo.hpp)
+        src/main.cpp
+        src/Application/Application.cpp
+        src/ExecutionModes/ExecutionMode.cpp
+        src/ExecutionModes/ForwardingMode.cpp
+        src/ExecutionModes/TrackingMode.cpp
+        src/ExecutionModes/BanMode.cpp
+        src/CommandLineOptions/CommandLineOptions.cpp
+        src/ConnectionInfo/ConnectionInfo.cpp
+        src/ThreadManager/ThreadPool.cpp
+        src/ExecutionModes/SOCKS5Mode.cpp src/TestMain.cpp tmp.h)
 
 target_link_libraries(proxytcp pthread)
+target_link_libraries(proxytcp gtest gtest_main)
