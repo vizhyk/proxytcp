@@ -1,28 +1,38 @@
+//
+// Created by vizhy on 05.11.20.
+
 #include "SOCKSParser.h"
 
 
-    bool SOCKSParser::IsClientInitiationMessage(const char *buffer, int32_t buffersize) {
-    int32_t nMethods[buffer[1]];
-    int8_t Methods = buffer[1];
-    if(buffer[2] == Proxy::Utilities::SOCKS5::Handshake::Version){
-        memcpy(&nMethods[0] , &buffer[2], Methods );
-    }
-    for(int i = 1; i < 1+Methods ; ++i)
-    {
-        switch (buffer[i]) {
-            case 0x00:
-            case 0x02:
-            case 0x03:
-            case 0x80:
-                return true;
-            case 0xFF:
-                return false;
+    bool SOCKSParser::IsClientInitiationMessage(const unsigned char *buffer, int32_t buffersize) {
+        if ((sizeof(buffer)/sizeof(char)) == 0)
+            return false;
+        else {
+            int32_t nMethods[buffer[1]];
+            unsigned int Methods = buffer[1];
+            if (buffer[2] == Proxy::Utilities::SOCKS5::Handshake::Version) {
+                memcpy(&nMethods[0], &buffer[1], Methods);
+            }
+            if(Methods == 0x00)
+                Methods = 1;
+            if(Methods == 0xFE)
+                Methods = 0xFE - 1;
 
+            for (int i = 1; i < (Methods + 1); ++i) {
+                switch (buffer[i]) {
+                    case 0x00:
+                    case 0x02:
+                    case 0x03:
+                    case 0xFE:
+                        return true;
+                    case 0xFF:
+                        return false;
+
+                }
+
+            }
         }
-
-    }
-
-        return true;
+            return false;
     };
 
     int8_t SOCKSParser::GetClientAuthenticationMethod(const char* buffer, uint32_t bufferSize){
