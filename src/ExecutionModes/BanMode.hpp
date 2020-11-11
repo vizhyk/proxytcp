@@ -10,7 +10,7 @@ namespace Proxy::ExecutionModes
     class BanMode : public ExecutionMode
     {
     public:
-        int32_t Run(const ConnectionInfo& info, ThreadPool<std::function<void()>>& threadPool) const noexcept override;
+        int32_t Run(const ConnectionInfo& info,  ThreadPool<std::function<void()>>& threadPool) const noexcept override;
     };
 } //namespace Proxy::ExecutionModes
 

@@ -3,7 +3,7 @@
 namespace Proxy::ExecutionModes
 {
 
-    int32_t ForwardingMode::Run(const ConnectionInfo& info, ThreadPool<std::function<void()>>& threadPool) const noexcept
+    int32_t ForwardingMode::Run(const ConnectionInfo& info,  ThreadPool<std::function<void()>>& threadPool) const noexcept
     {
         std::cout << "[Forwarding mode]\n";
 

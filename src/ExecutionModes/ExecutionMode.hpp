@@ -30,7 +30,7 @@ namespace Proxy::ExecutionModes
 
     public:
         virtual ~ExecutionMode() = default;
-        virtual int32_t Run(const ConnectionInfo& info, ThreadPool<std::function<void()>> & threadPool) const noexcept = 0;
+        virtual int32_t Run(const ConnectionInfo& info,  ThreadPool<std::function<void()>>& threadPool) const noexcept = 0;
 
         static Utilities::Status CreateForwardingSocketByHostname(int32_t& socketForForwarding, int32_t destinationPort, const std::string& hostName) noexcept;
         static Utilities::Status CreateForwardingSocketByIP(int32_t& socketForForwarding, int32_t destinationPort, const std::string& addr) noexcept;
@@ -46,7 +46,7 @@ namespace Proxy::ExecutionModes
         static bool IsClientHelloMesasge(const char* buff, int32_t offset = 0) noexcept;
 
         static void PrintStatus(const Utilities::Status& status) noexcept;
-        void PrintStatusAndTerminateProcess(const Utilities::Status& status) const noexcept;
+        static void PrintStatusAndTerminateProcess(const Utilities::Status& status) noexcept;
         static void PrintNetworkData(const char* buffer, uint32_t size) noexcept;
     };
 

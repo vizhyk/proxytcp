@@ -36,6 +36,8 @@ namespace Proxy::Utilities
             BadRecievingDataFromSocket = -16,
             BadSendingDataToServer = -17,
             BadConnectionHostDomainName = -18,
+            BadMakingSocketNonblocking = -19,
+            BadGetNameInfo = -20,
         };
 
     public:

@@ -2,14 +2,18 @@
 #define PROXYTCP_SOCKS5MODE_HPP
 
 #include "ExecutionMode.hpp"
+#include "src/ConnectionManager/ConnectionManager.hpp"
 #include "src/Utilities/SOCKS5.hpp"
+
+
+
 
 namespace Proxy::ExecutionModes
 {
     class SOCKS5Mode : public ExecutionMode
     {
     public:
-        [[noreturn]] int32_t Run(const ConnectionInfo& info, ThreadPool<std::function<void()>> & threadPool) const noexcept override;
+        [[noreturn]] int32_t Run(const ConnectionInfo& info,  ThreadPool<std::function<void()>>& threadPool) const noexcept override;
 
         static bool IsClientInitiationMessage(const char* buffer, uint32_t bufferSize) noexcept;
         static int8_t GetClientAuthenticationMethod(const char* buffer, uint32_t bufferSize) noexcept;

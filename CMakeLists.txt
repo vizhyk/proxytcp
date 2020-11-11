@@ -21,7 +21,12 @@ add_executable(proxytcp
         src/CommandLineOptions/CommandLineOptions.cpp
         src/ConnectionInfo/ConnectionInfo.cpp
         src/ThreadManager/ThreadPool.cpp
-        src/ExecutionModes/SOCKS5Mode.cpp src/TestMain.cpp tmp.h)
+        src/ExecutionModes/SOCKS5Mode.cpp
+        src/TestMain.cpp
+        src/Connection/Connection.cpp
+        src/ConnectionManager/ConnectionManager.cpp
+        src/ConversationManager/ConversationManager.cpp
+        src/DataBuffer/DataBuffer.cpp)
 
 target_link_libraries(proxytcp pthread)
 target_link_libraries(proxytcp gtest gtest_main)

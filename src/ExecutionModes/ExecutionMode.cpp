@@ -358,8 +358,8 @@ namespace Proxy::ExecutionModes
     {
         // offset is used for compatibility with raw sockets when they need.
 
-        // buff[66] - position of the TLS Content Type field. [0x16 - Handshake]/[0x17 - Application Data]
-        // buff[71] - position of the Handshake Type [0x01 - ClienHello]/[0x02 - ServerHello]
+        // buff[66] - position of the TLS Content Side field. [0x16 - Handshake]/[0x17 - Application Data]
+        // buff[71] - position of the Handshake Side [0x01 - ClienHello]/[0x02 - ServerHello]
         return ( static_cast<uint32_t>(buff[Utilities::Offsets::TLS::MESSAGE_TYPE - offset]) == 0x16 ) &&
                ( static_cast<uint32_t>(buff[Utilities::Offsets::TLS::HANDSHAKE_TYPE - offset]) == 0x01 );
     }
@@ -371,7 +371,7 @@ namespace Proxy::ExecutionModes
     }
 
     void ExecutionMode::PrintStatusAndTerminateProcess
-    (const Utilities::Status& status) const noexcept
+    (const Utilities::Status& status) noexcept
     {
         std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Status code: " << status.Code() << " | " << strerror(errno) << "]\n";
         exit(status.Code());

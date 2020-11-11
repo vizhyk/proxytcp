@@ -1,6 +1,3 @@
-//
-// Created by vizhy on 05.11.20.
-
 #include "SOCKSParser.h"
 
 
