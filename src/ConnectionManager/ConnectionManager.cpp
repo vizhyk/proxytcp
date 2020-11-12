@@ -1,9 +1,10 @@
+#include <src/Utilities/SOCKS5.hpp>
 #include "ConnectionManager.hpp"
 
 namespace Proxy
 {
     Utilities::Status
-    ConnectionManager::BindSocketToPort(int32_t _sockfd, uint16_t port) noexcept
+    ConnectionManager::BindSocketToPort(int32_t& _sockfd, uint16_t port) noexcept
     {
         Utilities::Status status {};
 
@@ -30,7 +31,7 @@ namespace Proxy
 
         socketData.sin_family = AF_INET;
         socketData.sin_addr.s_addr = INADDR_ANY;
-        socketData.sin_port = htons(_sockfd);
+        socketData.sin_port = htons(port);
 
         if(bind(_sockfd, reinterpret_cast<sockaddr*>(&socketData), sizeof(socketData)) == -1)
         {
@@ -142,7 +143,8 @@ namespace Proxy
     ConnectionManager::MakeSocketNonblocking(int32_t socket) noexcept
     {
         Utilities::Status status {};
-        auto result = fcntl(socket,F_SETFL, O_NONBLOCK);
+        int32_t flags = fcntl(socket, F_GETFL, 0);
+        auto result = fcntl(socket, F_SETFL, flags | O_NONBLOCK);
         if(result < 0)
         {
             status = Utilities::Status::Error::BadMakingSocketNonblocking;
@@ -176,10 +178,8 @@ namespace Proxy
     }
 
     Connection
-    ConnectionManager::GetServerConnectionByClientSocket(int32_t clientSocket) const noexcept
+    ConnectionManager::GetServerConnectionByClient(const Connection& clientConnection) const noexcept
     {
-        auto connectionFindResult = socketConnectionMapping_.find(clientSocket);
-        auto clientConnection = (connectionFindResult != socketConnectionMapping_.end()) ? connectionFindResult->second : Connection{};
         auto serverConnection = conversationManager_.GetServerConnectionByClient(clientConnection);
         //TODO: Process NoServerConnectionFound Error
 //        if(serverConnection == nullptr)
@@ -189,6 +189,15 @@ namespace Proxy
 //        }
         return serverConnection;
     }
+
+    Connection ConnectionManager::GetClientConnectionByServer(const Connection& serverConnection) const noexcept
+    {
+        auto clientConnection = conversationManager_.GetClientConnectionByServer(serverConnection);
+
+        return clientConnection;
+    }
+
+
 
     [[noreturn]] void
     ConnectionManager::ProcessConnections(const ConnectionInfo& info)
@@ -203,34 +212,32 @@ namespace Proxy
 
         UpdateBiggestSockfd(listeningSocket);
 
-        FD_ZERO(&nonblockingSockets_);
-        FD_SET(listeningSocket, &nonblockingSockets_);
-
-        timeval timeout {};
-        timeout.tv_sec = 3 * 60;
-
         epoll_event ev {}, events[10];
         int32_t epollfd {}, nfds {};
 
-        epollfd = epoll_create(0);
+        epollfd = epoll_create(1);
         if(epollfd == -1)
         {
-            std::cout << "bad epoll\n";
+            status = Utilities::Status::Error::BadEpollCreateInstance;
+            PrintStatusAndTerminateProcess(status);
         }
 
         ev.events = EPOLLIN;
         ev.data.fd = listeningSocket;
         if(epoll_ctl(epollfd, EPOLL_CTL_ADD, listeningSocket, &ev) == -1)
         {
-            std::cout << "epolctl: bad socket\n";
+            status = Utilities::Status::Error::BadEpollCTL;
+            PrintStatusAndTerminateProcess(status);
         }
 
         while(true)
         {
+            std::cout << "Waiting for epoll events\n";
             nfds = epoll_wait(epollfd, events, 10, -1);
             if(nfds == -1)
             {
-                std::cout << "Bad epollWait\n";
+                status = Utilities::Status::Error::BadEpollWait;
+                PrintStatusAndTerminateProcess(status);
             }
 
             for(int i = 0; i < nfds; ++i)
@@ -252,59 +259,75 @@ namespace Proxy
 
                     if(epoll_ctl(epollfd,EPOLL_CTL_ADD, newConnectionSocket, &ev) == -1)
                     {
-                        std::cout << "epolctl: bad socket\n";
+                        status = Utilities::Status::Error::BadEpollCTL;
+                        PrintStatusAndTerminateProcess(status);
                     }
 
-                    status = AddNewConnection({events[i].data.fd, Connection::Side::Client});
+                    auto socketConnection = Connection {newConnectionSocket, Connection::Side::Client};
+
+                    status = AddNewConnection(socketConnection);
                     if(status.Failed()) { PrintStatus(status); }
-                }
 
-                else
-                {
-                    auto socketConnection = GetConnection(events[i].data.fd);
-                    bool socks5ConnectionIsEstablished = false;
-                    if(socks5ConnectionIsEstablished)
+                    if(socketConnection.GetSide() == Connection::Side::Client)
                     {
+                        std::vector<char> buffer;
+                        buffer.reserve(512);
 
-                    }
-                    else
-                    {
-                        if(socketConnection.GetSide() == Connection::Side::Client)
+                        status = ConversationManager::ReadFixedSizeFromConnection(buffer, socketConnection, 4);
+                        if(status.Failed()) { PrintStatusAndTerminateProcess(status); }
+
+
+                        if( SOCKSParser::IsClientInitiationMessage(buffer.data(),buffer.size()) )
                         {
-                            DataBuffer buffer {512};
+                            std::string serverAddress {};
+                            uint16_t serverPort {};
 
-                            ConversationManager::ReadFromConnection(buffer, socketConnection);
+                            auto response = ConversationManager::GenerateClientInitiationResponse();
+                            auto a = response.size();
+                            status = ConversationManager::SendTo(response, socketConnection);
+                            if(status.Failed()) { PrintStatus(status); }
 
-                            if( SOCKSParser::IsClientInitiationMessage(buffer.GetBuffer(),buffer.GetUsedDataSize()) )
-                            {
-                                std::string serverAddress {};
-                                uint16_t serverPort {};
 
-                                auto response = ConversationManager::GenerateClientInitiationResponse();
-                                ConversationManager::SendTo(buffer, socketConnection);
+                            status = ConversationManager::ReadFromConnection(buffer, socketConnection);
+                            if(status.Failed()) { PrintStatus(status); }
 
-                                ConversationManager::ReadFromConnection(buffer, socketConnection);
-                                SOCKSParser::GetDestinationAddressAndPort(buffer.GetBuffer(), buffer.GetUsedDataSize(), serverAddress, serverPort);
+                            SOCKSParser::GetDestinationAddressAndPort(buffer.data(), buffer.size(), serverAddress, serverPort);
 
-                                auto addressType = SOCKSParser::GetDestinationAddressType(buffer.GetBuffer(),buffer.GetUsedDataSize());
-                                int32_t serverSocket {};
+                            auto addressType = SOCKSParser::GetDestinationAddressType(buffer.data(),buffer.size());
+                            int32_t serverSocket {};
 
-                                status = TryConnectToTheServer(serverSocket, serverAddress, serverPort, addressType);
-                                if(status.Failed()) { PrintStatusAndTerminateProcess(status); }
-                                //TODO: status of the following 2 operations
-                                const Connection serverConnection {serverSocket, Connection::Side::Server};
-                                AddNewConnection(serverConnection);
-                                AddConnectionPipeline(socketConnection, serverConnection);
+                            status = TryConnectToTheServer(serverSocket, serverAddress, serverPort, addressType);
+                            if(status.Failed()) { PrintStatus(status); }
 
-                                buffer = ConversationManager::GenerateServerConnectionSuccessResponse(serverAddress, serverPort, addressType);
-                                ConversationManager::SendTo(buffer,serverConnection);
-                            }
+                            //TODO: status of the following 2 operations
+                            const Connection serverConnection {serverSocket, Connection::Side::Server};
+                            AddNewConnection(serverConnection);
+                            AddConnectionPipeline(socketConnection, serverConnection);
 
-                            ConversationManager::SendTo(buffer,GetServerConnectionByClientSocket(socketConnection.GetSocketfd()));
+                            buffer = ConversationManager::GenerateServerConnectionSuccessResponse(serverAddress, serverPort, addressType);
+                            status = ConversationManager::SendTo(buffer, socketConnection);
+                            if(status.Failed()) { PrintStatus(status); }
 
                         }
                     }
+
                 }
+
+                auto socketConnection = GetConnection(events[i].data.fd);
+
+                std::vector<char> buffer;
+
+                ConversationManager::ReadFromConnection(buffer, socketConnection);
+                if(socketConnection.GetSide() == Connection::Side::Client)
+                {
+                    ConversationManager::SendTo(buffer,GetServerConnectionByClient(socketConnection));
+
+                }
+                else
+                {
+                    ConversationManager::SendTo(buffer, GetClientConnectionByServer(socketConnection));
+                }
+
             }
         }
 
@@ -327,8 +350,17 @@ namespace Proxy
 
     Utilities::Status ConnectionManager::AddNewConnection(const Connection& connection) noexcept
     {
+        Utilities::Status status {};
         //TODO: Handle errors while emplace
-        socketConnectionMapping_.emplace(std::make_pair( connection.GetSocketfd(),connection ));
+        auto result = socketConnectionMapping_.emplace(std::make_pair( connection.GetSocketfd(),connection ));
+        if(result.second == false)
+        {
+            status = Utilities::Status(Utilities::Status::Error::BadMappingInsertion);
+            return status;
+        }
+
+        return  status;
+
     }
 
     Utilities::Status ConnectionManager::TryConnectToTheServer(int32_t& serverSocket, const std::string& serverAddress,
@@ -349,4 +381,6 @@ namespace Proxy
             if (status.Failed()) { PrintStatus(status); return status; }
         }
     }
+
+
 }

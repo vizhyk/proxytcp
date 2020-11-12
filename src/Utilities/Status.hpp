@@ -38,6 +38,11 @@ namespace Proxy::Utilities
             BadConnectionHostDomainName = -18,
             BadMakingSocketNonblocking = -19,
             BadGetNameInfo = -20,
+            BadEpollCreateInstance = - 200000,
+            BadEpollWait = - 200001,
+            BadEpollCTL = - 200002,
+            BadMappingInsertion = -21,
+            BadSendingData = -22,
         };
 
     public:

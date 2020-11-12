@@ -28,8 +28,8 @@ namespace Proxy
         ~Connection() = default;
     public:
         int32_t GetSocketfd() const noexcept { return socket; }
-        Side    GetSide()   const noexcept { return  type; }
         State   GetState()  const noexcept { return state; }
+        Side    GetSide()   const noexcept { return  type; }
 
     private:
         int32_t socket;
@@ -37,8 +37,8 @@ namespace Proxy
         State state;
     };
 
-    bool operator==(const Connection& lhs, const Connection& rhs) noexcept { return lhs.GetSocketfd() == rhs.GetSocketfd(); }
-    bool operator!=(const Connection& lhs, const Connection& rhs) noexcept { return !(lhs == rhs); }
+    bool operator==(const Connection& lhs, const Connection& rhs) noexcept;
+    bool operator!=(const Connection& lhs, const Connection& rhs) noexcept;
 
 }
 

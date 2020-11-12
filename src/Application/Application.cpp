@@ -8,15 +8,6 @@ namespace Proxy
     {
         switch (mode)
         {
-            case ExecutionModes::ExecutionModeType::Tracking:
-                executionMode_ = new ExecutionModes::TrackingMode;
-                break;
-            case ExecutionModes::ExecutionModeType::Forwarding:
-                executionMode_ = new ExecutionModes::ForwardingMode;
-                break;
-            case ExecutionModes::ExecutionModeType::Ban:
-                executionMode_ = new ExecutionModes::BanMode;
-                break;
             case ExecutionModes::ExecutionModeType::SOCKS5:
                 executionMode_ = new ExecutionModes::SOCKS5Mode;
                 break;

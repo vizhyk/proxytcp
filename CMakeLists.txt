@@ -26,7 +26,9 @@ add_executable(proxytcp
         src/Connection/Connection.cpp
         src/ConnectionManager/ConnectionManager.cpp
         src/ConversationManager/ConversationManager.cpp
-        src/DataBuffer/DataBuffer.cpp)
+        src/DataBuffer/DataBuffer.cpp
+        src/NetworkTrafficParser/SOCKSParser.cpp)
 
 target_link_libraries(proxytcp pthread)
-target_link_libraries(proxytcp gtest gtest_main)
+#target_link_libraries(proxytcp gtest gtest_main)
+target_link_libraries(proxytcp gtest)

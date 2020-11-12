@@ -1,25 +1,29 @@
-//
-// Created by vizhy on 05.11.20.
-
 #include "SOCKSParser.h"
+#include "src/Utilities/SOCKS5.hpp"
+#include <cstring>
+#include <src/Utilities/Status.hpp>
+#include <src/Utilities/Offsets.hpp>
+#include <netinet/in.h>
 
-
-    bool SOCKSParser::IsClientInitiationMessage(const unsigned char *buffer, int32_t buffersize) {
+bool SOCKSParser::IsClientInitiationMessage(const char* buffer, int32_t buffersize) {
         if ((sizeof(buffer)/sizeof(char)) == 0)
             return false;
-        else {
-            int32_t nMethods[buffer[1]];
-            unsigned int Methods = buffer[1];
-            if (buffer[2] == Proxy::Utilities::SOCKS5::Handshake::Version) {
-                memcpy(&nMethods[0], &buffer[1], Methods);
-            }
-            if(Methods == 0x00)
-                Methods = 1;
-            if(Methods == 0xFE)
-                Methods = 0xFE - 1;
+        else
+        {
+            int32_t methods[buffer[1]];
+            uint32_t nMethods = static_cast<uint8_t>(buffer[1]);
 
-            for (int i = 1; i < (Methods + 1); ++i) {
-                switch (buffer[i]) {
+            if (buffer[2] == Proxy::Utilities::SOCKS5::Handshake::Version)
+            {
+                memcpy(&methods[0], &buffer[1], nMethods);
+            }
+            if(nMethods == 0x00)
+                nMethods = 1;
+            if(nMethods == 0xFE)
+                nMethods = 0xFE - 1;
+
+            for (int i = 1; i < (nMethods + 1); ++i) {
+                switch (static_cast<uint8_t>(buffer[1])) {
                     case 0x00:
                     case 0x02:
                     case 0x03:
@@ -32,7 +36,7 @@
 
             }
         }
-            return false;
+        return false;
     };
 
     int8_t SOCKSParser::GetClientAuthenticationMethod(const char* buffer, uint32_t bufferSize){

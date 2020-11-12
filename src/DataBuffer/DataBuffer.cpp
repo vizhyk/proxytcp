@@ -3,24 +3,20 @@
 namespace Proxy
 {
     DataBuffer::DataBuffer(size_t bufferSize) noexcept
-        : bufferSize_{bufferSize}, usedBytes_{bufferSize}
+        : bufferSize_{bufferSize}, usedBytes_{0}
     {
         //TODO: buffer size + 1
-        buffer_ = new char[bufferSize_ + 1];
+        buffer_ = std::make_unique<char[]>(bufferSize_ + 1);
     }
 
     DataBuffer::DataBuffer(const char* array) noexcept
-        :  bufferSize_{static_cast<uint32_t>(strlen(array))}, usedBytes_{bufferSize_}
+        :  bufferSize_{static_cast<uint32_t>(strlen(array))}, usedBytes_{0}
     {
         //TODO: check if strlen is 0
-        buffer_ = new char[bufferSize_ + 1];
-        memcpy(buffer_, array, bufferSize_);
-    }
+        buffer_ = std::make_unique<char[]>(bufferSize_ + 1);
+        memcpy(buffer_.get(), array, bufferSize_);
 
-
-    DataBuffer::~DataBuffer() noexcept
-    {
-        delete[] buffer_;
+        usedBytes_ = bufferSize_;
     }
 
     void DataBuffer::ResizeAndCopyData() noexcept
@@ -28,15 +24,12 @@ namespace Proxy
         auto previousAvailableBytes = bufferSize_;
         bufferSize_ = bufferSize_ * 2;
 
-        auto newBuffer = new char[bufferSize_ + 1];
+        auto newBuffer = std::make_unique<char[]>(bufferSize_ + 1);
 
-        memcpy(newBuffer,buffer_,previousAvailableBytes);
+        memcpy(newBuffer.get(),buffer_.get(),previousAvailableBytes);
 
-        delete[] buffer_;
+        buffer_ = std::move(newBuffer);
 
-        buffer_ = newBuffer;
-
-        newBuffer = nullptr;
     }
 
     uint32_t DataBuffer::GetAvailableBytes() noexcept
@@ -54,21 +47,19 @@ namespace Proxy
     {
         //TODO: get error checking
         usedBytes_ += recievedDataSize;
-        MovePointer(recievedDataSize);
 
     }
 
-    void DataBuffer::MovePointer(int32_t offset) noexcept
-    {
-        //TODO: get error checking
 
-        if(offset + usedBytes_ < bufferSize_)
-        {
-            buffer_ += offset;
-        }
 
-    }
 
+    bool operator==(const Proxy::DataBuffer& lhs, const Proxy::DataBuffer& rhs) noexcept { return strcmp(lhs.GetBuffer(), rhs.GetBuffer()); }
+    bool operator==(const Proxy::DataBuffer& lhs, const char* rhs)       noexcept { return strcmp(lhs.GetBuffer(), Proxy::DataBuffer{rhs}.GetBuffer()); }
+    bool operator==(const char* lhs, const Proxy::DataBuffer& rhs)       noexcept { return strcmp(Proxy::DataBuffer{lhs}.GetBuffer(), rhs.GetBuffer()); }
+
+    bool operator!=(const Proxy::DataBuffer& lhs, const Proxy::DataBuffer& rhs) noexcept { return !( strcmp(lhs.GetBuffer(), rhs.GetBuffer()) ); }
+    bool operator!=(const Proxy::DataBuffer& lhs, const char* rhs)       noexcept { return !( strcmp(lhs.GetBuffer(), Proxy::DataBuffer{rhs}.GetBuffer()) ); }
+    bool operator!=(const char* lhs, const Proxy::DataBuffer& rhs)       noexcept { return !( strcmp(Proxy::DataBuffer{lhs}.GetBuffer(), rhs.GetBuffer()) ); }
 
 
 }

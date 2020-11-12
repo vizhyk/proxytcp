@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <memory>
 #include <list>
+#include <src/Utilities/Status.hpp>
+#include <vector>
 
 namespace Proxy
 {
@@ -21,18 +23,20 @@ namespace Proxy
         };
     public:
         Connection GetServerConnectionByClient(const Connection& clientConnection) const noexcept;
+        Connection GetClientConnectionByServer(const Connection& serverConnection) const noexcept;
 
         void AddNewPipeline(const ConversationPipeline& pipeline) noexcept;
         void AddNewPipeline(Connection clientConnection, Connection serverConnection) noexcept;
 
-        static DataBuffer GenerateClientInitiationResponse() noexcept;
-        static DataBuffer GenerateServerConnectionSuccessResponse(const std::string& destinationAddress, uint16_t port, uint8_t addressType) noexcept;
+        static std::vector<char> GenerateClientInitiationResponse() noexcept;
+        static std::vector<char> GenerateServerConnectionSuccessResponse(const std::string& destinationAddress, uint16_t port, uint8_t addressType) noexcept;
 
 
-        static void ReadFromConnection  (       DataBuffer& buffer, const Connection& connection) noexcept;
+        static Utilities::Status ReadFromConnection  (std::vector<char>& buffer, const Connection& connection) noexcept;
+        static Utilities::Status ReadFixedSizeFromConnection  (std::vector<char>& buffer, const Connection& connection, uint32_t size) noexcept;
 
         //TODO: send should return status
-        static void SendTo    (const  DataBuffer& buffer, const Connection& recipientConnection) noexcept;
+        static Utilities::Status SendTo    (const std::vector<char>& buffer, const Connection& recipientConnection) noexcept;
 //        static void SendToClientByServer(const  DataBuffer& buffer, const Connection& recipientConnection) noexcept;
 //        static void SendToServerByClient(const  DataBuffer& buffer, const Connection& recipientConnection) noexcept;
 

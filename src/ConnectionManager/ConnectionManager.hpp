@@ -1,7 +1,6 @@
 #ifndef PROXYTCP_CONNECTIONMANAGER_HPP
 #define PROXYTCP_CONNECTIONMANAGER_HPP
 
-#include "src/Connection/Connection.hpp"
 #include "src/ConnectionInfo/ConnectionInfo.hpp"
 #include "src/ConversationManager/ConversationManager.hpp"
 #include "src/Utilities/NonCopyable.hpp"
@@ -30,20 +29,19 @@ namespace Proxy
     public:
         ~ConnectionManager() noexcept = default;
     public:
-        static Utilities::Status BindSocketToPort(int32_t _sockfd, uint16_t port) noexcept;
+        static Utilities::Status BindSocketToPort(int32_t& _sockfd, uint16_t port) noexcept;
         static Utilities::Status CreateSocketForForwardingByIP(int32_t& socketForForwarding, int32_t destinationPort, const std::string& addr) noexcept;
         static Utilities::Status CreateSocketForForwardingByHostname(int32_t& socketForForwarding, int32_t destinationPort, const std::string& hostname) noexcept;
         static Utilities::Status MakeSocketNonblocking(int32_t socket) noexcept;
 
 
-        Utilities::Status
-        TryConnectToTheServer(int32_t& serverSocket, const std::string& serverAddress, uint16_t serverPort,
-                              uint8_t addressType) noexcept;
+        Utilities::Status TryConnectToTheServer(int32_t& serverSocket, const std::string& serverAddress, uint16_t serverPort, uint8_t addressType) noexcept;
         Utilities::Status AddConnectionPipeline(Connection clientConnection,Connection serverConnection) noexcept;
         Utilities::Status AddNewConnection(const Connection& connection) noexcept;
 //        Utilities::Status AddConnection(Connection clientConnection) noexcept;
         Connection GetConnection(int32_t socket) const noexcept;
-        Connection GetServerConnectionByClientSocket(int32_t clientSocket) const noexcept;
+        Connection GetServerConnectionByClient(const Connection& clientConnection) const noexcept;
+        Connection GetClientConnectionByServer(const Connection& serverConnection) const noexcept;
 
         void UpdateBiggestSockfd(int32_t sockfd) noexcept { biggestSockfd_ = sockfd; };
 
