@@ -10,10 +10,11 @@ include_directories(googletest/googletest/include)
 
 
 add_executable(proxytcp
+        src/Connection/Connection.cpp
+        src/Connection/ClientConnection.cpp
+        src/Connection/ServerConnection.cpp
         src/ByteStream/ByteStream.cpp
-        Tests/ByteStream/ByteStreamTests.cpp
-
-        )
+        Tests/ByteStream/ByteStreamTests.cpp)
 
 
 target_link_libraries(proxytcp gtest gtest_main)
