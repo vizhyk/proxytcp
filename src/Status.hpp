@@ -44,6 +44,7 @@ namespace Proxy
             BadMappingInsertion = -21,
             BadSendingData = -22,
             BadRecievedDataSize = -23,
+            BadBufferSize = -24,
         };
 
     public:
