@@ -1,0 +1,22 @@
+image: gcc
+
+before_script:
+    - apt-get update --yes
+    - apt-get install --yes cmake
+    - git clone https://github.com/google/googletest.git
+    - cd googletest/ 
+    - cmake .
+    - cmake --build .
+    - cd ..
+
+ 
+
+test:
+  stage: test
+  only: 
+    - merge_request
+  script:
+    - ls 
+    - cmake .
+    - cmake --build .
+    - ./proxytcp_tests

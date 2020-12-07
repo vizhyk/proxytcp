@@ -5,6 +5,9 @@ cmake_install.cmake
 CMakeFiles/
 Makefile
 proxytcp.cbp
+*.cbp
 *.a
 lib/
 proxytcp
+proxytcp_tests
+googletest/
