@@ -2,5 +2,5 @@
 
 namespace Proxy
 {
-    ServerConnection::ServerConnection(int32_t sockfd) noexcept: Connection(sockfd) {}
+    ServerConnection::ServerConnection(int32_t sockfd, ConnectionState state) noexcept: Connection(sockfd, state) {}
 }

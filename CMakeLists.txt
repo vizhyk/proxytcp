@@ -4,8 +4,15 @@ project(proxytcp)
 
 set(CMAKE_CXX_STANDARD 17)
 include_directories(.)
+include_directories(src)
 
 add_executable(proxytcp
+        src/ConversationFlow/SOCKS5Flow/ClientHelloTransmission.cpp
+        src/ConversationFlow/SOCKS5Flow/ConnectionRequestTransmission.cpp
+        src/ConversationFlow/ConversationFlow.cpp
+        src/Connection/Connection.cpp
+        src/Connection/ClientConnection.cpp
+        src/Connection/ServerConnection.cpp
         src/ByteStream/ByteStream.cpp
         src/TrafficParsing/SOCKS5/SOCKS5Parser.cpp
         src/TrafficParsing/TLS/TLSParser.cpp
@@ -16,6 +23,7 @@ add_executable(proxytcp
 add_subdirectory(googletest)
 include_directories(googletest/googletest/include)
 add_executable(proxytcp_tests
+        src/ConversationFlow/ConversationFlow.cpp
         src/Connection/Connection.cpp
         src/Connection/ClientConnection.cpp
         src/Connection/ServerConnection.cpp

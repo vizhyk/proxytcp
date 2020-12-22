@@ -69,7 +69,7 @@ namespace Proxy::TrafficParsing
 
         switch(GetDestinationAddressType(buffer, bufferSize))
         {
-            case static_cast<uint8_t>(SOCKS5::Handshake::AddressType::IPv4):
+            case static_cast<uint8_t>(SOCKS5::Handshake::IPv4):
             {
                 tmpDestinationAddressSize = 4;
 
@@ -82,7 +82,7 @@ namespace Proxy::TrafficParsing
                 MemcpyDestinationAddressAndPortFromBuffer(buffer, tmpDestinationAddressSize, destinationAddress, port, Offsets::SOCKS5::Handshake::Client::IPv4_ADDRESS);
                 break;
             }
-            case static_cast<uint8_t>(SOCKS5::Handshake::AddressType::DomainName):
+            case static_cast<uint8_t>(SOCKS5::Handshake::DomainName):
             {
                 memcpy(&tmpDestinationAddressSize,buffer + Offsets::SOCKS5::Handshake::Client::DOMAIN_NAME_SIZE, sizeof(tmpDestinationAddressSize));
 
@@ -95,7 +95,7 @@ namespace Proxy::TrafficParsing
                 MemcpyDestinationAddressAndPortFromBuffer(buffer, tmpDestinationAddressSize, destinationAddress, port, Offsets::SOCKS5::Handshake::Client::DOMAIN_NAME);
                 break;
             }
-            case static_cast<uint8_t>(SOCKS5::Handshake::AddressType::IPv6):
+            case static_cast<uint8_t>(SOCKS5::Handshake::IPv6):
             {
                 tmpDestinationAddressSize = 16;
 
@@ -126,4 +126,54 @@ namespace Proxy::TrafficParsing
         memcpy(&port, buffer + portOffset, sizeof(port));
         port = ntohs(port);
     }
+
+    bool SOCKS5Parser::IsValidConnectionRequestMessage(const uint8_t *buffer, int32_t bufferSize) noexcept
+    {
+        if(bufferSize < 4) { return false; }
+
+        auto atyp = GetDestinationAddressType(buffer, bufferSize);
+        if (atyp == 0) { return false; }
+
+        switch(atyp)
+        {
+            case static_cast<uint8_t>(Utilities::SOCKS5::Handshake::IPv4):
+                if (bufferSize != 4 + 4 + 2) { return false; }
+                break;
+            case static_cast<uint8_t>(Utilities::SOCKS5::Handshake::DomainName):
+                if(bufferSize < 5) { return false; }
+                if (bufferSize != 4 + buffer[4] + 2 + 1) { return false; }
+                break;
+            case static_cast<uint8_t>(Utilities::SOCKS5::Handshake::IPv6):
+                if (bufferSize != 4 + 16 + 2) { return false; }
+                break;
+            default: return false;
+        }
+        return true;
+    }
+     size_t SOCKS5Parser::GetConnectionRequestLength(const uint8_t *buffer, size_t buffersize)
+    {
+        if(buffersize < 4) { return -1; }
+
+        auto atyp = GetDestinationAddressType(buffer, buffersize);
+        if (atyp == 0) { return -1; }
+
+        switch(atyp)
+        {
+            case static_cast<uint8_t>(Utilities::SOCKS5::Handshake::IPv4):
+                if (buffersize != 4 + 4 + 2) { return -1; }
+                break;
+            case static_cast<uint8_t>(Utilities::SOCKS5::Handshake::DomainName):
+                if(buffersize < 5) { return -1; }
+                if (buffersize != 4 + buffer[4] + 2 + 1) { return -1; }
+                break;
+            case static_cast<uint8_t>(Utilities::SOCKS5::Handshake::IPv6):
+                if (buffersize != 4 + 16 + 2) { return -1; }
+                break;
+            default: return -1;
+        }
+        return buffersize;
+    }
+
 }
+
+

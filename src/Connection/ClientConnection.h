@@ -6,7 +6,8 @@ namespace Proxy
     class ClientConnection : public Proxy::Connection
     {
     public:
-        ClientConnection(int32_t sockfd) noexcept;
+
+        ClientConnection(int32_t sockfd, ConnectionState state) noexcept;
     };
 }
 
