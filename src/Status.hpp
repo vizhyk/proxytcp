@@ -15,6 +15,7 @@ namespace Proxy
             Success = 0,
             BannedHostConnectionRefused = 1,
             IgnoredBadConnectionHostDomainName = 2,
+            WaitingForData = 3,
         };
         enum class Error : CodeType
         {
@@ -45,6 +46,7 @@ namespace Proxy
             BadSendingData = -22,
             BadRecievedDataSize = -23,
             BadBufferSize = -24,
+            BadGetAddrInfo = -25,
         };
 
     public:

@@ -7,7 +7,7 @@ namespace Proxy
     {
     public:
 
-        ServerConnection(int32_t sockfd) noexcept;
+        ServerConnection(int32_t sockfd, ConnectionState state) noexcept;
     };
 }
 

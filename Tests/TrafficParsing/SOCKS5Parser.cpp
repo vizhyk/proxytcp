@@ -51,3 +51,14 @@ TEST(SOCKS5ParsingTests, ConnectionRequestParsingIncorrectBuffSize)
 
     EXPECT_TRUE(status.Failed());
 }
+
+TEST(SOCKS5ParsingTests, IsValidConnectionRequestMessage)
+{
+    EXPECT_TRUE(SOCKS5Parser::IsValidConnectionRequestMessage(SOCKS5ConnectionRequestMessage0, sizeof(SOCKS5ConnectionRequestMessage0)));
+    EXPECT_TRUE(SOCKS5Parser::IsValidConnectionRequestMessage(SOCKS5ConnectionRequestMessage0, sizeof(SOCKS5ConnectionRequestMessage0)));
+    EXPECT_TRUE(SOCKS5Parser::IsValidConnectionRequestMessage(SOCKS5ConnectionRequestMessage1, sizeof(SOCKS5ConnectionRequestMessage1)));
+    EXPECT_FALSE(SOCKS5Parser::IsValidConnectionRequestMessage(SOCKS5InvalidConnectionRequestMessage, sizeof(SOCKS5InvalidConnectionRequestMessage)));
+    EXPECT_FALSE(SOCKS5Parser::IsValidConnectionRequestMessage(SOCKS5InvalidConnectionRequestMessage0, sizeof(SOCKS5InvalidConnectionRequestMessage0)));
+    EXPECT_FALSE(SOCKS5Parser::IsValidConnectionRequestMessage(SOCKS5InvalidConnectionRequestMessage1, sizeof(SOCKS5InvalidConnectionRequestMessage1)));
+
+}
