@@ -72,7 +72,6 @@ namespace Proxy::TrafficParsing
             case static_cast<uint8_t>(SOCKS5::Handshake::IPv4):
             {
                 tmpDestinationAddressSize = 4;
-
                 if( bufferSize < (connectionRequestHeadingSize + tmpDestinationAddressSize + sizeof(port)) )
                 {
                     status = Status(Status::Error::BadBufferSize);
@@ -98,7 +97,6 @@ namespace Proxy::TrafficParsing
             case static_cast<uint8_t>(SOCKS5::Handshake::IPv6):
             {
                 tmpDestinationAddressSize = 16;
-
                 if( bufferSize < (connectionRequestHeadingSize + tmpDestinationAddressSize + sizeof(port)) )
                 {
                     status = Status(Status::Error::BadBufferSize);
@@ -150,7 +148,8 @@ namespace Proxy::TrafficParsing
         }
         return true;
     }
-     size_t SOCKS5Parser::GetConnectionRequestLength(const uint8_t *buffer, size_t buffersize)
+
+    size_t SOCKS5Parser::GetConnectionRequestLength(const uint8_t *buffer, size_t buffersize)
     {
         if(buffersize < 4) { return -1; }
 
@@ -175,5 +174,4 @@ namespace Proxy::TrafficParsing
     }
 
 }
-
 

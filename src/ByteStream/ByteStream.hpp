@@ -6,8 +6,6 @@
 #include <vector>
 #include <cstring>
 
-
-
 namespace Proxy
 {
     class ByteStream
@@ -33,8 +31,8 @@ namespace Proxy
         ByteStream& operator<<(const ByteStream& rhs) noexcept;
 
     public:
-        const uint8_t* GetBuffer()         const noexcept;
-        std::size_t GetUsedBytes()       const noexcept;
+        const uint8_t* GetBuffer()      const noexcept;
+        std::size_t GetUsedBytes()      const noexcept;
         std::size_t GetSize()           const noexcept;
         std::size_t GetAvailableBytes() const noexcept;
 

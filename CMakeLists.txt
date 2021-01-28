@@ -2,15 +2,20 @@ cmake_minimum_required(VERSION 3.10)
 
 project(proxytcp)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+add_definitions(--coverage)
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}   --coverage")
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "-g -O0 -Wall -fprofile-arcs --coverage -ftest-coverage")
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "-g -O0 -Wall  --coverage ")
 include_directories(.)
 include_directories(src)
 
 add_executable(proxytcp
         src/ConversationFlow/SOCKS5Flow/ClientHelloTransmission.cpp
         src/ConversationFlow/SOCKS5Flow/ConnectionRequestTransmission.cpp
+        src/ConversationFlow/TLSFlow/TLSReceivingClientHello.cpp
+        src/ConversationFlow/TLSFlow/TLSReceivingServerHello.cpp
+        src/ConversationFlow/TLSFlow/TLSDefault.cpp
         src/ConversationFlow/ConversationFlow.cpp
         src/Connection/Connection.cpp
         src/Connection/ClientConnection.cpp
@@ -18,6 +23,14 @@ add_executable(proxytcp
         src/ByteStream/ByteStream.cpp
         src/TrafficParsing/SOCKS5/SOCKS5Parser.cpp
         src/TrafficParsing/TLS/TLSParser.cpp
+        src/TrafficParsing/TLS/TLSRecordParser.cpp
+        src/TrafficParsing/TLS/TLSMessageParser.cpp
+        src/ConversationPipeline/ConversationPipeline.cpp
+        src/ConversationPipeline/PayloadBuffer/PayloadBuffer.cpp
+        src/ConversationPipeline/PayloadBuffer/TLSPayloadBuffer.cpp
+        src/ConversationManager/ConversationManager.cpp
+        src/ConnectionManager/ConnectionManager.cpp
+        src/Application/Application.cpp
         main.cpp
         )
 
@@ -25,6 +38,11 @@ add_executable(proxytcp
 add_subdirectory(googletest)
 include_directories(googletest/googletest/include)
 add_executable(proxytcp_tests
+        src/ConversationFlow/SOCKS5Flow/ClientHelloTransmission.cpp
+        src/ConversationFlow/SOCKS5Flow/ConnectionRequestTransmission.cpp
+        src/ConversationFlow/TLSFlow/TLSReceivingClientHello.cpp
+        src/ConversationFlow/TLSFlow/TLSReceivingServerHello.cpp
+        src/ConversationFlow/TLSFlow/TLSDefault.cpp
         src/ConversationFlow/ConversationFlow.cpp
         src/Connection/Connection.cpp
         src/Connection/ClientConnection.cpp
@@ -32,11 +50,19 @@ add_executable(proxytcp_tests
         src/ByteStream/ByteStream.cpp
         src/TrafficParsing/SOCKS5/SOCKS5Parser.cpp
         src/TrafficParsing/TLS/TLSParser.cpp
+        src/TrafficParsing/TLS/TLSRecordParser.cpp
+        src/TrafficParsing/TLS/TLSMessageParser.cpp
+        src/ConversationPipeline/ConversationPipeline.cpp
+        src/ConversationPipeline/PayloadBuffer/PayloadBuffer.cpp
+        src/ConversationPipeline/PayloadBuffer/TLSPayloadBuffer.cpp
+        src/ConversationManager/ConversationManager.cpp
+        src/ConnectionManager/ConnectionManager.cpp
         Tests/ByteStream/ByteStreamTests.cpp
         Tests/TrafficParsing/SOCKS5Parser.cpp
         Tests/TrafficParsing/TLSParser.cpp
+        Tests/SOCKS5/SOCKS5_test.cpp
+        Tests/Connection/Connection.cpp
+        Tests/ConnectionManager/ConnectionManager_test.cpp
         )
 target_link_libraries(proxytcp_tests gtest gtest_main)
-
-
 

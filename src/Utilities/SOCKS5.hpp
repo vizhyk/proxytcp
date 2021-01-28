@@ -20,7 +20,6 @@ namespace Proxy::Utilities
             domain = 0x03,
         };
 
-
         enum  class ReplyStatus : uint8_t
         {
              Succeeded = 0x00,
