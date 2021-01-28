@@ -1,9 +1,21 @@
+#include "TrafficParsing/SOCKS5/SOCKS5Parser.hpp"
+#include "Utilities/SOCKS5.hpp"
 #include "ConnectionRequestTransmission.hpp"
+#include "Connection/ClientConnection.hpp"
+#include "Connection/ServerConnection.hpp"
+#include "ConversationPipeline/ConversationPipeline.hpp"
+#include "ConversationManager/ConversationManager.hpp"
+#include <netdb.h>
+#include "fcntl.h"
+#include <sys/socket.h>
+#include <unistd.h>
+#include <iostream>
+#include <sys/epoll.h>
 
 namespace Proxy::SOCKS5Flow
 {
-    using namespace  TrafficParsing;
-    Status ConnectionRequestTransmission::MakeSocketNonblocking(int32_t socket) noexcept
+    Status
+    ConnectionRequestTransmission::MakeSocketNonblocking(int32_t socket) noexcept
     {
         Status status {};
         int32_t flags = fcntl(socket, F_GETFL, 0);
@@ -16,49 +28,75 @@ namespace Proxy::SOCKS5Flow
         return status;
     }
 
-    Status ConnectionRequestTransmission::CreateSocketForForwardingByHostname(int32_t& socketForForwarding, int32_t destinationPort, const uint8_t* hostname) noexcept
+    int32_t
+    ConnectionRequestTransmission::CreateSocketForForwardingByHostname(Status& status, int32_t destinationPort, const uint8_t* hostname, int32_t epollfd) noexcept
     {
-        Status status {};
-
-        sockaddr_in destinationAddress {};
-        struct addrinfo hints, *res;
-        hostent* destinationHost {};
+        addrinfo hints, *res;
 
         memset(&hints, 0, sizeof hints);
         hints.ai_family = AF_INET;
         hints.ai_socktype = SOCK_STREAM;
 
-        if(getaddrinfo(reinterpret_cast<const char *>(hostname), reinterpret_cast<const char *>(destinationPort), &hints, &res) != 0)
+        auto gaiResult = getaddrinfo(reinterpret_cast<const char *>(hostname), "https", &hints, &res);
+        if(gaiResult != 0)
         {
+//            std::cout << "[ConnectionRequestTransmission]: " << gai_strerror(errno) << " | Might be incorrect domain name. " <<  "\n";
             status =  Status(Status::Error::BadGetAddrInfo);
-            return status;
+            return -1;
         }
 
-        socketForForwarding = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+        auto socketForForwarding = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
         if(socketForForwarding == -1)
         {
             status = Status(Status::Error::BadForwardingSocketCreation);
-            return status;
+            return -1;
         }
 
         status = MakeSocketNonblocking(socketForForwarding);
         if(status.Failed())
         {
             close(socketForForwarding);
-            return status;
+
+            status =  Status(Status::Error::BadMakingSocketNonblocking);
+            shutdown(socketForForwarding, SHUT_RDWR);
+
+            return -1;
+        }
+
+        epoll_event ev {};
+
+        ev.events = EPOLLIN | EPOLLOUT | EPOLLERR;
+        ev.data.fd = socketForForwarding;
+
+        if(epoll_ctl(epollfd, EPOLL_CTL_ADD, socketForForwarding, &ev) == -1)
+        {
+//            std::cout << "[ConnectionRequestTransmission]: " <<  "[M: " << strerror(errno) << " " << errno << " " << EINVAL << "]\n";
+
+            status = Status(Status::Error::BadEpollCTL);
+            shutdown(socketForForwarding, SHUT_RDWR);
+
+            return -1;
         }
 
         auto connectResult = connect(socketForForwarding, res->ai_addr, res->ai_addrlen);
-        if(connectResult == -1)
+        if(connectResult == -1 && errno == EINPROGRESS)
         {
-            status = Status(Status::Error::BadConnectionSocketToAddress);
-            return status;
+            status = Status(Status::Success::WaitingForConnectResponse);
+            return socketForForwarding;
         }
+        else
+        {
+//            std::cout << "[ConnectionRequestTransmission]: "  << strerror(errno) << "\n";
+            status = Status(Status::Error::BadConnectionSocketToAddress);
 
-        return status;
+            shutdown(socketForForwarding, SHUT_RDWR);
+
+            return -1;
+        }
     }
 
-    Status ConnectionRequestTransmission::CreateSocketForForwardingByIP(int32_t& socketForForwarding, int32_t destinationPort,const uint8_t *addr) noexcept
+    Status
+    ConnectionRequestTransmission::CreateSocketForForwardingByIP(int32_t socketForForwarding, int32_t destinationPort, const uint8_t *addr) noexcept
     {
         Status status {};
 
@@ -79,7 +117,7 @@ namespace Proxy::SOCKS5Flow
         destinationAddress.sin_family = AF_INET;
         destinationAddress.sin_port = destinationPort;
 
-        memcpy(&destinationAddress.sin_addr.s_addr, addr, sizeof (addr));
+        memcpy(&destinationAddress.sin_addr.s_addr, addr, sizeof (addr)); // sizeof(ptr) !!!!!
 
         if(getnameinfo(reinterpret_cast<sockaddr*>(&destinationAddress),sizeof(destinationAddress),hostName, sizeof(hostName), nullptr, 0, 0) != 0)
         {
@@ -88,7 +126,6 @@ namespace Proxy::SOCKS5Flow
         }
 
         socketForForwarding = socket(AF_INET, SOCK_STREAM, 0);
-
         if(socketForForwarding == -1)
         {
             status =  Status(Status::Error::BadForwardingSocketCreation);
@@ -96,7 +133,6 @@ namespace Proxy::SOCKS5Flow
         }
 
         status = MakeSocketNonblocking(socketForForwarding);
-
         if(status.Failed())
         {
             close(socketForForwarding);
@@ -115,77 +151,146 @@ namespace Proxy::SOCKS5Flow
         return status;
     }
 
-    Status ConnectionRequestTransmission::TryConnectToTheServer(int32_t serverSocket,  const uint8_t *serverAddress, uint16_t serverPort, uint8_t attype, uint8_t serverAddressSize) noexcept
+    Status
+    ConnectionRequestTransmission::TryConnectToTheServer(ClientConnection& clientConnection, const uint8_t* serverAddress, uint16_t serverPort, uint8_t addressType, int32_t epollfd, int32_t& serverSockfd) noexcept
     {
         using namespace Proxy::Utilities;
         Status status {};
 
-        if (attype == static_cast<uint8_t>(SOCKS5::Handshake::IPv4) || attype == static_cast<uint8_t>(Utilities::SOCKS5::Handshake::IPv6))
+        if (addressType == static_cast<uint8_t>(SOCKS5::Handshake::IPv4) || addressType == static_cast<uint8_t>(Utilities::SOCKS5::Handshake::IPv6))
         {
-            status = CreateSocketForForwardingByIP(serverSocket, serverPort,  serverAddress);
+//            status = CreateSocketForForwardingByIP(serverConnection, serverPort, serverAddress);
             if (status.Failed()) {return status;}
+
+            return status;
         }
 
-        if (attype == static_cast<uint8_t>(Utilities::SOCKS5::Handshake::DomainName))
+        if (addressType == static_cast<uint8_t>(Utilities::SOCKS5::Handshake::DomainName))
         {
-            status = CreateSocketForForwardingByHostname(serverSocket, serverPort, serverAddress);
-            if (status.Failed()) { return status; }
+            serverSockfd = CreateSocketForForwardingByHostname(status, serverPort, serverAddress, epollfd);
+            if(serverSockfd == -1)
+            {
+                // here might be additional logic that process different errors;
+                return status;
+            }
+            return status;
         }
+
+        status = Status(Status::Error::BadConnectToServer);
+        return status;
     }
 
-
-    int32_t ConnectionRequestTransmission::GenerateConnectionRequestReply(const uint8_t *buffer, size_t buffersize, ByteStream &GeneratedReply) noexcept
+    Status
+    ConnectionRequestTransmission::GenerateConnectionRequestReply(const uint8_t* buffer, size_t buffersize, ByteStream& connectionRequestReply) noexcept
     {
-        auto buffervariable = SOCKS5Parser::GetConnectionRequestLength(buffer, buffersize);
-
-        if(buffervariable != -1 )
-        {
-            GeneratedReply.Insert(buffer, buffersize);
-            GeneratedReply[1] = static_cast<uint8_t>(Utilities::SOCKS5::Handshake::ReplyStatus::Succeeded);
-            GeneratedReply[2] = static_cast<uint8_t>(Utilities::SOCKS5::Handshake::RSV);
-            GeneratedReply[3] = static_cast<uint8_t>(Utilities::SOCKS5::Handshake::ATYP::IPv4);
-            return 0;
-        }
-         return -1;
-    }
-
-
-    std::unique_ptr<ConversationFlow>
-    ConnectionRequestTransmission::PerformTransaction(Connection& clientConnection, Connection& serverConnection) noexcept
-    {
+        using namespace Utilities;
+        using namespace TrafficParsing;
 
         Status status;
-        ByteStream destinationAddress;
-        uint16_t  port = 0;
 
-        status = ReadAllDataFromConnection(clientConnection);
-        if(status.Failed()) { return nullptr; }
+        auto connectionRequestLength = SOCKS5Parser::GetConnectionRequestLength(buffer, buffersize);
 
-        if(SOCKS5Parser::IsValidConnectionRequestMessage(clientConnection.Buffer().GetBuffer(), clientConnection.Buffer().GetUsedBytes()))
+        if( connectionRequestLength != -1 )
         {
-            uint8_t addressType = clientConnection.Buffer()[3];
-            status = SOCKS5Parser::GetDestinationAddressAndPort(clientConnection.Buffer().GetBuffer(),clientConnection.Buffer().GetUsedBytes(),destinationAddress, port);
+            connectionRequestReply.Insert(buffer, buffersize);
+            connectionRequestReply[1] = static_cast<uint8_t>(SOCKS5::Handshake::ReplyStatus::Succeeded);
+            connectionRequestReply[2] = static_cast<uint8_t>(0x00); // RSV(reserved)
+            connectionRequestReply[3] = static_cast<uint8_t>(SOCKS5::Handshake::ATYP::domain);
+
+            return status;
+        }
+
+        status = Status(Status::Error::BadConnectionRequestLenght);
+        return status;
+    }
+
+    std::unique_ptr<ConversationFlow>
+    ConnectionRequestTransmission::PerformTransaction(ClientConnection& clientConnection, ServerConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept
+    {
+        using namespace  TrafficParsing;
+
+        Status status;
+
+        if(m_connetionState == ConnectionState::NotConnected)
+        {
+//            std::cout << "SOCKS5Flow::ConnectionRequest\n";
+
+            ByteStream destinationAddress;
+
+            int32_t serverSockfd = 0;
+            uint16_t  port = 0;
+
+            status = ReadAllDataFromConnection(clientConnection);
             if(status.Failed()) { return nullptr; }
 
-            status = TryConnectToTheServer(serverConnection.GetSocketfd(),destinationAddress.GetBuffer() , port, addressType , destinationAddress.GetSize());
+            if(SOCKS5Parser::IsValidConnectionRequestMessage(clientConnection.Buffer().GetBuffer(), clientConnection.Buffer().GetUsedBytes()))
+            {
+                uint8_t destinationAddressType = SOCKS5Parser::GetDestinationAddressType(clientConnection.Buffer().GetBuffer(), clientConnection.Buffer().GetUsedBytes());
+                if(destinationAddressType == 0)
+                {
+                    status = Status(Status::Error::BadDestinationAddressType);
+                    return nullptr;
+                }
+
+                status = SOCKS5Parser::GetDestinationAddressAndPort(clientConnection.Buffer().GetBuffer(),clientConnection.Buffer().GetUsedBytes(),destinationAddress, port);
+                if(status.Failed()) { return nullptr; }
+
+                status = TryConnectToTheServer(clientConnection, destinationAddress.GetBuffer(), port, destinationAddressType, epollfd, serverSockfd);
+                if(status.Failed()) { return nullptr; }
+                if(status == Status::Success::WaitingForConnectResponse)
+                {
+                    clientConnection.Pipeline()->InitServerConnection(serverSockfd);
+                    clientConnection.Pipeline()->PipelineManager().LinkSockfdToExistingPipeline(serverSockfd,clientConnection.Pipeline());
+
+                    m_connetionState = ConnectionState::WaitingForResponse;
+                    return nullptr;
+                }
+            }
+        }
+
+        if(m_connetionState == ConnectionState::WaitingForResponse && IsConnectionSucceed(serverConnection.GetSocketfd()))
+        {
+            ByteStream connectionRequestReply;
+
+            status = GenerateConnectionRequestReply(clientConnection.Buffer().GetBuffer(), clientConnection.Buffer().GetUsedBytes(), connectionRequestReply);
             if(status.Failed()) { return nullptr; }
 
-            serverConnection.ChangeState(Connection::ConnectionState::Connected);
-
-            ByteStream tmp_client_buffer;
-
-            GenerateConnectionRequestReply(clientConnection.Buffer().GetBuffer(), clientConnection.Buffer().GetSize(),
-                                           tmp_client_buffer);
-
-            status = SendAllDataToConnection(tmp_client_buffer,clientConnection);
-            if(status.Failed()){ return nullptr; }
+            status = SendAllDataToConnection(connectionRequestReply, clientConnection);
+            if(status.Failed()) { return nullptr; }
 
             serverConnection.Buffer().Clear();
-
-            return std::make_unique<ConnectionRequestTransmission>(); //Will return TLS FLow
-
+            clientConnection.Buffer().Clear();
+//            std::cout << "[SOCKS5 Handshake Succeed]\n";
+            return std::make_unique<TLSFlow::TLSReceivingClientHello>();
         }
+
         return nullptr;
+    }
+
+
+    Status
+    ConnectionRequestTransmission::IsConnectionSucceed(int32_t sockfd) noexcept
+    {
+        Status status;
+
+        auto optval = 0;
+        socklen_t optlen = sizeof(optval);
+
+        auto opts = getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen);
+        if(opts == -1)
+        {
+            status = Status(Status::Error::BadGetSockopt);
+            return status;
+        }
+
+        if((optval == EWOULDBLOCK) || (optval == EAGAIN))
+        {
+            // prefer to close connection and continue program execution
+            status = Status(Status::Error::BadConnectToServer);
+            return status;
+        }
+
+        return status;
     }
 
 }

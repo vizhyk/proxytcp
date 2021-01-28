@@ -108,7 +108,7 @@ namespace Proxy
 
     void ByteStream::Insert(const ByteStream& rhs) noexcept
     {
-        auto rhsUsedDataSize = rhs.GetSize();
+        auto rhsUsedDataSize = rhs.GetUsedBytes();
 
         if(this->GetAvailableBytes() < rhsUsedDataSize)
         {
@@ -131,7 +131,6 @@ namespace Proxy
 
         memcpy(m_buffer.data() + m_usedBytes, &value, valueSizeof);
         m_usedBytes += sizeof(value);
-
     }
 
     void ByteStream::Insert(uint16_t value) noexcept

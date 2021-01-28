@@ -1,15 +1,25 @@
 #ifndef PROXYTCP_CONNECTION_HPP
 #define PROXYTCP_CONNECTION_HPP
-#include <cstdint>
+
+
+#include <memory>
 #include "ByteStream/ByteStream.hpp"
 
 
 namespace Proxy
 {
+    class ConversationPipeline;
+
     class Connection
     {
-    public:
+        friend class ConnectionTest_ChangeState_Test;
+        friend class ConnectionTest_Connection_Test;
+        friend class ConnectionTest_ChangeSockfd_Test;
+        friend class ConnectionTest_GetSocketfd_Test;
+        friend class ConnectionTest_Buffer_Test;
+        friend class ConnectionTest_shared_Pipeline_Test;
 
+    public:
         enum class ConnectionState : uint8_t
         {
             Connected = 0x00,
@@ -17,25 +27,29 @@ namespace Proxy
         };
 
     public:
-        Connection() noexcept = default;
-        Connection(int32_t socket, ConnectionState state) noexcept;
-        void ChangeState(ConnectionState state) noexcept;
-        virtual ~Connection() = default;
+        Connection() = default;
+        Connection(int32_t socket, ConnectionState state, std::shared_ptr<ConversationPipeline>& pipeline) noexcept;
+        virtual ~Connection();
+
+        Connection(Connection&& connection) noexcept = delete;
+        Connection& operator=(Connection&& rhs) noexcept = delete;
 
     public:
-        void SetRequiredBytes(std::size_t newRequiredBytes) noexcept;
+        ConnectionState GetState() const noexcept;
+        int32_t GetSocketfd() const noexcept;
 
-        int32_t GetSocketfd() const noexcept { return m_socket; }
-        std::size_t GetRequiredBytes() const noexcept { return m_requiredBytes; }
-        ByteStream& Buffer()  noexcept { return m_buffer; }
-        ConnectionState GetState() const noexcept { return m_state; }
+        void ChangeState(ConnectionState state) noexcept;
+        void ChangeSockfd(int32_t sockfd) noexcept;
 
-
+        ByteStream& Buffer() noexcept;
+        std::shared_ptr<ConversationPipeline>& Pipeline() noexcept;
     private:
+
         int32_t m_socket;
-        std::size_t m_requiredBytes;
         ConnectionState m_state;
         ByteStream m_buffer;
+        std::shared_ptr<ConversationPipeline> m_pipeline;
+
     };
 
     bool operator==(const Connection& lhs, const Connection& rhs) noexcept;
@@ -44,3 +58,4 @@ namespace Proxy
 }
 
 #endif //PROXYTCP_CONNECTION_HPP
+

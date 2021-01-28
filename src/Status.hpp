@@ -16,6 +16,9 @@ namespace Proxy
             BannedHostConnectionRefused = 1,
             IgnoredBadConnectionHostDomainName = 2,
             WaitingForData = 3,
+            WaitingForConnectResponse = 4,
+            WaitingForTLSMessages = 5,
+            GeneratedRecordsAndWaitForData = 6,
         };
         enum class Error : CodeType
         {
@@ -47,6 +50,20 @@ namespace Proxy
             BadRecievedDataSize = -23,
             BadBufferSize = -24,
             BadGetAddrInfo = -25,
+            IncorrectConversationFlowCode = -26,
+            ConversationPipelineNotFound = -27,
+            NoPipelineFound = -28,
+            BadPayloadSize = -29,
+            BadConnectionPayload = -30,
+            BadGetSockopt = -31,
+            BadConnectToServer = -32,
+            BadConnectionRequestLenght = -33,
+            BadDestinationAddressType = -34,
+            NoConversationPipelineFound = -35,
+            NoConversationPipelineCreated = -36,
+            PacketIsNotFull = -37,
+            BadRecordFound = -38,
+            BadTLSRecordContentType = -39,
         };
 
     public:

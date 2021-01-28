@@ -1,7 +1,6 @@
 #ifndef PROXYTCP_SOCKS5PARSER_HPP
 #define PROXYTCP_SOCKS5PARSER_HPP
 
-#include <cstdint>
 #include "src/ByteStream/ByteStream.hpp"
 
 namespace Proxy::TrafficParsing
@@ -13,7 +12,7 @@ namespace Proxy::TrafficParsing
         static bool IsValidClientHelloMessage(const uint8_t* buffer, int32_t bufferSize) noexcept;
         static uint8_t GetClientAuthenticationMethod(const uint8_t* buffer, uint32_t bufferSize) noexcept;
         static uint8_t GetDestinationAddressType(const uint8_t* buffer, uint32_t bufferSize) noexcept;
-        static Status  GetDestinationAddressAndPort(const uint8_t* buffer, uint32_t bufferSize, ByteStream& destinationAddress, uint16_t& port) noexcept;
+        static Status GetDestinationAddressAndPort(const uint8_t* buffer, uint32_t bufferSize, ByteStream& destinationAddress, uint16_t& port) noexcept;
         static size_t GetConnectionRequestLength(const uint8_t* buffer, size_t buffersize);
 
     private:

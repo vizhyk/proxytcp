@@ -1,0 +1,32 @@
+    dist: bionic
+    sudo: false
+    language: cpp
+    os: linux
+    
+
+    before_script:
+    - umask 000
+    - sudo apt-get update --yes
+    - sudo apt-get install --yes lcov
+    - sudo apt-get install --yes cmake
+    - sudo git clone https://github.com/google/googletest.git
+    - cd googletest/ 
+    - sudo cmake .
+    - sudo cmake --build .
+    - cd ..
+
+    script: 
+    - sudo cmake .
+    - sudo cmake --build .
+    - sudo cmake -DCMAKE_BUILD_TYPE=Debug .
+    - ls -l
+    - sudo ./bin/proxytcp_tests
+    - cd /home/travis/build/vizhyk/proxytcp/Regtest
+    - sudo ./test.sh
+    - cd ..
+    - sudo lcov --rc lcov_branch_coverage=1 --no-external -d "." --capture -o proxytcp_tests.info -c 
+    - sudo lcov --rc lcov_branch_coverage=1 --remove proxytcp_tests.info '/home/travis/build/vizhyk/proxytcp/Tests/*' '/home/travis/build/vizhyk/proxytcp/googletest/*' -o filtered.info
+    - sudo genhtml -o coverage filtered.info
+    after_success:
+    - export CODECOV_TOKEN="f720a65e-f3e7-48d2-afa7-193a211c9062"
+    - bash <(curl -s https://codecov.io/bash) -f filtered.info 

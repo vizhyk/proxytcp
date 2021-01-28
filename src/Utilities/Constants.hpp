@@ -3,14 +3,15 @@
 
 #include <cstdint>
 
-namespace Proxy::HeaderSizes
+namespace Proxy::HeaderSize
 {
+    const uint8_t ETH = 14;
+    const uint8_t IP  = 20;
+    const uint8_t TCP = 32;
+    const uint8_t TLS_RECORD = 5;
+    const uint8_t TLS_MESSAGE = 4;
 
-    const uint8_t ETH_HEADER = 14;
-    const uint8_t IP_HEADER  = 20;
-    const uint8_t TCP_HEADER = 32;
-
-} // namespace Proxy::HeaderSizes
+} // namespace Proxy::HeaderSize
 
 namespace Proxy::Utilities::Offsets
 {
@@ -18,12 +19,21 @@ namespace Proxy::Utilities::Offsets
     {
 
         const uint32_t TLS_DATA = 66; // start point of the tls data;
-        const uint32_t MESSAGE_TYPE = 66;
-        const uint32_t HANDSHAKE_TYPE = 71;
+        const uint32_t RECORD_TYPE = 66;
+        const uint32_t MESSAGE_TYPE = 71;
         const uint32_t EXTENTIONS_DATA_SIZE = 178;
-        const uint32_t EXTENTIONS_DATA = 180;
+        const uint32_t EXTENTIONS_DATA = 182;
+        const uint32_t MESSAGE_SIZE = 1;
+        const uint8_t  SESSION_ID_LENGTH = 109 - 66;
+        namespace SNI
+        {
+            const uint32_t SERVER_NAME_LIST_LENGTH = 0;
+            const uint32_t SERVER_NAME_TYPE = 2;
+            const uint32_t SERVER_NAME_LENGTH = 3;
+            const uint32_t SERVER_NAME = 5;
+        }
 
-    } // namespace Offsets::TLS
+    } // namespace Offsets::TLS_RECORD
 
     namespace TCP
     {
@@ -66,6 +76,14 @@ namespace Proxy::Utilities::Offsets
     } // namespace Offsets::SOCKS5
 
 } // namespace Proxy::Offsets
+
+namespace Proxy::Utilities::TLS::ContentType
+{
+    const uint8_t Handshake = 0x16;
+    const uint8_t ApplicationData = 0x17;
+    const uint8_t ChangeCipherSpec = 0x14;
+}
+
 
 namespace Proxy::Utilities::Ports
 {

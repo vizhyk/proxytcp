@@ -1,11 +1,15 @@
+#include <iostream>
+#include <src/TrafficParsing/SOCKS5/SOCKS5Parser.hpp>
 #include "ClientHelloTransmission.hpp"
+
 
 namespace Proxy::SOCKS5Flow
 {
 
     std::unique_ptr<ConversationFlow>
-    ClientHelloTransmission::PerformTransaction(Connection& clientConnection, Connection& serverConnection) noexcept
+    ClientHelloTransmission::PerformTransaction(ClientConnection& clientConnection, ServerConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept
     {
+//        std::cout << "SOCKS5Flow::ClientHello\n";
         using namespace  TrafficParsing;
         Status status;
         status = ReadAllDataFromConnection(clientConnection);
@@ -21,13 +25,16 @@ namespace Proxy::SOCKS5Flow
            return std::make_unique<ConnectionRequestTransmission>();
         }
         return nullptr;
+
+
     }
 
-    ByteStream ClientHelloTransmission::GenerateClientInitiationResponse() noexcept
+    ByteStream
+    ClientHelloTransmission::GenerateClientInitiationResponse() noexcept
     {
         ByteStream buffer(2);
-        buffer.Insert(static_cast<uint8_t>(0x5));
-        buffer.Insert (static_cast<uint8_t>(0x0));
+        buffer.Insert(static_cast<uint8_t>(0x05));
+        buffer.Insert (static_cast<uint8_t>(0x00));
         return  buffer;
     }
 
