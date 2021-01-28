@@ -1,2 +1,2 @@
-![Travis (.com)](https://img.shields.io/travis/com/vizhyk/https://github.com/vizhyk/proxytcp?style=flat-square)
-![Codecov](https://img.shields.io/codecov/c/github/vizhyk/https://github.com/vizhyk/proxytcp)
+![Travis (.com)](https://img.shields.io/travis/com/vizhyk/https://travis-ci.com/github/vizhyk/proxytcp)
+[![codecov](https://codecov.io/gh/vizhyk/proxytcp/branch/master/graph/badge.svg?token=EYQIQRX3CS)](https://codecov.io/gh/vizhyk/proxytcp)
