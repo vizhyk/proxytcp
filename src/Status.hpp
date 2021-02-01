@@ -64,6 +64,7 @@ namespace Proxy
             PacketIsNotFull = -37,
             BadRecordFound = -38,
             BadTLSRecordContentType = -39,
+            NoServerHelloFound = -40,
         };
 
     public:
