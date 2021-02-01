@@ -1,8 +1,8 @@
 #include <cstring>
 #include <netinet/in.h>
 #include "TLSRecordParser.hpp"
-#include "TLSMessageParser.hpp"
 #include "src/Utilities/Constants.hpp"
+#include "TLSMessageParser.hpp"
 
 namespace Proxy::TrafficParsing
 {
@@ -25,27 +25,14 @@ namespace Proxy::TrafficParsing
         using namespace Utilities;
         const uint8_t contentType = tlsRecordData[0];
 
-//        if(contentType == Utilities::TLS::ContentType::Handshake)
-//        {
-//            auto allMessagesArrived = TLSMessageParser::AllMessagesArrived(tlsRecordData+HeaderSize::TLS_RECORD, tlsRecordSize - HeaderSize::TLS_RECORD);
-//
-//            if(allMessagesArrived)
-//                return Status(Status::Success::Success);
-//
-//            return Status(Status::Success::WaitingForTLSMessages);
-//        }
-
-//        if(contentType == TLS::ContentType::ApplicationData || contentType == TLS::ContentType::ChangeCipherSpec)
-//        {
         auto payloadSize = GetTLSRecordPayloadSize(tlsRecordData,tlsRecordSize);
 
         if(payloadSize == tlsRecordSize - HeaderSize::TLS_RECORD)
             return Status(Status::Success::Success);
 
         return Status(Status::Success::WaitingForData);
-//        }
 
-        return Status(Status::Error::BadTLSRecordContentType);
     }
+
 }
 

@@ -1,5 +1,8 @@
 #include "TLSParser.hpp"
 #include "src/Utilities/Constants.hpp"
+#include "TLSRecordParser.hpp"
+#include "TLSMessageParser.hpp"
+
 #include <cstring>
 #include <netinet/in.h>
 #include <memory>
@@ -20,7 +23,7 @@ namespace Proxy::TrafficParsing
         return (static_cast<uint32_t>(buffer[Offsets::TLS::RECORD_TYPE - offset]) == 0x16 ) && (static_cast<uint32_t>(buffer[Offsets::TLS::MESSAGE_TYPE - offset]) == 0x02 );
     }
 
-    Status TLSParser::GetDomainNameFromTLSPacket(const uint8_t* buffer, uint32_t bufferSize, uint32_t offset, ByteStream& emptyByteStream) noexcept
+    Status TLSParser::GetDomainNameFromTLSPacket(const uint8_t* buffer, uint32_t bufferSize, ByteStream& emptyByteStream) noexcept
     {
         Status status;
         uint32_t extensionOffset = 0;
@@ -117,7 +120,7 @@ namespace Proxy::TrafficParsing
         return tmpValue;
     }
 
-    uint16_t TLSParser::GetTLSRecordPayloadSize(const uint8_t* buffer, std::size_t bufferSize) noexcept
+    uint16_t TLSParser::GetTLSRecordPayloadSize(const uint8_t* recordData, std::size_t bufferSize) noexcept
     {
         uint16_t recordSize;
         if(bufferSize < 5)
@@ -125,156 +128,109 @@ namespace Proxy::TrafficParsing
             return 0;
         }
 
-        memcpy(&recordSize, buffer + 3, sizeof(recordSize));
+        memcpy(&recordSize, recordData + 3, sizeof(recordSize));
 
         return ntohs(recordSize);
 
     }
 
-    uint32_t TLSParser::GetTLSMessageSize(const uint8_t* buffer, std::size_t bufferSize) noexcept
+    uint32_t TLSParser::GetTLSMessageSize(const uint8_t* messageData, std::size_t bufferSize) noexcept
     {
         uint32_t messageSize = 0;
 
         if(bufferSize < 3) { return 0; }
 
-        memcpy(&messageSize, buffer, 3);
+        memcpy(&messageSize, messageData, 3);
         messageSize = ntohl(messageSize);
         messageSize = messageSize >> 8;
 
         return messageSize;
     }
 
-    Status TLSParser::TLSPacketArrivedFully(const uint8_t* buffer, std::size_t bufferSize) noexcept
-    {
-        Status status;
-
-        std::size_t TLSRecordRequiredBytes;
-        std::size_t processedBytes = 0;
-        // adding 2 to get TLS_RECORD Message type and size of the first message
-        if(bufferSize < HeaderSize::TLS_RECORD + 2) { return status = Status(Status::Error::PacketIsNotFull); }
-        if(bufferSize >= HeaderSize::TLS_RECORD + 2)
-        {
-            while(processedBytes != bufferSize)
-            {
-                TLSRecordRequiredBytes = 0;
-
-                auto TLSRecordSize = GetTLSRecordPayloadSize(buffer + processedBytes, bufferSize - processedBytes);
-                if(TLSRecordSize == 0) { return status = Status(Status::Error::BadBufferSize); }
-
-                TLSRecordRequiredBytes += TLSRecordSize + HeaderSize::TLS_RECORD;
-                processedBytes += HeaderSize::TLS_RECORD;
-
-                if(bufferSize == TLSRecordRequiredBytes)
-                {
-                    auto firstTLSMessageSize = GetTLSMessageSize(buffer + processedBytes + 1, bufferSize - processedBytes);
-
-                    processedBytes += firstTLSMessageSize + HeaderSize::TLS_MESSAGE;
-
-                    if(firstTLSMessageSize == TLSRecordSize - HeaderSize::TLS_MESSAGE) { return status = Status(Status::Success::Success); }
-                    if(firstTLSMessageSize <  TLSRecordSize - HeaderSize::TLS_MESSAGE)
-                    {
-                        while(processedBytes < TLSRecordRequiredBytes)
-                        {
-                            auto newTLSMessageSize = GetTLSMessageSize(buffer + processedBytes + 1, bufferSize - processedBytes);
-
-                            processedBytes += newTLSMessageSize + HeaderSize::TLS_MESSAGE;
-                        }
-
-                        if(processedBytes == TLSRecordRequiredBytes + HeaderSize::TLS_RECORD) { return status = Status(Status::Success::Success); }
-                        if(processedBytes >  TLSRecordRequiredBytes + HeaderSize::TLS_RECORD) { return status = Status(Status::Success::WaitingForTLSMessages); }
-                    }
-                    if(firstTLSMessageSize >  TLSRecordSize - HeaderSize::TLS_MESSAGE)
-                    {
-                        return status = Status(Status::Success::WaitingForTLSMessages);
-                    }
-                }
-                if(bufferSize <  TLSRecordRequiredBytes) { return status = Status(Status::Error::PacketIsNotFull); }
-                if(bufferSize >  TLSRecordRequiredBytes)
-                {
-                    auto firstTLSMessageSize = GetTLSMessageSize(buffer + processedBytes + 1, bufferSize - processedBytes);
-                    if(firstTLSMessageSize == 0) { return status = Status(Status::Error::BadBufferSize); }
-
-                    processedBytes += firstTLSMessageSize + HeaderSize::TLS_MESSAGE;
-
-                    if(firstTLSMessageSize == TLSRecordSize - HeaderSize::TLS_MESSAGE)
-                    {
-//                    case when expecting 1 more TLS_RECORD record!!!!  use continue; here to move to the new record
-                        continue;
-                    }
-                    if(firstTLSMessageSize <  TLSRecordSize - HeaderSize::TLS_MESSAGE)
-                    {
-                        uint32_t newTLSMessageSize = 0;
-                        while(processedBytes < TLSRecordRequiredBytes)
-                        {
-                            newTLSMessageSize = GetTLSMessageSize(buffer + processedBytes, bufferSize - processedBytes);
-
-                            processedBytes += newTLSMessageSize + HeaderSize::TLS_MESSAGE;
-                        }
-
-                        if(processedBytes == TLSRecordRequiredBytes + HeaderSize::TLS_RECORD) { continue; }
-                        if(processedBytes > TLSRecordRequiredBytes)
-                        {
-                            if(processedBytes < bufferSize) { continue; }
-                            if(processedBytes > bufferSize) { return status = Status(Status::Success::WaitingForTLSMessages); }
-                        }
-                    }
-                    if(firstTLSMessageSize >  TLSRecordSize - HeaderSize::TLS_MESSAGE)
-                    {
-                        TLSRecordRequiredBytes += firstTLSMessageSize - (TLSRecordSize + HeaderSize::TLS_MESSAGE);
-
-                        // in that case we expect more than 1 record in packet.
-                        if(bufferSize > TLSRecordRequiredBytes)
-                            continue;
-
-                    }
-                }
-            }
-
-        }
-
-        return status;
-
-
-    }
-
-    Status TLSParser::ExtractAllValidRecords(const uint8_t* buffer, uint32_t bufferSize, ByteStream& validRecords, ByteStream& incompleteTLSRecords) noexcept
+    Status TLSParser::ExtractAllValidRecords(ByteStream& receivedData, ByteStream& validRecords) noexcept
     {
         Status status;
 
         std::size_t processedBytes = 0;
 
-        while(processedBytes < bufferSize)
+        const auto* buffer = receivedData.GetBuffer();
+
+        while(processedBytes < receivedData.GetUsedBytes())
         {
-            ///////
-            auto recordPayloadSize = GetTLSRecordPayloadSize(buffer + processedBytes, bufferSize - processedBytes);
-            if(recordPayloadSize == 0) { return status = Status(Status::Error::BadBufferSize); }
+            auto recordPayloadSize = GetTLSRecordPayloadSize(buffer + processedBytes, receivedData.GetUsedBytes() - processedBytes);
+            if(recordPayloadSize == 0) { return Status(Status::Error::BadBufferSize); }
 
-            auto fullTLSRecordSize = recordPayloadSize + HeaderSize::TLS_RECORD;
+            std::size_t fullTLSRecordSize = recordPayloadSize + HeaderSize::TLS_RECORD;
 
-            auto unprocessedBytes = bufferSize - processedBytes;
+            auto unprocessedBytes = receivedData.GetUsedBytes() - processedBytes;
             if(fullTLSRecordSize <= unprocessedBytes)
             {
                 status = TLSRecordParser::IsRecordFull(buffer + processedBytes, fullTLSRecordSize);
                 if(status == Status::Success::Success)
                 {
                     validRecords.Insert(buffer + processedBytes, fullTLSRecordSize);
-                    processedBytes += HeaderSize::TLS_RECORD + recordPayloadSize;
+                    receivedData.Erase(receivedData.Begin() + processedBytes, receivedData.Begin() + processedBytes + fullTLSRecordSize, fullTLSRecordSize);
+                    processedBytes = 0;
                 }
                 if(status == Status::Success::WaitingForData)
                 {
-                    incompleteTLSRecords.Insert(buffer + processedBytes, fullTLSRecordSize);
-                    continue;
+                    status = Status::Success::WaitingForData;
+                    return status;
                 }
             }
             else
             {
                 status = Status::Success::WaitingForData;
-                incompleteTLSRecords.Insert(buffer + processedBytes, unprocessedBytes);
                 return status;
             }
 
         }
         return  status;
+    }
+
+    Status TLSParser::CopyEveryRecordPayloadToMessageBuffer(const ByteStream& connectionBuffer, ByteStream& messageData, ByteStream& changeCipherSpecRecord, ByteStream& otherRecords, std::size_t& expectedBytesInTheNextPacket) noexcept
+    {
+        using namespace TrafficParsing;
+        Status status;
+
+        uint32_t processedData = 0;
+        const auto* receivedPacketData = connectionBuffer.GetBuffer();
+        const auto  receivedPacketSize = connectionBuffer.GetUsedBytes();
+
+        while(processedData < receivedPacketSize)
+        {
+            auto recordContentType = *(receivedPacketData + processedData);
+            if(recordContentType == TLS::ContentType::ChangeCipherSpec)
+            {
+                const uint8_t CHANGE_CHIPERSPEC_MESSAGE_SIZE = 1;
+                changeCipherSpecRecord.Insert(receivedPacketData + processedData, HeaderSize::TLS_RECORD + CHANGE_CHIPERSPEC_MESSAGE_SIZE);
+
+                processedData += HeaderSize::TLS_RECORD + CHANGE_CHIPERSPEC_MESSAGE_SIZE;
+
+
+                otherRecords.Insert(receivedPacketData + processedData, receivedPacketSize - processedData);
+                return status;
+            }
+
+            auto recordPayloadSize = TLSRecordParser::GetTLSRecordPayloadSize(receivedPacketData + processedData, receivedPacketSize - processedData);
+            if(recordPayloadSize > receivedPacketSize - processedData)
+            {
+                messageData.Insert(receivedPacketData + processedData + HeaderSize::TLS_RECORD,
+                                   receivedPacketSize - processedData - HeaderSize::TLS_RECORD);
+
+                // + header size
+                expectedBytesInTheNextPacket = recordPayloadSize - (receivedPacketSize - processedData - HeaderSize::TLS_RECORD);
+                return Status(Status::Success::WaitingForData);
+            }
+            else
+            {
+                messageData.Insert(receivedPacketData + processedData + HeaderSize::TLS_RECORD, recordPayloadSize);
+            }
+
+            processedData += recordPayloadSize + HeaderSize::TLS_RECORD;
+        }
+
+        return status;
     }
 
     Status TLSParser::CopyEveryRecordPayloadToMessageBuffer(const ByteStream& connectionBuffer, ByteStream& messageData) noexcept
@@ -304,92 +260,45 @@ namespace Proxy::TrafficParsing
         return status;
     }
 
-    Status TLSParser::FindFullServerHelloRecord(const ByteStream& connectionBuffer, ByteStream& recordBuffer, ByteStream& unprocessedRecords) noexcept
-    {
-        using namespace TrafficParsing;
-        Status status;
-
-        uint32_t processedData = 0;
-        uint32_t requiredServerHelloPayloadSize = 0;
-
-        const auto* receivedPacketData = connectionBuffer.GetBuffer();
-        const auto  receivedPacketSize = connectionBuffer.GetUsedBytes();
-
-        auto firstRecordPayloadSize = GetTLSRecordPayloadSize(receivedPacketData, receivedPacketSize);
-
-        if(firstRecordPayloadSize < receivedPacketSize)
-        {
-            if(TLSRecordParser::IsRecordFull(receivedPacketData, firstRecordPayloadSize + HeaderSize::TLS_RECORD))
-            {
-                if(IsServerHelloMessage(receivedPacketData, firstRecordPayloadSize + HeaderSize::TLS_RECORD, Offsets::TLS::TLS_DATA))
-                {
-                    recordBuffer.Insert(receivedPacketData, firstRecordPayloadSize + HeaderSize::TLS_RECORD);
-                    auto restPacketSize = receivedPacketSize - firstRecordPayloadSize - HeaderSize::TLS_RECORD;
-                    unprocessedRecords.Insert(receivedPacketData + firstRecordPayloadSize + HeaderSize::TLS_RECORD,restPacketSize);
-                    return status;
-                }
-            }
-        }
-
-
-        return status = Status::Success::WaitingForData;
-    }
-
-    Status TLSParser::CopyEveryFulLRecordPayloadToMessageBuffer(const ByteStream& recordBuffer, ByteStream& messageBuffer) noexcept
-    {
-        uint32_t processedData = 0;
-        const auto* recordData = recordBuffer.GetBuffer();
-        const auto  totalSizeOfAllFullRecords = recordBuffer.GetUsedBytes();
-
-        while(processedData < totalSizeOfAllFullRecords)
-        {
-            auto recordPayloadSize = TLSRecordParser::GetTLSRecordPayloadSize(recordData + processedData, totalSizeOfAllFullRecords - processedData);
-            processedData += HeaderSize::TLS_RECORD;
-            messageBuffer.Insert(recordData + processedData, recordPayloadSize);
-            processedData += recordPayloadSize;
-        }
-
-        //TODO error-handling
-        return Status();
-    }
-
     Status TLSParser::ProcessEveryFullMessagAndGenerateRecords(ByteStream& messageBuffer, ByteStream& emptyRecordBuffer) noexcept
     {
-        Status status;
         using namespace Utilities;
         uint32_t processedData = 0;
         const auto* messageData = messageBuffer.GetBuffer();
-        const auto  totalSizeOfAllMessages = messageBuffer.GetUsedBytes();
         ByteStream tmpIncompleteMessageHolder;
 
-        while(processedData < totalSizeOfAllMessages)
+//        while(processedData < messageBuffer.GetUsedBytes())
+        while(messageBuffer.GetUsedBytes() != 0)
         {
             auto messagePayloadSize = TLSMessageParser::GetTLSMessageSize(messageData + processedData + Offsets::TLS::MESSAGE_SIZE,
-                                                                   totalSizeOfAllMessages - processedData);
+                                                                          messageBuffer.GetUsedBytes() - processedData);
 
-            if(messagePayloadSize + HeaderSize::TLS_MESSAGE > totalSizeOfAllMessages - processedData )
+            if(messagePayloadSize + HeaderSize::TLS_MESSAGE > messageBuffer.GetUsedBytes() - processedData )
             {
                 if(emptyRecordBuffer.IsEmpty())
-                    return status = Status::Success::WaitingForData;
+                    return Status(Status::Success::WaitingForData);
 
-                tmpIncompleteMessageHolder.Insert(messageData + processedData, totalSizeOfAllMessages - processedData);
+//                tmpIncompleteMessageHolder.Insert(messageData + processedData, totalSizeOfAllMessages - processedData);
+//                messageBuffer.Clear();
+//                messageBuffer << tmpIncompleteMessageHolder;
 
-                messageBuffer.Clear();
-                messageBuffer << tmpIncompleteMessageHolder;
-
-                return status = Status::Success::GeneratedRecordsAndWaitForData;
+                return Status(Status::Success::GeneratedRecordsAndWaitForData);
             }
 
             emptyRecordBuffer << static_cast<uint8_t>(TLS::ContentType::Handshake);
-            emptyRecordBuffer << static_cast<uint16_t>(htons(0x0301)); // TLS version 1.0
-            emptyRecordBuffer << static_cast<uint16_t>(htons(messagePayloadSize + HeaderSize::TLS_MESSAGE)); // TLS version 1.0
+            emptyRecordBuffer << static_cast<uint16_t>(htons(0x0303)); // TLS version 1.2
+            emptyRecordBuffer << static_cast<uint16_t>(htons(messagePayloadSize + HeaderSize::TLS_MESSAGE));
             emptyRecordBuffer.Insert(messageData + processedData, messagePayloadSize + HeaderSize::TLS_MESSAGE);
 
-            processedData += messagePayloadSize + HeaderSize::TLS_MESSAGE;
+            messageBuffer.Erase(messageBuffer.Begin()+processedData,
+                                messageBuffer.Begin() + processedData + HeaderSize::TLS_MESSAGE + messagePayloadSize,
+                                HeaderSize::TLS_MESSAGE + messagePayloadSize);
+
+//            processedData += messagePayloadSize + HeaderSize::TLS_MESSAGE;
 
         }
 
-        return status = Status::Success::Success;
+        return Status(Status::Success::Success);
     }
 
 

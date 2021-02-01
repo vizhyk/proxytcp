@@ -9,7 +9,6 @@ namespace Proxy::TrafficParsing
     {
     public:
         static uint32_t GetTLSMessageSize(const uint8_t* buffer, std::size_t bufferSize) noexcept;
-        static bool AllMessagesArrived(const uint8_t* tlsRecordPayload, uint32_t tlsRecordPayloadSize);
     };
 }
 
