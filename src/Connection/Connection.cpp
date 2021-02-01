@@ -5,7 +5,7 @@
 namespace Proxy
 {
     Connection::Connection(int32_t socket, ConnectionState state, std::shared_ptr<ConversationPipeline>& pipeline) noexcept
-        : m_socket(socket), m_state(state), m_pipeline(pipeline), m_buffer()
+        : m_socket(socket), m_state(state), m_buffer(), m_pipeline(pipeline)
     {}
 
     Connection::~Connection()

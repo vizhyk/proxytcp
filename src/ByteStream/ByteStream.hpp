@@ -31,6 +31,9 @@ namespace Proxy
         ByteStream& operator<<(const ByteStream& rhs) noexcept;
 
     public:
+        std::vector<uint8_t>::const_iterator Begin();
+        std::vector<uint8_t>::const_iterator End();
+
         const uint8_t* GetBuffer()      const noexcept;
         std::size_t GetUsedBytes()      const noexcept;
         std::size_t GetSize()           const noexcept;
@@ -48,6 +51,9 @@ namespace Proxy
         void Insert(uint64_t value) noexcept;
         void Insert(const ByteStream& rhs) noexcept;
         void Insert(const uint8_t* data, uint32_t dataSize) noexcept;
+
+        void Erase(std::vector<uint8_t>::const_iterator position);
+        void Erase(std::vector<uint8_t>::const_iterator first, std::vector<uint8_t>::const_iterator last, std::size_t numberOfElements);
 
         void Resize(size_t newSize) noexcept;
 
