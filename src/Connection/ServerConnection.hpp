@@ -8,8 +8,7 @@ namespace Proxy
     class ServerConnection : public Connection
     {
     public:
-        ServerConnection(int32_t sockfd, ConnectionState state, std::shared_ptr<ConversationPipeline> pipeline) noexcept;
-        ~ServerConnection() override = default;
+        ServerConnection(int32_t sockfd, ConnectionState state, const std::shared_ptr<ConversationPipeline>& pipeline) noexcept;
     };
 }
 

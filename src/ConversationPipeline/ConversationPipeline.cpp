@@ -6,17 +6,15 @@
 
 namespace Proxy
 {
-    ConversationPipeline::ConversationPipeline(int32_t sockfd, int32_t epollfd, ConversationManager& conversationManager) noexcept
-        : m_serverConnection(nullptr),  m_payload(nullptr), m_conversationManager(conversationManager), m_epollfd(epollfd)
+    ConversationPipeline::ConversationPipeline(int32_t epollfd, ConversationManager& conversationManager) noexcept
+        : m_payload(nullptr), m_conversationManager(conversationManager), m_epollfd(epollfd)
     {
-        m_clientConnection = std::make_unique<ClientConnection>(sockfd, Connection::ConnectionState::Connected, std::shared_ptr<ConversationPipeline>(this));
         m_conversationFlow = std::make_unique<SOCKS5Flow::ClientHelloTransmission>();
     }
 
-    ConversationPipeline::ConversationPipeline(int32_t sockfd, int32_t epollfd, std::unique_ptr<ConversationFlow> flow, ConversationManager& conversationManager) noexcept
-        : m_serverConnection(nullptr), m_conversationFlow(std::move(flow)), m_payload(nullptr),m_conversationManager(conversationManager), m_epollfd(epollfd)
+    ConversationPipeline::ConversationPipeline(int32_t epollfd, std::unique_ptr<ConversationFlow> flow, ConversationManager& conversationManager) noexcept
+        : m_conversationFlow(std::move(flow)), m_payload(nullptr),m_conversationManager(conversationManager), m_epollfd(epollfd)
     {
-        m_clientConnection = std::make_unique<ClientConnection>(sockfd, Connection::ConnectionState::Connected, std::shared_ptr<ConversationPipeline>(this));
     }
 
     void
@@ -48,21 +46,21 @@ namespace Proxy
     }
 
     void
+    ConversationPipeline::InitClientConnection(int32_t sockfd) noexcept
+    {
+        m_clientConnection = std::make_unique<ClientConnection>(sockfd, Connection::ConnectionState::Connected, shared_from_this());
+    }
+
+    void
     ConversationPipeline::InitServerConnection(int32_t sockfd) noexcept
     {
-        m_serverConnection = std::make_unique<ServerConnection>(sockfd, Connection::ConnectionState::Connected, m_clientConnection->Pipeline());
+        m_serverConnection = std::make_unique<ServerConnection>(sockfd, Connection::ConnectionState::Connected, shared_from_this());
     }
 
     ConversationManager&
     ConversationPipeline::PipelineManager() noexcept
     {
         return m_conversationManager;
-    }
-
-    PayloadBuffer&
-    ConversationPipeline::Payload() noexcept
-    {
-        return *m_payload;
     }
 
     bool
@@ -80,6 +78,5 @@ namespace Proxy
     {
         return m_serverConnection != nullptr;
     }
-
 
 }

@@ -19,8 +19,6 @@ namespace Proxy
         std::shared_ptr<ConversationPipeline> LinkSockfdToExistingPipeline(int32_t sockfd, std::shared_ptr<ConversationPipeline>& pipelinePtr);
         std::shared_ptr<ConversationPipeline> FindPipelineBySockfd(int32_t sockfd) noexcept;
 
-        Status RemoveUnactivePipeline(int32_t sockfd) noexcept;
-
     private:
         std::map<int32_t , std::shared_ptr<ConversationPipeline>> pipelines;
     };

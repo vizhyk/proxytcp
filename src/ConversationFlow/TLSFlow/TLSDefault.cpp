@@ -29,12 +29,15 @@ namespace Proxy::TLSFlow
 
         if(status.Failed()) { return nullptr; }
 
+        auto pipeline =  clientConnection.Pipeline().lock();
+        if(!pipeline) { return nullptr; }
 
-        if(!clientConnection.Pipeline()->PayloadIsInitialized())
+
+        if(!pipeline->PayloadIsInitialized())
         {
-            clientConnection.Pipeline()->InitPayloadAs<TLSPayloadBuffer>();
+            pipeline->InitPayloadAs<TLSPayloadBuffer>();
         }
-        auto& unprocessedRecords = clientConnection.Pipeline()->PayloadAs<TLSPayloadBuffer>();
+        auto& unprocessedRecords = pipeline->PayloadAs<TLSPayloadBuffer>();
 
         ByteStream validRecords;
 

@@ -17,11 +17,14 @@ namespace Proxy::TLSFlow
         status = ReadAllDataFromConnection(clientConnection);
         if(status.Failed()) { return nullptr; }
 
-        if(!clientConnection.Pipeline()->PayloadIsInitialized())
+        auto pipeline =  clientConnection.Pipeline().lock();
+        if(!pipeline) { return nullptr; }
+
+        if(!pipeline->PayloadIsInitialized())
         {
-            clientConnection.Pipeline()->InitPayloadAs<TLSPayloadBuffer>();
+            pipeline->InitPayloadAs<TLSPayloadBuffer>();
         }
-        auto& payloadHolder = clientConnection.Pipeline()->PayloadAs<TLSPayloadBuffer>();
+        auto& payloadHolder = pipeline->PayloadAs<TLSPayloadBuffer>();
 
         ByteStream recordBuffer;
 

@@ -3,7 +3,7 @@
 
 #include "src/TrafficParsing/TLS/TLSParser.hpp"
 #include "src/ByteStream/ByteStream.hpp"
-#include "../TestUtilities.hpp"
+#include "Tests/TestUtilities.hpp"
 
 using namespace TestUtilities;
 using namespace Proxy::TrafficParsing;

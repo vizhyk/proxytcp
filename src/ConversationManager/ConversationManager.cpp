@@ -9,8 +9,13 @@ namespace Proxy
     std::shared_ptr<ConversationPipeline>
     ConversationManager::AddNewPipeline(int32_t clientSockfd, int32_t epollfd)
     {
-        auto result = pipelines.emplace(std::piecewise_construct, std::forward_as_tuple(clientSockfd),std::forward_as_tuple(new ConversationPipeline(clientSockfd, epollfd, *this)));
-        return (result.second) ? result.first->second : nullptr;
+        auto result = pipelines.emplace(std::piecewise_construct, std::forward_as_tuple(clientSockfd),std::forward_as_tuple( new ConversationPipeline(epollfd, *this)));
+        if(result.second)
+        {
+            result.first->second->InitClientConnection(clientSockfd);
+            return result.first->second;
+        }
+        return nullptr;
     }
 
     std::shared_ptr<ConversationPipeline> ConversationManager::LinkSockfdToExistingPipeline(int32_t sockfd, std::shared_ptr<ConversationPipeline>& pipelinePtr)
@@ -28,32 +33,5 @@ namespace Proxy
 
         return result->second;
     }
-
-    Status
-    ConversationManager::RemoveUnactivePipeline(int32_t sockfd) noexcept
-    {
-        Status status;
-        auto pipeline = FindPipelineBySockfd(sockfd);
-        if(pipeline != nullptr)
-        {
-            if(pipeline->IsClientConnectionInitialized())
-            {
-                shutdown(pipeline->GetClientSockfd(),SHUT_RDWR);
-                pipelines.erase(pipeline->GetClientSockfd());
-            }
-
-            if(pipeline->IsServerConnectionInitialized())
-            {
-                shutdown(pipeline->GetServerSockfd(),SHUT_RDWR);
-                pipelines.erase(pipeline->GetServerSockfd());
-            }
-            return status;
-        }
-
-        status = Status(Status::Error::NoConversationPipelineFound);
-        return status;
-
-    }
-
 
 }

@@ -11,13 +11,13 @@ namespace Proxy
 {
     class ConversationManager;
 
-    class ConversationPipeline
+    class ConversationPipeline : public std::enable_shared_from_this<ConversationPipeline>
     {
     public:
-        ~ConversationPipeline() noexcept = default;
+        ~ConversationPipeline() = default;
 
-        ConversationPipeline(int32_t sockfd, int32_t epollfd, ConversationManager& conversationManager) noexcept;
-        ConversationPipeline(int32_t sockfd, int32_t epollfd, std::unique_ptr<ConversationFlow> flow, ConversationManager& conversationManager) noexcept;
+        ConversationPipeline(int32_t epollfd, ConversationManager& conversationManager) noexcept;
+        ConversationPipeline(int32_t epollfd, std::unique_ptr<ConversationFlow> flow, ConversationManager& conversationManager) noexcept;
 
         ConversationPipeline(ConversationPipeline&& rhs) noexcept = delete;
         ConversationPipeline& operator=(ConversationPipeline&& rhs) noexcept = delete;
@@ -37,6 +37,7 @@ namespace Proxy
         }
 
         void PerformTransaction(int32_t sockfdWithEvent) noexcept;
+        void InitClientConnection(int32_t sockfd) noexcept;
         void InitServerConnection(int32_t sockfd) noexcept;
 
         int32_t GetEpollfd()      const noexcept;
@@ -47,7 +48,6 @@ namespace Proxy
         bool IsServerConnectionInitialized() const noexcept;
 
         ConversationManager& PipelineManager() noexcept;
-        PayloadBuffer& Payload() noexcept;
 
         bool PayloadIsInitialized() const noexcept;
     private:

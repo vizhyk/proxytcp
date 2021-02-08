@@ -194,7 +194,7 @@ namespace Proxy
         if(m_usedBytes != rhs.m_usedBytes)
             return false;
 
-        for(std::size_t i = 0; i < m_usedBytes - 1; ++i)
+        for(std::size_t i = 0; i < m_usedBytes; ++i)
         {
             if(m_buffer[i] != rhs.m_buffer[i])
             {
@@ -218,10 +218,9 @@ namespace Proxy
     }
 
 
-
     bool operator==(const ByteStream& lhs, const ByteStream& rhs) noexcept { return lhs.cmp(rhs); }
 
-    bool operator!=(const ByteStream& lhs, const ByteStream& rhs) noexcept { return !( lhs.cmp(rhs) ); }
+    bool operator!=(const ByteStream& lhs, const ByteStream& rhs) noexcept { return !(rhs == lhs); }
 
 }
 

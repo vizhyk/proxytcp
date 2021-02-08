@@ -41,7 +41,6 @@ namespace Proxy::SOCKS5Flow
         auto gaiResult = getaddrinfo(reinterpret_cast<const char *>(hostname), "https", &hints, &res);
         if(gaiResult != 0)
         {
-//            std::cout << "[ConnectionRequestTransmission]: " << gai_strerror(errno) << " | Might be incorrect domain name. " <<  "\n";
             status =  Status(Status::Error::BadGetAddrInfo);
             return -1;
         }
@@ -71,8 +70,6 @@ namespace Proxy::SOCKS5Flow
 
         if(epoll_ctl(epollfd, EPOLL_CTL_ADD, socketForForwarding, &ev) == -1)
         {
-//            std::cout << "[ConnectionRequestTransmission]: " <<  "[M: " << strerror(errno) << " " << errno << " " << EINVAL << "]\n";
-
             status = Status(Status::Error::BadEpollCTL);
             shutdown(socketForForwarding, SHUT_RDWR);
 
@@ -87,69 +84,12 @@ namespace Proxy::SOCKS5Flow
         }
         else
         {
-//            std::cout << "[ConnectionRequestTransmission]: "  << strerror(errno) << "\n";
             status = Status(Status::Error::BadConnectionSocketToAddress);
 
             shutdown(socketForForwarding, SHUT_RDWR);
 
             return -1;
         }
-    }
-
-    Status
-    ConnectionRequestTransmission::CreateSocketForForwardingByIP(int32_t socketForForwarding, int32_t destinationPort, const uint8_t *addr) noexcept
-    {
-        Status status {};
-
-        hostent* destinationHost = nullptr;
-        sockaddr_in destinationAddress {};
-
-        char hostName[NI_MAXHOST];
-
-        destinationHost = gethostbyaddr(addr, sizeof(addr), AF_INET);
-        if(destinationHost == nullptr)
-        {
-            status =  Status(Status::Error::BadDestinationHost);
-            return status;
-        }
-
-        memset(&destinationAddress, 0, sizeof(destinationAddress));
-
-        destinationAddress.sin_family = AF_INET;
-        destinationAddress.sin_port = destinationPort;
-
-        memcpy(&destinationAddress.sin_addr.s_addr, addr, sizeof (*addr)); // sizeof(ptr) !!!!!
-
-        if(getnameinfo(reinterpret_cast<sockaddr*>(&destinationAddress),sizeof(destinationAddress),hostName, sizeof(hostName), nullptr, 0, 0) != 0)
-        {
-            status = Status::Error::BadGetNameInfo;
-            return status;
-        }
-
-        socketForForwarding = socket(AF_INET, SOCK_STREAM, 0);
-        if(socketForForwarding == -1)
-        {
-            status =  Status(Status::Error::BadForwardingSocketCreation);
-            return status;
-        }
-
-        status = MakeSocketNonblocking(socketForForwarding);
-        if(status.Failed())
-        {
-            close(socketForForwarding);
-            return status;
-        }
-
-        auto connectResult = connect(socketForForwarding, reinterpret_cast<sockaddr*>(&destinationAddress), sizeof(destinationAddress));
-
-        if(connectResult == -1)
-        {
-            status =  Status(Status::Error::BadConnectionSocketToAddress);
-            close(socketForForwarding);
-            return status;
-        }
-
-        return status;
     }
 
     Status
@@ -160,10 +100,7 @@ namespace Proxy::SOCKS5Flow
 
         if (addressType == static_cast<uint8_t>(SOCKS5::Handshake::IPv4) || addressType == static_cast<uint8_t>(Utilities::SOCKS5::Handshake::IPv6))
         {
-//            status = CreateSocketForForwardingByIP(serverConnection, serverPort, serverAddress);
-            if (status.Failed()) {return status;}
-
-            return status;
+            return status = Status(Status::Error::BadConnectToServer);
         }
 
         if (addressType == static_cast<uint8_t>(Utilities::SOCKS5::Handshake::DomainName))
@@ -171,13 +108,12 @@ namespace Proxy::SOCKS5Flow
             serverSockfd = CreateSocketForForwardingByHostname(status, serverPort, serverAddress, epollfd);
             if(serverSockfd == -1)
             {
-                // here might be additional logic that process different errors;
                 return status;
             }
             return status;
         }
 
-        status = Status(Status::Error::BadConnectToServer);
+        status = Status(Status::Error::BadDestinationAddressType);
         return status;
     }
 
@@ -214,8 +150,6 @@ namespace Proxy::SOCKS5Flow
 
         if(m_connetionState == ConnectionState::NotConnected)
         {
-//            std::cout << "SOCKS5Flow::ConnectionRequest\n";
-
             ByteStream destinationAddress;
 
             int32_t serverSockfd = 0;
@@ -240,8 +174,13 @@ namespace Proxy::SOCKS5Flow
                 if(status.Failed()) { return nullptr; }
                 if(status == Status::Success::WaitingForConnectResponse)
                 {
-                    clientConnection.Pipeline()->InitServerConnection(serverSockfd);
-                    clientConnection.Pipeline()->PipelineManager().LinkSockfdToExistingPipeline(serverSockfd,clientConnection.Pipeline());
+                    auto pipeline =  clientConnection.Pipeline().lock();
+                    if(pipeline)
+                    {
+                        pipeline->InitServerConnection(serverSockfd);
+                        pipeline->PipelineManager().LinkSockfdToExistingPipeline(serverSockfd,pipeline);
+                    }
+
 
                     m_connetionState = ConnectionState::WaitingForResponse;
                     return nullptr;
@@ -261,7 +200,7 @@ namespace Proxy::SOCKS5Flow
 
             serverConnection.Buffer().Clear();
             clientConnection.Buffer().Clear();
-//            std::cout << "[SOCKS5 Handshake Succeed]\n";
+
             return std::make_unique<TLSFlow::TLSReceivingClientHello>();
         }
 

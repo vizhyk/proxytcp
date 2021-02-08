@@ -16,13 +16,10 @@ namespace Proxy
         static Status EpollWait(int32_t epollfd, epoll_event* epollEvents, uint32_t epollEventsSize, int32_t& socketsWithEvent) noexcept;
         static Status BindSocketToPort(int32_t& sockfd, uint16_t port) noexcept;
         static Status MakeSocketNonblocking(int32_t sockfd) noexcept;
-        static void PrintStatus(const Status& status) noexcept;
-        static void PrintStatusAndTerminateProcess(const Status& status) noexcept;
 
         std::shared_ptr<ConversationPipeline> FindConversationPipeline(int32_t sockfd) noexcept;
 
         std::shared_ptr<ConversationPipeline> AddConversationPipeline(int32_t clientSockfd, int32_t epollfd);
-        std::shared_ptr<ConversationPipeline> LinkSockfdToPipeline(int32_t sockfd, std::shared_ptr<ConversationPipeline> pipelinePtr);
 
         Status AcceptNewConnectionSocket(int32_t listeningSocket, int32_t epollfd) noexcept;
 

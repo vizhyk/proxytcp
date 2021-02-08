@@ -37,13 +37,6 @@ namespace Proxy
         ev.events = eventFlags;
         ev.data.fd = sockfd;
 
-//        ev.data.ptr = pipeline;
-//        if(ev.data.ptr == nullptr)
-//        {
-//            status = Status(Status::Error::NoConversationPipelineFound);
-//            return status;
-//        }
-
         if(epoll_ctl(epollfd, EPOLL_CTL_ADD, sockfd, &ev) == -1)
         {
             status = Status::Error::BadEpollCTL;
@@ -110,19 +103,6 @@ namespace Proxy
             return status;
         }
         return status;
-    }
-
-    void
-    ConnectionManager::PrintStatus(const Status& status) noexcept
-    {
-        std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Status code: " << status.Code() << " | " << strerror(errno) << "]\n";
-    }
-
-    void
-    ConnectionManager::PrintStatusAndTerminateProcess(const Status& status) noexcept
-    {
-        std::cout << "[Thread " << std::this_thread::get_id() << "]" << "\t\t[Status code: " << status.Code() << " | " << strerror(errno) << "]\n";
-        exit(status.Code());
     }
 
     std::shared_ptr<ConversationPipeline>
@@ -202,6 +182,8 @@ namespace Proxy
     {
         Status status;
 
+
+
         socketsWithEvent = epoll_wait(epollfd, epollEvents, epollEventsSize, -1);
         if(socketsWithEvent == -1)
         {
@@ -244,11 +226,6 @@ namespace Proxy
     ConnectionManager::AddConversationPipeline(int32_t clientSockfd, int32_t epollfd)
     {
         return m_conversationManager.AddNewPipeline(clientSockfd,epollfd);
-    }
-
-    std::shared_ptr<ConversationPipeline> ConnectionManager::LinkSockfdToPipeline(int32_t sockfd, std::shared_ptr<ConversationPipeline> pipelinePtr)
-    {
-        return m_conversationManager.LinkSockfdToExistingPipeline(sockfd, pipelinePtr);
     }
 
 }

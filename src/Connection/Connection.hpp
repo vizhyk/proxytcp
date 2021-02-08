@@ -19,7 +19,7 @@ namespace Proxy
         };
 
     public:
-        Connection(int32_t socket, ConnectionState state, std::shared_ptr<ConversationPipeline>& pipeline) noexcept;
+        Connection(int32_t socket, ConnectionState state, const std::shared_ptr<ConversationPipeline>& pipeline) noexcept;
         virtual ~Connection();
 
         Connection(Connection&& connection) noexcept = delete;
@@ -30,15 +30,14 @@ namespace Proxy
         int32_t GetSocketfd() const noexcept;
 
         void ChangeState(ConnectionState state) noexcept;
-        void ChangeSockfd(int32_t sockfd) noexcept;
 
         ByteStream& Buffer() noexcept;
-        std::shared_ptr<ConversationPipeline>& Pipeline() noexcept;
+        std::weak_ptr<ConversationPipeline>& Pipeline() noexcept;
     private:
         int32_t m_socket;
         ConnectionState m_state;
         ByteStream m_buffer;
-        std::shared_ptr<ConversationPipeline> m_pipeline;
+        std::weak_ptr<ConversationPipeline> m_pipeline;
 
     };
 
