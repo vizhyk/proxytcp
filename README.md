@@ -3,7 +3,7 @@
 
 # ProxyTCP
 Proxy that allows to visit some HTTPS websites.
-
+Proxy uses 1080 port by default
 ## Build
 
 Build project using commands below:
@@ -20,64 +20,20 @@ Move to the `bin` folder and run `proxytcp` :
 
 `./proxytcp`
 
-## Components
+Then run browser with appropriate flags or edit its configuratin in settings.
 
-### Application
-Actually runs the `ConnectionManager` using `Run()`
+__Chromium__
 
-### ConnectionManager
-Creates connections and listens for them using `epoll`.
-After new connection occurs, it's being handled.
-After that `ConversationPipeline` is being created from `ClientConnection` 
-in case if connection to the server after SOCSK5 Connetion Request was successful.
+via terminal: `chromium --proxy-server="socks5://127.0.0.1:1080"  `
 
-### ConversationManager
-Operates `ConversationPipeline`:
-- create new pipeline
-- find existing pipeline
+__Firefox__
 
-### ConversationFlow
-Is used to switch differrent states. For instance: Receiving _SOCSK5 ClientHello_ and _TLS CLientHello_. Receiveing _SOCKS5 ConnectionRequest_ 
-- __SOCKS5 flow__
-  - __ClientHelloTransmition__
-    
-    Sends socks5 client hello message to proxy and receives reply from it(proxy).
-  - __ConnectionRequestTransmition__
-    
-    Client sends socks5 connection request message to proxy, proxy tries to connect to the server and sends reply to client.
-- __TLS flow__
-  - __ReceievingClientHello__
-    
-    Proxy waits for valid ClientHello from client and sends it to server.
-  - __ReceivingServerHello__
-    
-    Proxy waits for valid ServerHello from server and sends it to client.
-### ConversationPipeline
-Holds 2 endpoints and current flow which should be executed on the next epoll event.
+via UI: `Settings->Preferences->Network Settings->Manual proxy configuration-> In Socks host: 127.0.0.1 / Port: 1080`
 
-Holds `ClientConnection`, `ServerConnection`, `ConversationFlow`, `PayloadBuffer`
+![](readme-img/output.gif)
 
 
-`ClientConnection`/`ServerConnection` - are wrappers of client/server sockfds
-
-`ConversationFlow` - TLS or SOCKS5 flow
-
-`PayloadBuffer` - used for holding incomplete data (for example part of the TLS record).
-
-
-### Connection
-`Connection` holds buffer for receiving data from socket, socket file desctiptor,
-pointer to `ConversationPipeline` for retrieving `PayloadBuffer` when it's necessary.
-
-`ClientConnection`/`ServerConnection` -  2 derived classes. They're the same as Connection, created only for semantics purposes only. Will be removed soon.
-
-### ByteStream
-Simple wrapper of vector. Holds actually used number of bytes.
-
-### SOCSK5/TLS Parsers
-Are used to parse SOCSK5/TLS data.
-
-Simple UML-diagram below:
-![](readme-img/simple-UML.png)
+# Components
+[Here](Components.md) you can find components description.
 
 
