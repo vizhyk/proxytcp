@@ -149,7 +149,7 @@ namespace Proxy::TrafficParsing
         return true;
     }
 
-    size_t SOCKS5Parser::GetConnectionRequestLength(const uint8_t *buffer, size_t buffersize)
+    int32_t SOCKS5Parser::GetConnectionRequestLength(const uint8_t *buffer, size_t buffersize)
     {
         if(buffersize < 4) { return -1; }
 

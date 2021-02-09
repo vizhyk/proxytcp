@@ -3,15 +3,15 @@
 namespace Proxy
 {
     ByteStream::ByteStream(const uint8_t* data, std::size_t size) noexcept
-        : m_usedBytes(size), m_buffer(data,data+size)
+        : m_buffer(data,data+size), m_usedBytes(size)
     {}
 
     ByteStream::ByteStream(size_t bufferSize) noexcept
-        : m_usedBytes(0), m_buffer(bufferSize)
+        : m_buffer(bufferSize), m_usedBytes(0)
     {}
 
     ByteStream::ByteStream() noexcept
-        : m_usedBytes(0), m_buffer(512)
+        : m_buffer(512), m_usedBytes(0)
     {}
 
     ByteStream::operator bool() const noexcept
@@ -58,6 +58,17 @@ namespace Proxy
 
         return *this;
     }
+
+    std::vector<uint8_t>::const_iterator ByteStream::Begin()
+    {
+        return m_buffer.begin();
+    }
+
+    std::vector<uint8_t>::const_iterator ByteStream::End()
+    {
+        return  m_buffer.end();
+    }
+
 
     std::size_t ByteStream::GetAvailableBytes() const noexcept
     {
@@ -183,7 +194,7 @@ namespace Proxy
         if(m_usedBytes != rhs.m_usedBytes)
             return false;
 
-        for(std::size_t i = 0; i < m_usedBytes - 1; ++i)
+        for(std::size_t i = 0; i < m_usedBytes; ++i)
         {
             if(m_buffer[i] != rhs.m_buffer[i])
             {
@@ -194,9 +205,22 @@ namespace Proxy
         return true;
     }
 
+    void ByteStream::Erase(std::vector<uint8_t>::const_iterator position)
+    {
+        m_buffer.erase(position);
+        --m_usedBytes;
+    }
+
+    void ByteStream::Erase(std::vector<uint8_t>::const_iterator first, std::vector<uint8_t>::const_iterator last, std::size_t numberOfElements)
+    {
+        m_buffer.erase(first,last);
+        m_usedBytes -= numberOfElements;
+    }
+
+
     bool operator==(const ByteStream& lhs, const ByteStream& rhs) noexcept { return lhs.cmp(rhs); }
 
-    bool operator!=(const ByteStream& lhs, const ByteStream& rhs) noexcept { return !( lhs.cmp(rhs) ); }
+    bool operator!=(const ByteStream& lhs, const ByteStream& rhs) noexcept { return !(rhs == lhs); }
 
 }
 

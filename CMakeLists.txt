@@ -57,12 +57,15 @@ add_executable(proxytcp_tests
         src/ConversationPipeline/PayloadBuffer/TLSPayloadBuffer.cpp
         src/ConversationManager/ConversationManager.cpp
         src/ConnectionManager/ConnectionManager.cpp
-        Tests/ByteStream/ByteStreamTests.cpp
-        Tests/TrafficParsing/SOCKS5Parser.cpp
-        Tests/TrafficParsing/TLSParser.cpp
-        Tests/SOCKS5/SOCKS5_test.cpp
-        Tests/Connection/Connection.cpp
-        Tests/ConnectionManager/ConnectionManager_test.cpp
+        Tests/UnitTests/ByteStream/ByteStreamTests.cpp
+        Tests/UnitTests/TrafficParsing/SOCKS5Parser.cpp
+        Tests/UnitTests/TrafficParsing/TLSParser.cpp
+        Tests/UnitTests/SOCKS5/SOCKS5FlowTest.cpp
+        Tests/UnitTests/Connection/Connection.cpp
+        Tests/UnitTests/ConnectionManager/ConnectionManagerTest.cpp
+        Tests/UnitTests/SOCKS5/SOCKS5FlowTest.cpp
+        Tests/UnitTests/ConversationPipeline/ConversationPipelineTest.cpp
+        Tests/UnitTests/TrafficParsing/TLSRecordParser.cpp
         )
 target_link_libraries(proxytcp_tests gtest gtest_main)
 

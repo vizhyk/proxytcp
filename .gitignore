@@ -11,3 +11,5 @@ lib/
 proxytcp
 proxytcp_tests
 googletest/
+curlOutputs/
+CodeCoverage/

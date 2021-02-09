@@ -79,9 +79,25 @@ namespace Proxy::Utilities::Offsets
 
 namespace Proxy::Utilities::TLS::ContentType
 {
+    const uint8_t NewSessionTicket = 0x04;
+    const uint8_t ChangeCipherSpec = 0x14;
+    const uint8_t Alert = 0x15;
     const uint8_t Handshake = 0x16;
     const uint8_t ApplicationData = 0x17;
-    const uint8_t ChangeCipherSpec = 0x14;
+}
+
+namespace Proxy::Utilities::TLS::HandshakeMessageType
+{
+    const uint8_t HelloRequest = 0;
+    const uint8_t ClientHello = 1;
+    const uint8_t ServerHello = 2;
+    const uint8_t Certificate = 11;
+    const uint8_t ServerKeyExchange = 12;
+    const uint8_t CertificateRequest = 13;
+    const uint8_t ServerHelloDone = 14;
+    const uint8_t CertificateVerify = 15;
+    const uint8_t ClientKeyExchange = 16;
+    const uint8_t Finished = 20;
 }
 
 

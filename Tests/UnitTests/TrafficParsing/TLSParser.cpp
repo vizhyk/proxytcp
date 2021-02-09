@@ -3,7 +3,7 @@
 
 #include "src/TrafficParsing/TLS/TLSParser.hpp"
 #include "src/ByteStream/ByteStream.hpp"
-#include "../TestUtilities.hpp"
+#include "Tests/TestUtilities.hpp"
 
 using namespace TestUtilities;
 using namespace Proxy::TrafficParsing;
@@ -42,7 +42,7 @@ TEST(TLSParsingTests, ExtractUint32AndUint16FromNetworkData)
 TEST(TLSParsingTests, GetDomainNameFromTLSPacket)
 {
     Proxy::ByteStream domainName;
-    auto status = TLSParser::GetDomainNameFromTLSPacket(TLSValidClientHelloMessage, sizeof(TLSValidClientHelloMessage), Offsets::TLS::TLS_DATA, domainName);
+    auto status = TLSParser::GetDomainNameFromTLSPacket(TLSValidClientHelloMessage, sizeof(TLSValidClientHelloMessage), domainName);
     EXPECT_TRUE( status.Succeed());
 
     auto expectedDomainNameByteStream = Proxy::ByteStream(TLSExpectedDomainName, sizeof(TLSExpectedDomainName));
@@ -61,7 +61,6 @@ TEST(TLSParsingTests, GetRecordSize)
 
     recordSize = TLSParser::GetTLSRecordPayloadSize(TLSValidShortClientHelloMessage, 1);
     EXPECT_TRUE(recordSize == 0x00);
-
 }
 
 TEST(TLSParsingTests, GetMessageSize)
@@ -72,29 +71,3 @@ TEST(TLSParsingTests, GetMessageSize)
     messageSize = TLSParser::GetTLSMessageSize(TLSValidShortClientHelloMessage + Proxy::HeaderSize::TLS_RECORD + 1, 0);
     EXPECT_TRUE(messageSize == 0x00);
 }
-
-
-TEST(TLSParsingTests, PacketArrivedFully)
-{
-    Proxy::Status status;
-    status = TLSParser::TLSPacketArrivedFully(TestUtilities::TLSValidClientHelloMessage1, sizeof(TestUtilities::TLSValidClientHelloMessage1));
-    EXPECT_TRUE(status.Succeed());
-
-    status = TLSParser::TLSPacketArrivedFully(TestUtilities::TLSValidClientHelloMessage1,sizeof(TestUtilities::TLSValidClientHelloMessage1) - 30);
-    EXPECT_TRUE(status == Proxy::Status::Error::PacketIsNotFull);
-
-    Proxy::ByteStream twoRecordsIn1Packet(TLSValidShortClientHelloMessage_BigMessage, sizeof(TLSValidShortClientHelloMessage_BigMessage));
-    twoRecordsIn1Packet.Insert(TLSRestOfMessage, sizeof(TLSRestOfMessage));
-
-    status = TLSParser::TLSPacketArrivedFully(twoRecordsIn1Packet.GetBuffer(), twoRecordsIn1Packet.GetUsedBytes());
-    EXPECT_TRUE( status.Succeed());
-
-    status = TLSParser::TLSPacketArrivedFully(TLSValidShortClientHelloMessage_BigMessage, sizeof(TLSValidShortClientHelloMessage_BigMessage));
-    EXPECT_TRUE(status == Proxy::Status::Success::WaitingForTLSMessages);
-
-    status = TLSParser::TLSPacketArrivedFully(TLSValidPacket_MultipleMessages, sizeof(TLSValidPacket_MultipleMessages));
-    EXPECT_TRUE(status.Succeed());
-}
-
-
-
