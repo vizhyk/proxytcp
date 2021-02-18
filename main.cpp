@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 #include "src/Application/Application.hpp"
+#include "CommandLineOptionsParser/CommandLineOptionsParser.hpp"
 
 void signalHandler( int signum ) {
     std::cout << "Interrupt signal (" << signum << ") received.\n";

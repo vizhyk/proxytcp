@@ -65,6 +65,7 @@ namespace Proxy
             BadRecordFound = -38,
             BadTLSRecordContentType = -39,
             NoServerHelloFound = -40,
+            PCAPFileWasNotCreated = -41,
         };
 
     public:
