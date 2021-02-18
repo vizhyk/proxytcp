@@ -1,14 +1,13 @@
 #include <src/TrafficParsing/TLS/TLSParser.hpp>
 #include <src/ConversationPipeline/PayloadBuffer/TLSPayloadBuffer.hpp>
 #include "TLSDefault.hpp"
-#include "Connection/ClientConnection.hpp"
-#include "Connection/ServerConnection.hpp"
+#include "Connection/SocketConnection.hpp"
 #include "ConversationPipeline/ConversationPipeline.hpp"
 
 namespace Proxy::TLSFlow
 {
     std::unique_ptr<ConversationFlow>
-    TLSDefault::PerformTransaction(ClientConnection& clientConnection, ServerConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept
+    TLSDefault::PerformTransaction(SocketConnection& clientConnection, SocketConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept
     {
         Status status;
 
@@ -56,11 +55,11 @@ namespace Proxy::TLSFlow
         {
             if(clientSideEvent)
             {
-                status = SendAllDataToConnection(validRecords, serverConnection);
+                status = SendAllDataFromConnection(validRecords, clientConnection);
             }
             else
             {
-                status = SendAllDataToConnection(validRecords, clientConnection);
+                status = SendAllDataFromConnection(validRecords, serverConnection);
             }
 
             if(status.Failed()) { return nullptr; }

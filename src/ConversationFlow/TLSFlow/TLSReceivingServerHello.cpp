@@ -2,16 +2,15 @@
 #include "TLSDefault.hpp"
 #include "TrafficParsing/TLS/TLSParser.hpp"
 #include "Utilities/Constants.hpp"
-#include "Connection/ClientConnection.hpp"
-#include "Connection/ServerConnection.hpp"
+#include "Connection/SocketConnection.hpp"
 #include "ConversationPipeline/ConversationPipeline.hpp"
-#include <ConversationPipeline/PayloadBuffer/TLSPayloadBuffer.hpp>
+#include "ConversationPipeline/PayloadBuffer/TLSPayloadBuffer.hpp"
 #include <iostream>
 
 namespace Proxy::TLSFlow
 {
     std::unique_ptr<ConversationFlow>
-    TLSReceivingServerHello::PerformTransaction(ClientConnection& clientConnection, ServerConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept
+    TLSReceivingServerHello::PerformTransaction(SocketConnection& clientConnection, SocketConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept
     {
         Status status;
 
@@ -75,7 +74,7 @@ namespace Proxy::TLSFlow
         {
             recordBuffer.Insert(changeCipherSpecRecordHolder);
 
-            status = SendAllDataToConnection(recordBuffer, clientConnection);
+            status = SendAllDataFromConnection(recordBuffer, serverConnection);
             if(status.Failed()) { return nullptr; }
 
             payloadHolder.Optdata().waitingForData = true;
@@ -93,7 +92,7 @@ namespace Proxy::TLSFlow
                 recordBuffer.Insert(changeCipherSpecRecordHolder);
             }
 
-            status = SendAllDataToConnection(recordBuffer, clientConnection);
+            status = SendAllDataFromConnection(recordBuffer, serverConnection);
             if(status.Failed()) { return nullptr; }
 
             clientConnection.Buffer().Clear();

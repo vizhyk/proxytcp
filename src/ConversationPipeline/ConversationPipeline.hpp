@@ -3,9 +3,9 @@
 
 #include "src/ConversationFlow/ConversationFlow.hpp"
 #include "src/ConversationFlow/SOCKS5Flow/ClientHelloTransmission.hpp"
-#include <src/ConversationPipeline/PayloadBuffer/PayloadBuffer.hpp>
-#include "src/Connection/ServerConnection.hpp"
-#include "src/Connection/ClientConnection.hpp"
+#include "src/ConversationPipeline/PayloadBuffer/PayloadBuffer.hpp"
+#include "src/Connection/SocketConnection.hpp"
+#include "src/Connection/SocketCapturingConnection.hpp"
 
 namespace Proxy
 {
@@ -37,8 +37,8 @@ namespace Proxy
         }
 
         void PerformTransaction(int32_t sockfdWithEvent) noexcept;
-        void InitClientConnection(int32_t sockfd) noexcept;
         void InitServerConnection(int32_t sockfd) noexcept;
+        void InitClientConnection(int32_t sockfd) noexcept;
 
         int32_t GetEpollfd()      const noexcept;
         int32_t GetClientSockfd() const noexcept;
@@ -52,8 +52,8 @@ namespace Proxy
         bool PayloadIsInitialized() const noexcept;
     private:
 
-        std::unique_ptr<ClientConnection> m_clientConnection;
-        std::unique_ptr<ServerConnection> m_serverConnection;
+        std::unique_ptr<SocketConnection> m_clientConnection;
+        std::unique_ptr<SocketConnection> m_serverConnection;
         std::unique_ptr<ConversationFlow> m_conversationFlow;
         std::unique_ptr<PayloadBuffer> m_payload;
         ConversationManager& m_conversationManager;

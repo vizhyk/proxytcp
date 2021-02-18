@@ -1,8 +1,7 @@
 #include "TrafficParsing/SOCKS5/SOCKS5Parser.hpp"
 #include "Utilities/SOCKS5.hpp"
 #include "ConnectionRequestTransmission.hpp"
-#include "Connection/ClientConnection.hpp"
-#include "Connection/ServerConnection.hpp"
+#include "Connection/SocketConnection.hpp"
 #include "ConversationPipeline/ConversationPipeline.hpp"
 #include "ConversationManager/ConversationManager.hpp"
 #include <netdb.h>
@@ -93,7 +92,7 @@ namespace Proxy::SOCKS5Flow
     }
 
     Status
-    ConnectionRequestTransmission::TryConnectToTheServer(ClientConnection& clientConnection, const uint8_t* serverAddress, uint16_t serverPort, uint8_t addressType, int32_t epollfd, int32_t& serverSockfd) noexcept
+    ConnectionRequestTransmission::TryConnectToTheServer(SocketConnection& clientConnection, const uint8_t* serverAddress, uint16_t serverPort, uint8_t addressType, int32_t epollfd, int32_t& serverSockfd) noexcept
     {
         using namespace Proxy::Utilities;
         Status status {};
@@ -142,7 +141,7 @@ namespace Proxy::SOCKS5Flow
     }
 
     std::unique_ptr<ConversationFlow>
-    ConnectionRequestTransmission::PerformTransaction(ClientConnection& clientConnection, ServerConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept
+    ConnectionRequestTransmission::PerformTransaction(SocketConnection& clientConnection, SocketConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept
     {
         using namespace  TrafficParsing;
 

@@ -1,4 +1,5 @@
 #include <src/TrafficParsing/SOCKS5/SOCKS5Parser.hpp>
+#include <Connection/SocketConnection.hpp>
 #include "ClientHelloTransmission.hpp"
 
 
@@ -6,7 +7,7 @@ namespace Proxy::SOCKS5Flow
 {
 
     std::unique_ptr<ConversationFlow>
-    ClientHelloTransmission::PerformTransaction(ClientConnection& clientConnection, ServerConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept
+    ClientHelloTransmission::PerformTransaction(SocketConnection& clientConnection, SocketConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept
     {
 //        std::cout << "SOCKS5Flow::ClientHello\n";
         using namespace  TrafficParsing;
@@ -16,7 +17,7 @@ namespace Proxy::SOCKS5Flow
 
         if (SOCKS5Parser::IsValidClientHelloMessage(clientConnection.Buffer().GetBuffer(),clientConnection.Buffer().GetUsedBytes()))
         {
-           status = SendAllDataToConnection(GenerateClientInitiationResponse(),clientConnection);
+           status = SendAllDataToConnection(GenerateClientInitiationResponse(), clientConnection);
            if(status.Failed()) { return nullptr; }
 
            clientConnection.Buffer().Clear();

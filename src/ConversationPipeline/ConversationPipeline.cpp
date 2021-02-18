@@ -1,6 +1,6 @@
 #include "ConversationPipeline.hpp"
-#include <src/ConversationManager/ConversationManager.hpp>
-
+#include "src/ConversationManager/ConversationManager.hpp"
+#include "src/Connection/SocketConnection.hpp"
 #include <memory>
 #include <utility>
 
@@ -48,13 +48,13 @@ namespace Proxy
     void
     ConversationPipeline::InitClientConnection(int32_t sockfd) noexcept
     {
-        m_clientConnection = std::make_unique<ClientConnection>(sockfd, Connection::ConnectionState::Connected, shared_from_this());
+        m_clientConnection = std::make_unique<SocketConnection>(sockfd, Connection::ConnectionState::Connected, shared_from_this());
     }
 
     void
     ConversationPipeline::InitServerConnection(int32_t sockfd) noexcept
     {
-        m_serverConnection = std::make_unique<ServerConnection>(sockfd, Connection::ConnectionState::Connected, shared_from_this());
+        m_serverConnection = std::make_unique<SocketConnection>(sockfd, Connection::ConnectionState::Connected, shared_from_this());
     }
 
     ConversationManager&

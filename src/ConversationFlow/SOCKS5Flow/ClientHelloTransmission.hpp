@@ -4,9 +4,7 @@
 #include "../ConversationFlow.hpp"
 #include "ConnectionRequestTransmission.hpp"
 #include <memory>
-
-#include "Connection/ClientConnection.hpp"
-#include "Connection/ServerConnection.hpp"
+#include "Connection/SocketConnection.hpp"
 
 namespace Proxy::SOCKS5Flow
 {
@@ -14,7 +12,7 @@ namespace Proxy::SOCKS5Flow
     {
     public:
         std::unique_ptr<ConversationFlow>
-        PerformTransaction(ClientConnection& clientConnection, ServerConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept override;
+        PerformTransaction(SocketConnection& clientConnection, SocketConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept override;
 
     private:
         static ByteStream GenerateClientInitiationResponse() noexcept;

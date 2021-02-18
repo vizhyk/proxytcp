@@ -2,7 +2,10 @@
 #define PROXYTCP_CONNECTION_HPP
 
 #include <memory>
+#include <csignal>
+#include <sys/socket.h>
 #include "ByteStream/ByteStream.hpp"
+
 
 namespace Proxy
 {
@@ -22,6 +25,9 @@ namespace Proxy
         Connection(int32_t socket, ConnectionState state, const std::shared_ptr<ConversationPipeline>& pipeline) noexcept;
         virtual ~Connection();
 
+        virtual Status ReadData() = 0;
+        virtual Status SendData(const ByteStream& data) = 0;
+
         Connection(Connection&& connection) noexcept = delete;
         Connection& operator=(Connection&& rhs) noexcept = delete;
 
@@ -33,7 +39,7 @@ namespace Proxy
 
         ByteStream& Buffer() noexcept;
         std::weak_ptr<ConversationPipeline>& Pipeline() noexcept;
-    private:
+    protected:
         int32_t m_socket;
         ConnectionState m_state;
         ByteStream m_buffer;

@@ -1,17 +1,16 @@
 #include <iostream>
 #include "TLSReceivingClientHello.hpp"
 #include "TLSReceivingServerHello.hpp"
-#include "Connection/ClientConnection.hpp"
-#include "Connection/ServerConnection.hpp"
+#include "Connection/SocketConnection.hpp"
 #include "src/TrafficParsing/TLS/TLSParser.hpp"
 #include "src/ConversationPipeline/ConversationPipeline.hpp"
-#include <src/ConversationPipeline/PayloadBuffer/TLSPayloadBuffer.hpp>
+#include "src/ConversationPipeline/PayloadBuffer/TLSPayloadBuffer.hpp"
 #include "Utilities/Constants.hpp"
 
 namespace Proxy::TLSFlow
 {
     std::unique_ptr<ConversationFlow>
-    TLSReceivingClientHello::PerformTransaction(ClientConnection& clientConnection, ServerConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept
+    TLSReceivingClientHello::PerformTransaction(SocketConnection& clientConnection, SocketConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept
     {
         Status status;
         status = ReadAllDataFromConnection(clientConnection);
@@ -51,7 +50,7 @@ namespace Proxy::TLSFlow
         {
             if(TrafficParsing::TLSParser::IsClientHelloMessage(recordBuffer.GetBuffer(),recordBuffer.GetUsedBytes(),Utilities::Offsets::TLS::TLS_DATA))
             {
-                status = SendAllDataToConnection(recordBuffer, serverConnection);
+                status = SendAllDataFromConnection(recordBuffer, clientConnection);
                 if(status.Failed()) { return nullptr; }
 
                 payloadHolder.Optdata().waitingForData = true;
@@ -74,7 +73,7 @@ namespace Proxy::TLSFlow
                 }
                 std::cout << reinterpret_cast<const char*>(domainName.GetBuffer()) << "\n";
 
-                status = SendAllDataToConnection(recordBuffer, serverConnection);
+                status = SendAllDataFromConnection(recordBuffer, clientConnection);
                 if(status.Failed()) { return nullptr; }
 
                 clientConnection.Buffer().Clear();

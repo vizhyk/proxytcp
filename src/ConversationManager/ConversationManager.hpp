@@ -3,9 +3,8 @@
 
 #include "src/ConversationPipeline/ConversationPipeline.hpp"
 #include "src/Utilities/NonCopyable.hpp"
+#include "Connection/SocketConnection.hpp"
 
-#include "Connection/ClientConnection.hpp"
-#include "Connection/ServerConnection.hpp"
 
 #include <map>
 #include <memory>
