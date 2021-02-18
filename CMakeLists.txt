@@ -18,8 +18,6 @@ add_executable(proxytcp
         src/ConversationFlow/TLSFlow/TLSDefault.cpp
         src/ConversationFlow/ConversationFlow.cpp
         src/Connection/Connection.cpp
-        src/Connection/ClientConnection.cpp
-        src/Connection/ServerConnection.cpp
         src/ByteStream/ByteStream.cpp
         src/TrafficParsing/SOCKS5/SOCKS5Parser.cpp
         src/TrafficParsing/TLS/TLSParser.cpp
@@ -31,6 +29,8 @@ add_executable(proxytcp
         src/ConversationManager/ConversationManager.cpp
         src/ConnectionManager/ConnectionManager.cpp
         src/Application/Application.cpp
+        src/Connection/SocketConnection.cpp
+        src/Connection/SocketCapturingConnection.cpp
         main.cpp
         )
 
@@ -45,8 +45,6 @@ add_executable(proxytcp_tests
         src/ConversationFlow/TLSFlow/TLSDefault.cpp
         src/ConversationFlow/ConversationFlow.cpp
         src/Connection/Connection.cpp
-        src/Connection/ClientConnection.cpp
-        src/Connection/ServerConnection.cpp
         src/ByteStream/ByteStream.cpp
         src/TrafficParsing/SOCKS5/SOCKS5Parser.cpp
         src/TrafficParsing/TLS/TLSParser.cpp

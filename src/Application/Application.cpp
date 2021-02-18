@@ -1,5 +1,6 @@
 #include "Application.hpp"
-#include "Connection/ClientConnection.hpp"
+#include "Connection/SocketConnection.hpp"
+
 
 namespace Proxy
 {

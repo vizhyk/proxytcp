@@ -2,7 +2,7 @@
 #include <fcntl.h>
 #include <iostream>
 #include <thread>
-#include "Connection/ClientConnection.hpp"
+#include "Connection/SocketConnection.hpp"
 
 #include "ConnectionManager.hpp"
 

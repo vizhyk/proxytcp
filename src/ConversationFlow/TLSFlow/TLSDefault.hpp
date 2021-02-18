@@ -2,6 +2,7 @@
 #define PROXYTCP_TLSDEFAULT_HPP
 
 
+#include "Connection/SocketConnection.hpp"
 #include "ConversationFlow/ConversationFlow.hpp"
 
 namespace Proxy::TLSFlow
@@ -10,7 +11,7 @@ namespace Proxy::TLSFlow
     {
     public:
         std::unique_ptr<ConversationFlow>
-        PerformTransaction(ClientConnection& clientConnection, ServerConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept override;
+        PerformTransaction(SocketConnection& clientConnection, SocketConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept override;
     };
 }
 
