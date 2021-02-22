@@ -11,13 +11,13 @@ namespace Proxy::PCAP
     class PCAPFile
     {
     public:
-        explicit PCAPFile(const std::string& filename) noexcept;
+        PCAPFile() noexcept = default;
 
         PCAPFile(const PCAPFile& pcap) noexcept = delete;
         PCAPFile& operator=(const PCAPFile& pcap) noexcept = delete;
 
     public:
-        virtual Status ReadAllDataFromFile(ByteStream& data) = 0;
+        virtual Status ReadAllDataFromFile() = 0;
         virtual Status Write(const ByteStream& data) = 0;
         virtual Status Write(const uint8_t* data, std::size_t dataSize) = 0;
 

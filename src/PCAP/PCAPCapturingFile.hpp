@@ -8,7 +8,7 @@ namespace Proxy::PCAP
     class PCAPCapturingFile : public PCAPFile
     {
     public:
-        Status ReadAllDataFromFile(ByteStream& data) final = 0;
+        Status ReadAllDataFromFile() final = 0;
 
         Status Write(const ByteStream& data) override;
         Status Write(const uint8_t* data, std::size_t dataSize) override;

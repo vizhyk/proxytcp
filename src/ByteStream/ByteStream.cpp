@@ -1,4 +1,7 @@
 #include <iterator>
+#include <algorithm>
+#include <fstream>
+
 #include "ByteStream.hpp"
 
 namespace Proxy
@@ -107,10 +110,13 @@ namespace Proxy
         m_usedBytes = 0;
     }
 
-    void ByteStream::Insert( std::istream_iterator<uint8_t> first,  std::istream_iterator<uint8_t> last, std::size_t size) noexcept
+    void ByteStream::Insert(std::basic_istream<uint8_t>& is) noexcept
     {
-        m_buffer.insert(m_buffer.begin(),first,last);
-        m_usedBytes += size;
+        auto bytesBeforeInsert = m_buffer.size();
+
+        std::for_each(std::istreambuf_iterator<uint8_t>(is), std::istreambuf_iterator<uint8_t>(), [this](const uint8_t c){ m_buffer.push_back(c); });
+
+        m_usedBytes += m_buffer.size() - bytesBeforeInsert;
     }
 
     void ByteStream::Insert(const uint8_t* data, uint32_t dataSize) noexcept

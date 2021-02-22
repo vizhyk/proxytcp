@@ -24,6 +24,7 @@ ADD_LIBRARY(SourceFiles STATIC
         src/TrafficParsing/TLS/TLSParser.cpp
         src/TrafficParsing/TLS/TLSRecordParser.cpp
         src/TrafficParsing/TLS/TLSMessageParser.cpp
+        src/TrafficParsing/PCAP/PCAPParser.cpp
         src/ConversationPipeline/ConversationPipeline.cpp
         src/ConversationPipeline/PayloadBuffer/PayloadBuffer.cpp
         src/ConversationPipeline/PayloadBuffer/TLSPayloadBuffer.cpp
@@ -35,8 +36,8 @@ ADD_LIBRARY(SourceFiles STATIC
         src/PCAP/PCAPFile.cpp
         src/PCAP/PCAPCapturingFile.cpp
         src/PCAP/PCAPReplayFile.cpp
-        src/CommandLineOptions/CommandLineOptions.cpp
-        src/CommandLineOptionsParser/CommandLineOptionsParser.cpp
+#        src/CommandLineOptions/CommandLineOptions.cpp
+#        src/CommandLineOptionsParser/CommandLineOptionsParser.cpp
         )
 
 add_executable(proxytcp main.cpp)

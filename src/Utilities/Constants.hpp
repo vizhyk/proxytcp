@@ -10,6 +10,7 @@ namespace Proxy::HeaderSize
     const uint8_t TCP = 32;
     const uint8_t TLS_RECORD = 5;
     const uint8_t TLS_MESSAGE = 4;
+    const uint8_t PCAP_GLOBAL_HEADER = 24;
 
 } // namespace Proxy::HeaderSize
 
@@ -100,6 +101,20 @@ namespace Proxy::Utilities::TLS::HandshakeMessageType
     const uint8_t Finished = 20;
 }
 
+namespace Proxy::PCAP
+{
+    struct GlobalHeader
+    {
+        uint32_t magicNumber;
+        uint16_t versionMajor;
+        uint16_t versionMinor;
+        int32_t thisZone;
+        uint32_t timestampAccuracy;
+        uint32_t maxPacketSize;
+        uint32_t dataLinkType;
+    };
+
+}
 
 namespace Proxy::Utilities::Ports
 {
