@@ -1,3 +1,4 @@
+#include <iostream>
 #include "PCAPCapturingFile.hpp"
 
 namespace Proxy::PCAP
@@ -20,5 +21,30 @@ namespace Proxy::PCAP
         m_pcapfile.write(reinterpret_cast<const char*>(data), dataSize);
 
         return status;
+    }
+
+    PCAPCapturingFile::PCAPCapturingFile(const std::string& filename) noexcept
+    {
+        m_pcapfile.open(filename, std::ios_base::binary);
+        if(!m_pcapfile.is_open())
+        {
+            std::cout << "[No pcap file was opened]\n";
+            exit(1);
+        }
+    }
+
+    void PCAPCapturingFile::Open(const std::string& filename) noexcept
+    {
+        m_pcapfile.open(filename, std::ios_base::binary);
+        if(!m_pcapfile.is_open())
+        {
+            std::cout << "[No pcap file was opened]\n";
+            exit(1);
+        }
+    }
+
+    bool PCAPCapturingFile::IsOpened() noexcept
+    {
+        return m_pcapfile.is_open();
     }
 }

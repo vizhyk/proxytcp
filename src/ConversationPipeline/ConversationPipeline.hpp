@@ -6,6 +6,7 @@
 #include "src/ConversationPipeline/PayloadBuffer/PayloadBuffer.hpp"
 #include "src/Connection/SocketConnection.hpp"
 #include "src/Connection/SocketCapturingConnection.hpp"
+#include "src/PCAP/PCAPCapturingFile.hpp"
 
 namespace Proxy
 {
@@ -39,6 +40,7 @@ namespace Proxy
         void PerformTransaction(int32_t sockfdWithEvent) noexcept;
         void InitServerConnection(int32_t sockfd) noexcept;
         void InitClientConnection(int32_t sockfd) noexcept;
+        void OpenPCAPFile(const std::string& filename) noexcept;
 
         int32_t GetEpollfd()      const noexcept;
         int32_t GetClientSockfd() const noexcept;
@@ -48,16 +50,17 @@ namespace Proxy
         bool IsServerConnectionInitialized() const noexcept;
 
         ConversationManager& PipelineManager() noexcept;
-
+        PCAP::PCAPCapturingFile& PCAPFile() noexcept;
         bool PayloadIsInitialized() const noexcept;
-    private:
 
+    private:
         std::unique_ptr<SocketConnection> m_clientConnection;
         std::unique_ptr<SocketConnection> m_serverConnection;
         std::unique_ptr<ConversationFlow> m_conversationFlow;
         std::unique_ptr<PayloadBuffer> m_payload;
         ConversationManager& m_conversationManager;
         int32_t m_epollfd;
+        std::unique_ptr<PCAP::PCAPCapturingFile> m_pcapfile;
 
     };
 

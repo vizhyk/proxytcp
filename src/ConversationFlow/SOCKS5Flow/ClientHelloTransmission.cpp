@@ -1,5 +1,5 @@
-#include <src/TrafficParsing/SOCKS5/SOCKS5Parser.hpp>
-#include <Connection/SocketConnection.hpp>
+#include "src/TrafficParsing/SOCKS5/SOCKS5Parser.hpp"
+#include "Connection/SocketConnection.hpp"
 #include "ClientHelloTransmission.hpp"
 
 

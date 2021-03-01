@@ -21,6 +21,21 @@ namespace Proxy::PCAP
     {
         ByteStream packet;
 
+        /*
+         *  auto pcapPacketSize = PCAPParser::GetPacketSize();
+         *  offset += HeaderSize::PCAP_PACKET_HEADER
+         *  offset += ethheader
+         *
+         *  srcIP = getSourceIPAddress()
+         *  dstIP = ..../
+         *
+         *  offset += HeaderSize::IP
+         *  offset += HeaderSize::TCP
+         *
+         *  packetPayloadSize = pcapPacketSize - HeaderSize::PCAP - HeaderSize::ETH - HeaderSize::IP - HeaderSize::TCP;
+         *  packet.Insert(m_pcapFileBuffer.GetBuffer() + m_pcapFileBufferOffset, packetPayloadSize);
+         */
+
 
 
 

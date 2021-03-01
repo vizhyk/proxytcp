@@ -8,29 +8,21 @@ namespace Proxy
     Status
     ConversationFlow::ReadAllDataFromConnection(SocketConnection& connection) noexcept
     {
-        connection.ReadData();
-        return connection.ReadData();
+        return dynamic_cast<SocketCapturingConnection*>(&connection)->ReadData();
     }
 
     Status
-    ConversationFlow::SendAllDataFromConnection(const ByteStream& data, SocketConnection& destination) noexcept
+    ConversationFlow::SendAllDataFromConnection(const ByteStream& data, SocketConnection& connection) noexcept
     {
-        destination.SendData(data);
-        return destination.SendData(data);
+        return connection.SendData(data);
     }
 
     Status ConversationFlow::SendAllDataToConnection(const ByteStream& data, SocketConnection& destination) noexcept
     {
         Status status;
-<<<<<<< HEAD
         auto onetimeDataSent = send(destination.GetSocketfd(), data.GetBuffer(), data.GetUsedBytes(),
                                     MSG_NOSIGNAL);
         if (onetimeDataSent == -1)
-=======
-
-        auto onetimeDataSent = send(recipientConnection.GetSocketfd(), data.GetBuffer() , data.GetUsedBytes(), MSG_NOSIGNAL);
-        if(onetimeDataSent == -1)
->>>>>>> bed8039 (Entry commit)
         {
             status = Status(Status::Error::BadSendingData);
             return status;

@@ -8,19 +8,19 @@ namespace Proxy
 
     TEST(ConnectionTest, ChangeState)
     {
-        ClientConnection connection(0, Connection::ConnectionState::NotConnected, nullptr);
+        ClientConnection connection(0, Connection::ConnectionSide::Server, nullptr);
 
-        connection.ChangeState(Connection::ConnectionState::Connected);
+        connection.ChangeState(Connection::ConnectionSide::Client);
 
-        EXPECT_EQ(connection.GetState() , Connection::ConnectionState::Connected);
+        EXPECT_EQ(connection.GetConnectionSide() , Connection::ConnectionSide::Client);
     }
 
     TEST(ConnectionTest, ConnectionEquality)
     {
-        ClientConnection  connection(0, Connection::ConnectionState::NotConnected, nullptr);
-        ClientConnection connection1(2, Connection::ConnectionState::NotConnected, nullptr);
-        ClientConnection connection2(0, Connection::ConnectionState::NotConnected, nullptr);
-        ServerConnection connection3(4, Connection::ConnectionState::NotConnected, nullptr);
+        ClientConnection  connection(0, Connection::ConnectionSide::Server, nullptr);
+        ClientConnection connection1(2, Connection::ConnectionSide::Server, nullptr);
+        ClientConnection connection2(0, Connection::ConnectionSide::Server, nullptr);
+        ServerConnection connection3(4, Connection::ConnectionSide::Server, nullptr);
 
 
         EXPECT_TRUE(connection != connection1);
@@ -30,7 +30,7 @@ namespace Proxy
 
     TEST(ConnectionTest, GetNullptrPipeline)
     {
-        ClientConnection  connection(0, Connection::ConnectionState::NotConnected, nullptr);
+        ClientConnection  connection(0, Connection::ConnectionSide::Server, nullptr);
 
         auto fakePipeline = connection.Pipeline();
 

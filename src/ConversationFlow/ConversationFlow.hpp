@@ -15,7 +15,7 @@ namespace Proxy
 
     protected:
         static Status ReadAllDataFromConnection(SocketConnection& connection) noexcept;
-        static Status SendAllDataFromConnection(const ByteStream& data, SocketConnection& destination) noexcept;
+        static Status SendAllDataFromConnection(const ByteStream& data, SocketConnection& connection) noexcept;
         static Status SendAllDataToConnection(const ByteStream& data, SocketConnection& destination) noexcept;
     };
 

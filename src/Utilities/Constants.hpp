@@ -11,6 +11,7 @@ namespace Proxy::HeaderSize
     const uint8_t TLS_RECORD = 5;
     const uint8_t TLS_MESSAGE = 4;
     const uint8_t PCAP_GLOBAL_HEADER = 24;
+    const uint8_t PCAP_PACKET_HEADER = 16;
 
 } // namespace Proxy::HeaderSize
 
