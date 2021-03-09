@@ -17,18 +17,23 @@ namespace Proxy
         return connection.SendData(data);
     }
 
-    Status ConversationFlow::SendAllDataToConnection(const ByteStream& data, SocketConnection& destination) noexcept
+    Status ConversationFlow::SendAllDataToConnection(const ByteStream& data, SocketConnection& recipient) noexcept
     {
-        Status status;
-        auto onetimeDataSent = send(destination.GetSocketfd(), data.GetBuffer(), data.GetUsedBytes(),
-                                    MSG_NOSIGNAL);
-        if (onetimeDataSent == -1)
-        {
-            status = Status(Status::Error::BadSendingData);
-            return status;
-        }
+//        Status status;
+//        auto onetimeDataSent = send(destination.GetSocketfd(), data.GetBuffer(), data.GetUsedBytes(),
+//                                    MSG_NOSIGNAL);
+//        if (onetimeDataSent == -1)
+//        {
+//            status = Status(Status::Error::BadSendingData);
+//            return status;
+//        }
+//
+//        return status;
 
-        return status;
+        return SocketCapturingConnection::SendDataTo(data, recipient);
+
+
+
     }
 
 }

@@ -10,6 +10,8 @@ namespace Proxy::TLSFlow
     class TLSDefault : public ConversationFlow
     {
     public:
+        TLSDefault() noexcept { m_flowState = FlowState::TLSDefault; }
+    public:
         std::unique_ptr<ConversationFlow>
         PerformTransaction(SocketConnection& clientConnection, SocketConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept override;
     };

@@ -1,6 +1,7 @@
 #ifndef PROXYTCP_CONVERSATIONPIPELINE_HPP
 #define PROXYTCP_CONVERSATIONPIPELINE_HPP
 
+#include <Utilities/SYNACKData.hpp>
 #include "src/ConversationFlow/ConversationFlow.hpp"
 #include "src/ConversationFlow/SOCKS5Flow/ClientHelloTransmission.hpp"
 #include "src/ConversationPipeline/PayloadBuffer/PayloadBuffer.hpp"
@@ -45,6 +46,7 @@ namespace Proxy
         int32_t GetEpollfd()      const noexcept;
         int32_t GetClientSockfd() const noexcept;
         int32_t GetServerSockfd() const noexcept;
+        ConversationFlow::FlowState GetConversationFlowState() const noexcept;
 
         bool IsClientConnectionInitialized() const noexcept;
         bool IsServerConnectionInitialized() const noexcept;
@@ -52,6 +54,8 @@ namespace Proxy
         ConversationManager& PipelineManager() noexcept;
         PCAP::PCAPCapturingFile& PCAPFile() noexcept;
         bool PayloadIsInitialized() const noexcept;
+        SYNACKData& ClientSYNACK() noexcept { return m_clientSYNACKData; };
+        SYNACKData& ServerSYNACK() noexcept { return m_serverSYNACKData; };
 
     private:
         std::unique_ptr<SocketConnection> m_clientConnection;
@@ -60,7 +64,10 @@ namespace Proxy
         std::unique_ptr<PayloadBuffer> m_payload;
         ConversationManager& m_conversationManager;
         int32_t m_epollfd;
+
         std::unique_ptr<PCAP::PCAPCapturingFile> m_pcapfile;
+        SYNACKData m_clientSYNACKData { 1, 1 };
+        SYNACKData m_serverSYNACKData { 1, 1 };
 
     };
 

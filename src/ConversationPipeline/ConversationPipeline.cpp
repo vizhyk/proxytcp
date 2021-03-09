@@ -90,4 +90,10 @@ namespace Proxy
         return *m_pcapfile;
     }
 
+    ConversationFlow::FlowState ConversationPipeline::GetConversationFlowState() const noexcept
+    {
+        return m_conversationFlow->GetState();
+    }
+
+
 }

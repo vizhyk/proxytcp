@@ -31,7 +31,7 @@ Is used to switch differrent states. For instance: Receiving _SOCSK5 ClientHello
 
       Proxy waits for valid ServerHello from server and sends it to client.
 ### ConversationPipeline
-Holds 2 endpoints and current flow which should be executed on the next epoll event.
+Holds 2 defaultEndpoints and current flow which should be executed on the next epoll event.
 
 Holds `ClientConnection`, `ServerConnection`, `ConversationFlow`, `PayloadBuffer`
 

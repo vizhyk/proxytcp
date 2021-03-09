@@ -15,7 +15,7 @@ namespace Proxy::PCAP
 
         bool IsOpened() noexcept;
 
-        Status ReadAllDataFromFile() override {};
+        Status ReadAllDataFromFile() override { return Status(Status::Error::NoDataReadFromSocket); };
 
         Status Write(const ByteStream& data) override;
         Status Write(const uint8_t* data, std::size_t dataSize) override;

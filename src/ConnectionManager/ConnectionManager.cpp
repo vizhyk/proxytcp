@@ -3,7 +3,7 @@
 #include <iostream>
 #include <thread>
 #include "Connection/SocketConnection.hpp"
-#include "TrafficParsing/PCAP/PCAPParser.hpp"
+#include "PCAPGenerator/PCAPGenerator.hpp"
 #include "ConnectionManager.hpp"
 
 namespace Proxy
@@ -159,7 +159,8 @@ namespace Proxy
                 if(!pipeline->PCAPFile().IsOpened())
                 {
                     pipeline->PCAPFile().Open(filename);
-                    pipeline->PCAPFile().Write(TrafficParsing::PCAPParser::GeneratePCAPGlobalHeader());
+                    pipeline->PCAPFile().Write(PCAP::PCAPGenerator::GeneratePCAPGlobalHeader());
+                    pipeline->PCAPFile().Write(PCAP::PCAPGenerator::Generate3WayTCPHandshake());
                 }
 
                 pipeline->PerformTransaction(events[sockfdID].data.fd);

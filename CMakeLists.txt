@@ -24,7 +24,7 @@ ADD_LIBRARY(SourceFiles STATIC
         src/TrafficParsing/TLS/TLSParser.cpp
         src/TrafficParsing/TLS/TLSRecordParser.cpp
         src/TrafficParsing/TLS/TLSMessageParser.cpp
-        src/TrafficParsing/PCAP/PCAPParser.cpp
+        src/PCAPGenerator/PCAPGenerator.cpp
         src/ConversationPipeline/ConversationPipeline.cpp
         src/ConversationPipeline/PayloadBuffer/PayloadBuffer.cpp
         src/ConversationPipeline/PayloadBuffer/TLSPayloadBuffer.cpp

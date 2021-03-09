@@ -1,6 +1,7 @@
 #include "SocketCapturingConnection.hpp"
 #include "ConversationPipeline/ConversationPipeline.hpp"
-#include "TrafficParsing/PCAP/PCAPParser.hpp"
+#include "PCAPGenerator/PCAPGenerator.hpp"
+
 namespace Proxy
 {
     SocketCapturingConnection::SocketCapturingConnection(int32_t sockfd, ConnectionSide state, const std::shared_ptr<ConversationPipeline>& pipeline) noexcept
@@ -33,73 +34,92 @@ namespace Proxy
         auto currentPipeline = m_pipeline.lock();
         if(!currentPipeline)
         {
-            status = Status(Status::Error::BadGetAddrInfo);
+            status = Status(Status::Error::NoPipelineFound);
         }
 
-        CaptureData(currentPipeline->PCAPFile());
+        //if data was sended from client
+        if(m_connectionSide == ConnectionSide::Client)
+        {
+            CaptureData(currentPipeline->PCAPFile(), m_buffer, currentPipeline->ClientSYNACK(), currentPipeline->ServerSYNACK(), ConnectionSide::Client);
+        }
+            //if data was sended from server
+        else
+        {
+            CaptureData(currentPipeline->PCAPFile(), m_buffer, currentPipeline->ServerSYNACK(), currentPipeline->ClientSYNACK(), ConnectionSide::Server);
+        }
 
         return status;
     }
 
-//    Status SocketCapturingConnection::SendData(const ByteStream& data)
-//    {
-//        int32_t endpointSockfd;
-//        Status status;
-//        auto currentPipeline = m_pipeline.lock();
-//        if(!currentPipeline)
-//        {
-//            status = Status(Status::Error::BadGetAddrInfo);
-//        }
-//        if(m_socket == currentPipeline->GetClientSockfd())
-//        {
-//            endpointSockfd = currentPipeline->GetServerSockfd();
-//        }
-//        if(m_socket == currentPipeline->GetServerSockfd())
-//        {
-//            endpointSockfd = currentPipeline->GetClientSockfd();
-//        }
-//
-//        auto onetimeDataSent = send(endpointSockfd, data.GetBuffer(), data.GetUsedBytes(),
-//                                    MSG_NOSIGNAL);
-//        if (onetimeDataSent == -1)
-//        {
-//            status = Status(Status::Error::BadSendingData);
-//            return status;
-//        }
-//
-//        return status;
-//    }
 
-    void SocketCapturingConnection::CaptureData(PCAP::PCAPCapturingFile& file)
+
+    void SocketCapturingConnection::CaptureData(PCAP::PCAPCapturingFile& file, const ByteStream& data, SYNACKData& senderSYNACKData, SYNACKData& recipientSYNACKData, ConnectionSide senderConnectionSide)
     {
         uint32_t sourceIPv4 = 0;
         uint32_t destinationIPv4 = 0;
         uint16_t sourcePort = 0;
         uint16_t destinationPort = 0;
 
-        if(m_connectionSide == ConnectionSide::Server)
+        if(senderConnectionSide == ConnectionSide::Server)
         {
-            sourceIPv4 = TrafficParsing::PCAPParser::ServerIPv4;
-            sourcePort = TrafficParsing::PCAPParser::ServerPort;
-            destinationIPv4 = TrafficParsing::PCAPParser::ClientIPv4;
-            destinationPort = TrafficParsing::PCAPParser::ClientPort;
-
+            sourceIPv4 = PCAP::PCAPGenerator::defaultEndpoints.server.ipv4;
+            sourcePort = PCAP::PCAPGenerator::defaultEndpoints.server.port;
+            destinationIPv4 = PCAP::PCAPGenerator::defaultEndpoints.client.ipv4;
+            destinationPort = PCAP::PCAPGenerator::defaultEndpoints.client.port;
         }
         else
         {
-            sourceIPv4 = TrafficParsing::PCAPParser::ClientIPv4;
-            sourcePort = TrafficParsing::PCAPParser::ClientPort;
-            destinationIPv4 = TrafficParsing::PCAPParser::ServerIPv4;
-            destinationPort = TrafficParsing::PCAPParser::ServerPort;
+            sourceIPv4 = PCAP::PCAPGenerator::defaultEndpoints.client.ipv4;
+            sourcePort = PCAP::PCAPGenerator::defaultEndpoints.client.port;
+            destinationIPv4 = PCAP::PCAPGenerator::defaultEndpoints.server.ipv4;
+            destinationPort = PCAP::PCAPGenerator::defaultEndpoints.server.port;
         }
 
-        file.Write(TrafficParsing::PCAPParser::GeneratePCAPPacketHeader(m_buffer.GetUsedBytes()));
-        file.Write(TrafficParsing::PCAPParser::GenerateEthHeader());
-        file.Write(TrafficParsing::PCAPParser::GenerateIPv4Header(m_buffer.GetUsedBytes(), sourceIPv4, destinationIPv4));
-        file.Write(TrafficParsing::PCAPParser::GenerateTCPHeader(TrafficParsing::PCAPParser::TCPSequenceNumber, sourcePort, destinationPort));
-        file.Write(m_buffer);
+        file.Write(PCAP::PCAPGenerator::GeneratePCAPPacketHeader(data.GetUsedBytes()));
+        file.Write(PCAP::PCAPGenerator::GenerateEthHeader());
+        file.Write(PCAP::PCAPGenerator::GenerateIPv4Header(data.GetUsedBytes(), sourceIPv4, destinationIPv4));
+        file.Write(PCAP::PCAPGenerator::GenerateTCPHeader(senderSYNACKData, recipientSYNACKData , data.GetUsedBytes(),
+                                                                    sourcePort, destinationPort, static_cast<uint16_t>(TCP::Flags::PSHACK)));
+        file.Write(data);
 
-        TrafficParsing::PCAPParser::TCPSequenceNumber++;
+        file.Write(PCAP::PCAPGenerator::GenerateNoTCPPayloadPacket(recipientSYNACKData, senderSYNACKData, destinationIPv4, destinationPort,
+                                                                             sourceIPv4, sourcePort, static_cast<uint16_t>(TCP::Flags::ACK)));
+
+    }
+
+    Status SocketCapturingConnection::SendDataTo(const ByteStream& data, SocketConnection& recipientConnection) noexcept
+    {
+        Status status;
+        auto onetimeDataSent = send(recipientConnection.GetSocketfd(), data.GetBuffer(), data.GetUsedBytes(),
+                                    MSG_NOSIGNAL);
+        if (onetimeDataSent == -1)
+        {
+            status = Status(Status::Error::BadSendingData);
+            return status;
+        }
+
+        auto currentPipeline = recipientConnection.Pipeline().lock();
+        if(!currentPipeline)
+        {
+            status = Status(Status::Error::NoPipelineFound);
+        }
+
+        if(currentPipeline->GetConversationFlowState() == ConversationFlow::FlowState::SOCKS5ClientHello ||
+           currentPipeline->GetConversationFlowState() == ConversationFlow::FlowState::SOCKS5ConnectionRequest)
+        {
+            //if data was sended from server
+            if(recipientConnection.GetConnectionSide() == ConnectionSide::Client)
+            {
+                CaptureData(currentPipeline->PCAPFile(), data, currentPipeline->ServerSYNACK(), currentPipeline->ClientSYNACK(), ConnectionSide::Server);
+            }
+            //if data was sended from client
+            else
+            {
+                CaptureData(currentPipeline->PCAPFile(), data, currentPipeline->ClientSYNACK(), currentPipeline->ServerSYNACK(), ConnectionSide::Client);
+            }
+        }
+
+        return status;
     }
 
 

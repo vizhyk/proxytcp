@@ -9,6 +9,8 @@ namespace Proxy::TLSFlow
     class TLSReceivingServerHello : public ConversationFlow
     {
     public:
+        TLSReceivingServerHello() noexcept { m_flowState = FlowState::TLSServerHello; }
+    public:
         std::unique_ptr<ConversationFlow>
         PerformTransaction(SocketConnection& clientConnection, SocketConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept override;
     };
