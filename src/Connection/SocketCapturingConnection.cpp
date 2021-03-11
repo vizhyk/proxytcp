@@ -1,5 +1,5 @@
 #include "SocketCapturingConnection.hpp"
-#include "ConversationPipeline/ConversationPipeline.hpp"
+#include "ConversationPipeline/CapturingConversationPipeline.hpp"
 #include "PCAPGenerator/PCAPGenerator.hpp"
 
 namespace Proxy
@@ -31,10 +31,11 @@ namespace Proxy
 
         m_buffer.Insert(tmpBuffer, receivedData);
 
-        auto currentPipeline = m_pipeline.lock();
+        const auto currentPipeline = dynamic_cast<CapturingConversationPipeline*>(m_pipeline.lock().get());
         if(!currentPipeline)
         {
             status = Status(Status::Error::NoPipelineFound);
+            return status;
         }
 
         //if data was sended from client
@@ -98,10 +99,12 @@ namespace Proxy
             return status;
         }
 
-        auto currentPipeline = recipientConnection.Pipeline().lock();
+        const auto currentPipeline = dynamic_cast<CapturingConversationPipeline*>(recipientConnection.Pipeline().lock().get());
+
         if(!currentPipeline)
         {
             status = Status(Status::Error::NoPipelineFound);
+            return status;
         }
 
         if(currentPipeline->GetConversationFlowState() == ConversationFlow::FlowState::SOCKS5ClientHello ||

@@ -2,30 +2,37 @@
 #define PROXYTCP_COMMANDLINEOPTIONS_HPP
 
 #include <cstdint>
+#include <getopt.h>
 #include <string>
+
+#include "src/ExecutionModeType/ExecutionModeType.hpp"
 
 namespace Proxy
 {
     class CommandLineOptions
     {
     public:
-        CommandLineOptions() noexcept = default;
-        CommandLineOptions(uint8_t executionMode, uint32_t port, std::string  outputFilePath) noexcept;
+        enum class OptionID : uint32_t
+        {
+            Mode = 0x00,
+            OutputFilePath = 0x01,
+            ListeningPort = 0x02,
+
+        };
+    public:
+        CommandLineOptions(uint32_t argc, char** argv) noexcept;
 
     public:
-        uint32_t GetExecutionModeID() const noexcept;
-        uint32_t GetPort() const noexcept;
-        std::string GetOutputFilePath() const noexcept;
+        uint8_t GetChosenExecutionMode() const noexcept;
+        uint16_t GetChosenPort() const noexcept;
+        std::string GetChosenOutputFilePath() const noexcept;
 
     private:
-        uint8_t m_executionModeID;
         uint32_t m_port;
+        uint8_t  m_executionMode;
         std::string m_outputFilePath;
     };
 
-} //namespace Proxy
-
-
-
+}
 
 #endif //PROXYTCP_COMMANDLINEOPTIONS_HPP

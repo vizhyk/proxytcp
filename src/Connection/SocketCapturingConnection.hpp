@@ -14,9 +14,10 @@ namespace Proxy
 
     public:
         SocketCapturingConnection(int32_t sockfd, ConnectionSide state, const std::shared_ptr<ConversationPipeline>& pipeline) noexcept;
+
         Status ReadData() override;
-//        Status SendData(const ByteStream& data) override;
-        static Status SendDataTo(const ByteStream& data, SocketConnection& recipientConnection) noexcept;
+        Status SendDataTo(const ByteStream& data, SocketConnection& recipientConnection) noexcept override;
+
         static void CaptureData(PCAP::PCAPCapturingFile& file, const ByteStream& data, SYNACKData& senderSYNACKData, SYNACKData& recipientSYNACKData, ConnectionSide senderConnectionSide);
     };
 }

@@ -51,9 +51,21 @@ namespace Proxy
             endpointSockfd = currentPipeline->GetClientSockfd();
         }
 
-
-
         auto onetimeDataSent = send(endpointSockfd, data.GetBuffer(), data.GetUsedBytes(),
+                                    MSG_NOSIGNAL);
+        if (onetimeDataSent == -1)
+        {
+            status = Status(Status::Error::BadSendingData);
+            return status;
+        }
+
+        return status;
+    }
+
+    Status SocketConnection::SendDataTo(const ByteStream& data, SocketConnection& recipientConnection) noexcept
+    {
+        Status status;
+        auto onetimeDataSent = send(recipientConnection.GetSocketfd(), data.GetBuffer(), data.GetUsedBytes(),
                                     MSG_NOSIGNAL);
         if (onetimeDataSent == -1)
         {

@@ -11,7 +11,7 @@ namespace Proxy::PCAP
     class PCAPFile
     {
     public:
-        PCAPFile() noexcept = default;
+        PCAPFile() = default;
 
         PCAPFile(const PCAPFile& pcap) noexcept = delete;
         PCAPFile& operator=(const PCAPFile& pcap) noexcept = delete;

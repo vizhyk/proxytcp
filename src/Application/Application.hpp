@@ -1,19 +1,25 @@
 #ifndef PROXYTCP_APPLICATION_HPP
 #define PROXYTCP_APPLICATION_HPP
 
-#include <src/Utilities/NonCopyable.hpp>
 #include <cstdint>
-#include <src/ConnectionManager/ConnectionManager.hpp>
+#include "src/Utilities/NonCopyable.hpp"
+#include "src/ConnectionManager/ConnectionManager.hpp"
+#include "ExecutionModes/ExecutionMode.hpp"
+#include "ExecutionModes/DefaultExecutionMode.hpp"
+#include "ExecutionModes/CapturingExecutionMode.hpp"
+#include "ExecutionModeType/ExecutionModeType.hpp"
 
 namespace Proxy
 {
     class Application : public NonCopyable
     {
     public:
-        int32_t Run() noexcept;
+        explicit Application(uint8_t executionModeID, uint16_t port, const std::string& outputFilePath) noexcept;
+        Status Run() noexcept;
 
     private:
-        ConnectionManager m_connectionManager;
+        std::unique_ptr<ExecutionMode> m_executionMode;
+        uint16_t m_port;
     };
 }
 

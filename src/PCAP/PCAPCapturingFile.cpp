@@ -3,8 +3,6 @@
 
 namespace Proxy::PCAP
 {
-
-
     Status PCAPCapturingFile::Write(const ByteStream& data)
     {
         Status status;

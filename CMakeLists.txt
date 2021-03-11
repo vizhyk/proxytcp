@@ -26,18 +26,22 @@ ADD_LIBRARY(SourceFiles STATIC
         src/TrafficParsing/TLS/TLSMessageParser.cpp
         src/PCAPGenerator/PCAPGenerator.cpp
         src/ConversationPipeline/ConversationPipeline.cpp
+        src/ConversationPipeline/CapturingConversationPipeline.cpp
         src/ConversationPipeline/PayloadBuffer/PayloadBuffer.cpp
         src/ConversationPipeline/PayloadBuffer/TLSPayloadBuffer.cpp
         src/ConversationManager/ConversationManager.cpp
         src/ConnectionManager/ConnectionManager.cpp
+        src/ConnectionManager/SocketConnectionManager.cpp
+        src/ConnectionManager/SocketCapturingConnectionManager.cpp
         src/Application/Application.cpp
         src/Connection/SocketConnection.cpp
         src/Connection/SocketCapturingConnection.cpp
         src/PCAP/PCAPFile.cpp
         src/PCAP/PCAPCapturingFile.cpp
         src/PCAP/PCAPReplayFile.cpp
-#        src/CommandLineOptions/CommandLineOptions.cpp
-#        src/CommandLineOptionsParser/CommandLineOptionsParser.cpp
+        src/CommandLineOptions/CommandLineOptions.cpp
+        src/ExecutionModes/DefaultExecutionMode.cpp
+        src/ExecutionModes/CapturingExecutionMode.cpp
         )
 
 add_executable(proxytcp main.cpp)

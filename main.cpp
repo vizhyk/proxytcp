@@ -1,15 +1,13 @@
 #include <csignal>
 #include <cstdlib>
 #include <iostream>
-#include "src/Application/Application.hpp"
-#include "CommandLineOptionsParser/CommandLineOptionsParser.hpp"
 
-void signalHandler( int signum ) {
+#include "Application/Application.hpp"
+#include "CommandLineOptions/CommandLineOptions.hpp"
+
+void signalHandler( int signum )
+{
     std::cout << "Interrupt signal (" << signum << ") received.\n";
-
-    // cleanup and close up stuff here
-    // terminate program
-
     exit(signum);
 }
 
@@ -18,7 +16,10 @@ int main(int argc, char** argv)
     signal(SIGINT, signalHandler);
     signal(SIGTERM, signalHandler);
 
-    Proxy::Application a;
-    return a.Run();
+    Proxy::CommandLineOptions cmd(argc, argv);
+
+    Proxy::Application application(cmd.GetChosenExecutionMode(), cmd.GetChosenPort(), cmd.GetChosenOutputFilePath());
+
+    return application.Run().Code();
 }
 
