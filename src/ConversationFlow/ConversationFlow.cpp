@@ -8,14 +8,12 @@ namespace Proxy
     Status
     ConversationFlow::ReadAllDataFromConnection(SocketConnection& connection) noexcept
     {
-        connection.ReadData();
         return connection.ReadData();
     }
 
     Status
     ConversationFlow::SendAllDataFromConnection(const ByteStream& data, SocketConnection& destination) noexcept
     {
-        destination.SendData(data);
         return destination.SendData(data);
     }
 
