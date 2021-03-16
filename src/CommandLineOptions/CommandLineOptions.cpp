@@ -11,6 +11,7 @@ namespace Proxy
         if(argc < 3)
         {
             std::cout << "[Not enough args.]\n";
+//            --mode capture --output /home/work/restore/proxytcp/bin/capture.pcap --port 1080
             std::cout << "[Usage]: ./proxytcp --mode [default/capture/replay] --port [port] --output [filename]";
         }
 
@@ -70,12 +71,12 @@ namespace Proxy
         std::cout << "[" << static_cast<uint32_t>(m_executionMode) << " : " << m_outputFilePath << " : " << m_port << "]\n";
     }
 
-    uint8_t CommandLineOptions::GetChosenExecutionMode() const noexcept
+    uint8_t CommandLineOptions::GetChosenExecutionModeID() const noexcept
     {
         return m_executionMode;
     }
 
-    std::string CommandLineOptions::GetChosenOutputFilePath() const noexcept
+    const std::string & CommandLineOptions::GetChosenOutputFilePath() const noexcept
     {
         return m_outputFilePath;
     }

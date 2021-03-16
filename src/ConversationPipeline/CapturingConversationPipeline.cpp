@@ -4,14 +4,14 @@
 namespace Proxy
 {
 
-    CapturingConversationPipeline::CapturingConversationPipeline(int32_t epollfd, ConversationManager& conversationManager) noexcept
-            : ConversationPipeline(epollfd, conversationManager)
+    CapturingConversationPipeline::CapturingConversationPipeline(int32_t epollfd, SocketConversationManager& conversationManager) noexcept
+            : ConversationPipeline(epollfd, conversationManager), m_clientSYNACKData(), m_serverSYNACKData()
     {
         m_pcapfile = std::make_unique<PCAP::PCAPCapturingFile>();
     }
 
-    CapturingConversationPipeline::CapturingConversationPipeline(int32_t epollfd, std::unique_ptr<ConversationFlow> flow, ConversationManager& conversationManager) noexcept
-            : ConversationPipeline(epollfd, std::move(flow), conversationManager)
+    CapturingConversationPipeline::CapturingConversationPipeline(int32_t epollfd, std::unique_ptr<ConversationFlow> flow, SocketConversationManager& conversationManager) noexcept
+            : ConversationPipeline(epollfd, std::move(flow), conversationManager), m_clientSYNACKData(), m_serverSYNACKData()
     {
         m_pcapfile = std::make_unique<PCAP::PCAPCapturingFile>();
     }
@@ -38,12 +38,12 @@ namespace Proxy
         return *m_pcapfile;
     }
 
-    SYNACKData& CapturingConversationPipeline::ClientSYNACK() noexcept
+    PCAPData& CapturingConversationPipeline::ClientPCAPData() noexcept
     {
         return m_clientSYNACKData;
     }
 
-    SYNACKData& CapturingConversationPipeline::ServerSYNACK() noexcept
+    PCAPData& CapturingConversationPipeline::ServerPCAPData() noexcept
     {
         return m_serverSYNACKData;
     }
@@ -55,5 +55,29 @@ namespace Proxy
         {
             m_conversationFlow = std::move(newFlow);
         }
+    }
+
+    void CapturingConversationPipeline::InitPCAPClientData(const PCAPData& pcapData) noexcept
+    {
+        m_clientSYNACKData = pcapData;
+    }
+
+    void CapturingConversationPipeline::InitPCAPServerData(const PCAPData& pcapData) noexcept
+    {
+        m_serverSYNACKData = pcapData;
+    }
+
+    void CapturingConversationPipeline::InitPCAPClientData(uint32_t sequenceNumber, uint32_t acknowledgmentNumber, uint32_t IPv4) noexcept
+    {
+        m_clientSYNACKData.m_sequenceNumber = sequenceNumber;
+        m_clientSYNACKData.m_acknowledgmentNumber = acknowledgmentNumber;
+        m_clientSYNACKData.m_IPv4 = IPv4;
+    }
+
+    void CapturingConversationPipeline::InitPCAPServerData(uint32_t sequenceNumber, uint32_t acknowledgmentNumber, uint32_t IPv4) noexcept
+    {
+        m_serverSYNACKData.m_sequenceNumber = sequenceNumber;
+        m_serverSYNACKData.m_acknowledgmentNumber = acknowledgmentNumber;
+        m_serverSYNACKData.m_IPv4 = IPv4;
     }
 }

@@ -1,36 +1,46 @@
 #include "Application.hpp"
 #include "Connection/SocketConnection.hpp"
+#include "ConnectionManager/SocketConnectionManager.hpp"
+#include "ConnectionManager/SocketCapturingConnectionManager.hpp"
 
 
 namespace Proxy
 {
-    Application::Application(uint8_t executionModeID, uint16_t port, const std::string& outputFilePath) noexcept
+    Application::Application(uint16_t port) noexcept
         : m_port(port)
     {
+    }
 
+    Status Application::Run() noexcept
+    {
+        return (m_connectionManager) ? m_connectionManager->ProcessConnections(m_port) : Status(-1);
+
+//        auto status = m_connectionManager.ProcessConnections();
+//        // LCOV_EXCL_START
+//        return status.Code();
+//        // LCOV_EXCL_STOP
+    }
+
+    Status Application::InitConnectionManager(uint8_t executionModeID, const std::string& outputFilePath)
+    {
         switch (executionModeID)
         {
             case ExecutionModeType::DefaultForward:
-                m_executionMode = std::make_unique<DefaultExecutionMode>();
+                m_connectionManager = std::make_unique<SocketConnectionManager>();
                 break;
             case ExecutionModeType::Capture:
-                m_executionMode = std::make_unique<CapturingExecutionMode>(outputFilePath);
+                m_connectionManager = std::make_unique<SocketCapturingConnectionManager>(outputFilePath);
                 break;
             case ExecutionModeType::Replay:
             default:
                 break;
 
         }
-    }
 
-    Status Application::Run() noexcept
-    {
-        return (m_executionMode) ? m_executionMode->Run(m_port) : Status(-1);
-
-//        auto status = m_connectionManager.ProcessConnections();
-//        // LCOV_EXCL_START
-//        return status.Code();
-//        // LCOV_EXCL_STOP
+        if(m_connectionManager)
+            return Status();
+        else
+            return Status(Status::Error::ConnectionManagerIsNotInitialized);
     }
 
 

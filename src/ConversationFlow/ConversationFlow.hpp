@@ -3,6 +3,7 @@
 
 #include "ByteStream/ByteStream.hpp"
 #include <memory>
+#include <iostream>
 #include "Connection/SocketConnection.hpp"
 
 namespace Proxy
@@ -27,6 +28,8 @@ namespace Proxy
         static Status ReadAllDataFromConnection(SocketConnection& connection) noexcept;
         static Status SendAllDataFromConnection(const ByteStream& data, SocketConnection& connection) noexcept;
         static Status SendAllDataToConnection(const ByteStream& data, SocketConnection& recipient) noexcept;
+
+        static void LogData(const std::string& sender, const ByteStream& data) noexcept;
 
     protected:
         FlowState m_flowState {};

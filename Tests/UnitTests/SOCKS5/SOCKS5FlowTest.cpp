@@ -7,7 +7,7 @@
 #include "Utilities/SOCKS5.hpp"
 #include "Tests/TestUtilities.hpp"
 #include "ConversationFlow/SOCKS5Flow/ClientHelloTransmission.hpp"
-#include "ConversationManager/ConversationManager.hpp"
+#include "ConversationManager/SocketConversationManager.hpp"
 
 namespace Proxy::SOCKS5Flow
 {

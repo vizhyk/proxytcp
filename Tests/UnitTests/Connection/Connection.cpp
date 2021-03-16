@@ -2,7 +2,7 @@
 #include "Connection/ClientConnection.hpp"
 #include "Connection/ServerConnection.hpp"
 #include "ConversationPipeline/ConversationPipeline.hpp"
-#include "ConversationManager/ConversationManager.hpp"
+#include "ConversationManager/SocketConversationManager.hpp"
 namespace Proxy
 {
 

@@ -14,11 +14,11 @@ namespace Proxy
     class Application : public NonCopyable
     {
     public:
-        explicit Application(uint8_t executionModeID, uint16_t port, const std::string& outputFilePath) noexcept;
+        Application(uint16_t port) noexcept;
         Status Run() noexcept;
-
+        Status InitConnectionManager(uint8_t executionModeID, const std::string& outputFilePath);
     private:
-        std::unique_ptr<ExecutionMode> m_executionMode;
+        std::unique_ptr<ConnectionManager> m_connectionManager;
         uint16_t m_port;
     };
 }

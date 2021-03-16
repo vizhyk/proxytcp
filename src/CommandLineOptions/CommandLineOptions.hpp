@@ -23,9 +23,9 @@ namespace Proxy
         CommandLineOptions(uint32_t argc, char** argv) noexcept;
 
     public:
-        uint8_t GetChosenExecutionMode() const noexcept;
+        uint8_t GetChosenExecutionModeID() const noexcept;
         uint16_t GetChosenPort() const noexcept;
-        std::string GetChosenOutputFilePath() const noexcept;
+        const std::string & GetChosenOutputFilePath() const noexcept;
 
     private:
         uint32_t m_port;

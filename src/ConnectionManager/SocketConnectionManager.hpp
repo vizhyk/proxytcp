@@ -20,12 +20,11 @@ namespace Proxy
         static Status MakeSocketNonblocking(int32_t sockfd) noexcept;
 
         std::shared_ptr<ConversationPipeline> FindConversationPipeline(int32_t sockfd) noexcept;
-
         std::shared_ptr<ConversationPipeline> AddConversationPipeline(int32_t clientSockfd, int32_t epollfd);
 
         Status AcceptNewConnectionSocket(int32_t listeningSocket, int32_t epollfd) noexcept;
-
         Status ProcessConnections(uint16_t port) override;
+        Status FindPipelineAndPerformTransaction(int32_t sockfd) override;
 
     };
 }

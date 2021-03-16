@@ -3,7 +3,7 @@
 #include "ConnectionRequestTransmission.hpp"
 #include "Connection/SocketConnection.hpp"
 #include "ConversationPipeline/ConversationPipeline.hpp"
-#include "ConversationManager/ConversationManager.hpp"
+#include "ConversationManager/SocketConversationManager.hpp"
 #include <netdb.h>
 #include "fcntl.h"
 #include <sys/socket.h>

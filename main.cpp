@@ -16,9 +16,14 @@ int main(int argc, char** argv)
     signal(SIGINT, signalHandler);
     signal(SIGTERM, signalHandler);
 
+    Proxy::Status status;
     Proxy::CommandLineOptions cmd(argc, argv);
+    Proxy::Application application(cmd.GetChosenPort());
 
-    Proxy::Application application(cmd.GetChosenExecutionMode(), cmd.GetChosenPort(), cmd.GetChosenOutputFilePath());
+    status = application.InitConnectionManager(cmd.GetChosenExecutionModeID(), cmd.GetChosenOutputFilePath());
+
+    if(status.Failed())
+        return status.Code();
 
     return application.Run().Code();
 }

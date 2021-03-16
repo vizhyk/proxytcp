@@ -3,7 +3,7 @@
 
 #include <fstream>
 #include "SocketConnection.hpp"
-#include "Utilities/SYNACKData.hpp"
+#include "Utilities/PCAPData.hpp"
 #include "PCAP/PCAPCapturingFile.hpp"
 
 namespace Proxy
@@ -18,7 +18,7 @@ namespace Proxy
         Status ReadData() override;
         Status SendDataTo(const ByteStream& data, SocketConnection& recipientConnection) noexcept override;
 
-        static void CaptureData(PCAP::PCAPCapturingFile& file, const ByteStream& data, SYNACKData& senderSYNACKData, SYNACKData& recipientSYNACKData, ConnectionSide senderConnectionSide);
+        static void CaptureData(PCAP::PCAPCapturingFile& file, const ByteStream& data, PCAPData& senderPCAPData, PCAPData& recipientPCAPData);
     };
 }
 

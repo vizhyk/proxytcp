@@ -41,12 +41,12 @@ namespace Proxy
         //if data was sended from client
         if(m_connectionSide == ConnectionSide::Client)
         {
-            CaptureData(currentPipeline->PCAPFile(), m_buffer, currentPipeline->ClientSYNACK(), currentPipeline->ServerSYNACK(), ConnectionSide::Client);
+            CaptureData(currentPipeline->PCAPFile(), m_buffer, currentPipeline->ClientPCAPData(), currentPipeline->ServerPCAPData());
         }
             //if data was sended from server
         else
         {
-            CaptureData(currentPipeline->PCAPFile(), m_buffer, currentPipeline->ServerSYNACK(), currentPipeline->ClientSYNACK(), ConnectionSide::Server);
+            CaptureData(currentPipeline->PCAPFile(), m_buffer, currentPipeline->ServerPCAPData(), currentPipeline->ClientPCAPData());
         }
 
         return status;
@@ -54,37 +54,22 @@ namespace Proxy
 
 
 
-    void SocketCapturingConnection::CaptureData(PCAP::PCAPCapturingFile& file, const ByteStream& data, SYNACKData& senderSYNACKData, SYNACKData& recipientSYNACKData, ConnectionSide senderConnectionSide)
+    void SocketCapturingConnection::CaptureData(PCAP::PCAPCapturingFile& file, const ByteStream& data, PCAPData& senderPCAPData, PCAPData& recipientPCAPData)
     {
-        uint32_t sourceIPv4 = 0;
-        uint32_t destinationIPv4 = 0;
-        uint16_t sourcePort = 0;
-        uint16_t destinationPort = 0;
-
-        if(senderConnectionSide == ConnectionSide::Server)
-        {
-            sourceIPv4 = PCAP::PCAPGenerator::defaultEndpoints.server.ipv4;
-            sourcePort = PCAP::PCAPGenerator::defaultEndpoints.server.port;
-            destinationIPv4 = PCAP::PCAPGenerator::defaultEndpoints.client.ipv4;
-            destinationPort = PCAP::PCAPGenerator::defaultEndpoints.client.port;
-        }
-        else
-        {
-            sourceIPv4 = PCAP::PCAPGenerator::defaultEndpoints.client.ipv4;
-            sourcePort = PCAP::PCAPGenerator::defaultEndpoints.client.port;
-            destinationIPv4 = PCAP::PCAPGenerator::defaultEndpoints.server.ipv4;
-            destinationPort = PCAP::PCAPGenerator::defaultEndpoints.server.port;
-        }
+        uint32_t sourceIPv4 = senderPCAPData.m_IPv4;
+        uint16_t sourcePort = senderPCAPData.port;
+        uint32_t destinationIPv4 = recipientPCAPData.m_IPv4;
+        uint16_t destinationPort = recipientPCAPData.port;
 
         file.Write(PCAP::PCAPGenerator::GeneratePCAPPacketHeader(data.GetUsedBytes()));
         file.Write(PCAP::PCAPGenerator::GenerateEthHeader());
         file.Write(PCAP::PCAPGenerator::GenerateIPv4Header(data.GetUsedBytes(), sourceIPv4, destinationIPv4));
-        file.Write(PCAP::PCAPGenerator::GenerateTCPHeader(senderSYNACKData, recipientSYNACKData , data.GetUsedBytes(),
-                                                                    sourcePort, destinationPort, static_cast<uint16_t>(TCP::Flags::PSHACK)));
+        file.Write(PCAP::PCAPGenerator::GenerateTCPHeader(senderPCAPData, recipientPCAPData , data.GetUsedBytes(),
+                                                          sourcePort, destinationPort, static_cast<uint16_t>(TCP::Flags::PSHACK)));
         file.Write(data);
 
-        file.Write(PCAP::PCAPGenerator::GenerateNoTCPPayloadPacket(recipientSYNACKData, senderSYNACKData, destinationIPv4, destinationPort,
-                                                                             sourceIPv4, sourcePort, static_cast<uint16_t>(TCP::Flags::ACK)));
+        file.Write(PCAP::PCAPGenerator::GenerateNoTCPPayloadPacket(recipientPCAPData, senderPCAPData, destinationIPv4, destinationPort,
+                                                                   sourceIPv4, sourcePort, static_cast<uint16_t>(TCP::Flags::ACK)));
 
     }
 
@@ -113,12 +98,12 @@ namespace Proxy
             //if data was sended from server
             if(recipientConnection.GetConnectionSide() == ConnectionSide::Client)
             {
-                CaptureData(currentPipeline->PCAPFile(), data, currentPipeline->ServerSYNACK(), currentPipeline->ClientSYNACK(), ConnectionSide::Server);
+                CaptureData(currentPipeline->PCAPFile(), data, currentPipeline->ServerPCAPData(), currentPipeline->ClientPCAPData());
             }
             //if data was sended from client
             else
             {
-                CaptureData(currentPipeline->PCAPFile(), data, currentPipeline->ClientSYNACK(), currentPipeline->ServerSYNACK(), ConnectionSide::Client);
+                CaptureData(currentPipeline->PCAPFile(), data, currentPipeline->ClientPCAPData(), currentPipeline->ServerPCAPData());
             }
         }
 

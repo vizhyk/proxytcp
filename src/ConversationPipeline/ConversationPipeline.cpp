@@ -1,18 +1,18 @@
 #include "ConversationPipeline.hpp"
-#include "ConversationManager/ConversationManager.hpp"
+#include "ConversationManager/SocketConversationManager.hpp"
 #include "Connection/SocketConnection.hpp"
 #include <memory>
 #include <utility>
 
 namespace Proxy
 {
-    ConversationPipeline::ConversationPipeline(int32_t epollfd, ConversationManager& conversationManager) noexcept
+    ConversationPipeline::ConversationPipeline(int32_t epollfd, SocketConversationManager& conversationManager) noexcept
         : m_payload(nullptr), m_conversationManager(conversationManager), m_epollfd(epollfd)
     {
         m_conversationFlow = std::make_unique<SOCKS5Flow::ClientHelloTransmission>();
     }
 
-    ConversationPipeline::ConversationPipeline(int32_t epollfd, std::unique_ptr<ConversationFlow> flow, ConversationManager& conversationManager) noexcept
+    ConversationPipeline::ConversationPipeline(int32_t epollfd, std::unique_ptr<ConversationFlow> flow, SocketConversationManager& conversationManager) noexcept
         : m_conversationFlow(std::move(flow)), m_payload(nullptr),m_conversationManager(conversationManager), m_epollfd(epollfd)
     {
     }
@@ -57,7 +57,7 @@ namespace Proxy
         m_serverConnection = std::make_unique<SocketConnection>(sockfd, Connection::ConnectionSide::Server, shared_from_this());
     }
 
-    ConversationManager&
+    SocketConversationManager&
     ConversationPipeline::PipelineManager() noexcept
     {
         return m_conversationManager;

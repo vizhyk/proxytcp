@@ -33,7 +33,7 @@ namespace Proxy::PCAP
 
     void PCAPCapturingFile::Open(const std::string& filename) noexcept
     {
-        m_pcapfile.open(filename, std::ios_base::binary);
+        m_pcapfile.open(filename, std::ios_base::binary | std::ios_base::app);
         if(!m_pcapfile.is_open())
         {
             std::cout << "[No pcap file was opened]\n";

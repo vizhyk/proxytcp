@@ -11,7 +11,7 @@ namespace Proxy
 {
     SocketConnectionManager::SocketConnectionManager() noexcept
     {
-        m_conversationManager = std::make_unique<ConversationManager>();
+        m_conversationManager = std::make_unique<SocketConversationManager>();
     }
 
     Status
@@ -180,7 +180,7 @@ namespace Proxy
     std::shared_ptr<ConversationPipeline>
     SocketConnectionManager::AddConversationPipeline(int32_t clientSockfd, int32_t epollfd)
     {
-        return m_conversationManager->AddNewPipeline(clientSockfd,epollfd);
+        return dynamic_cast<SocketConversationManager*>(m_conversationManager.get())->AddNewPipeline(clientSockfd,epollfd);
     }
 
     Status
@@ -221,17 +221,27 @@ namespace Proxy
                     continue;
                 }
 
-                const auto pipeline = FindConversationPipeline(events[sockfdID].data.fd);
-                if(pipeline == nullptr)
-                {
-                    status = Status(Status::Error::NoPipelineFound);
-                    return status;
-                }
-
-                pipeline->PerformTransaction(events[sockfdID].data.fd);
+                status = FindPipelineAndPerformTransaction(events[sockfdID].data.fd);
+                if(status.Failed()) { return status; }
             }
 
         }
+
+        return status;
+    }
+
+    Status SocketConnectionManager::FindPipelineAndPerformTransaction(int32_t sockfd)
+    {
+        Status status;
+
+        const auto pipeline = FindConversationPipeline(sockfd);
+        if(pipeline == nullptr)
+        {
+            status = Status(Status::Error::NoPipelineFound);
+            return status;
+        }
+
+        pipeline->PerformTransaction(sockfd);
 
         return status;
     }

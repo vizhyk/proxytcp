@@ -3,14 +3,14 @@
 
 #include "Utilities/Constants.hpp"
 #include "ByteStream/ByteStream.hpp"
-#include "Utilities/SYNACKData.hpp"
+#include "Utilities/PCAPData.hpp"
 
 namespace Proxy::PCAP
 {
     struct Endpoint
     {
-        const uint32_t ipv4;
-        const uint16_t port;
+        uint32_t ipv4;
+        uint16_t port;
     };
 
     struct DefaultEndpoints
@@ -32,12 +32,15 @@ namespace Proxy::PCAP
         static ByteStream GenerateIPv4Header(uint16_t tcpPayloadSize, uint32_t sourceIPv4, uint32_t desinationIPv4) noexcept;
         static ByteStream GenerateIPv4Header(uint16_t tcpPayloadSize, uint32_t sourceIPv4, uint32_t desinationIPv4, uint16_t TCPHeaderSize) noexcept;
         static ByteStream GenerateTCPHeader(uint32_t sequenceNumber, uint32_t acknowledgmentNumber, uint32_t tcpPayloadSize, uint32_t sourcePort, uint32_t destinationPort, uint16_t flags) noexcept;
-        static ByteStream GenerateTCPHeader(SYNACKData& senderSYNACKData, SYNACKData& recipientSYNACKData, uint32_t tcpPayloadSize, uint32_t sourcePort, uint32_t destinationPort, uint16_t flags) noexcept;
+        static ByteStream GenerateTCPHeader(PCAPData& senderPCAPData, PCAPData& recipientPCAPData, uint32_t tcpPayloadSize, uint32_t sourcePort, uint32_t destinationPort, uint16_t flags) noexcept;
         static ByteStream GenerateTCPHeaderSYNACKOptions(uint32_t sequenceNumber, uint32_t acknowledgmentNumber, uint32_t sourcePort, uint32_t destinationPort, uint16_t flags) noexcept;
-        static ByteStream GenerateNoTCPPayloadPacket(SYNACKData& lhsSYNACKData, SYNACKData& rhsSYNACKData, uint32_t sourceIPv4, uint16_t sourcePort, uint32_t destinationIPv4, uint16_t destinationPort, uint16_t flags) noexcept;
+        static ByteStream GenerateNoTCPPayloadPacket(PCAPData& lhsPCAPData, PCAPData& rhsPCAPData, uint32_t sourceIPv4, uint16_t sourcePort, uint32_t destinationIPv4, uint16_t destinationPort, uint16_t flags) noexcept;
         static ByteStream Generate3WayTCPHandshake() noexcept;
-    public:
+
+        static DefaultEndpoints GenerateNewPipelineEndpoints() noexcept;
+    private:
         static const DefaultEndpoints defaultEndpoints;
+        static uint32_t pipelinesCount;
     };
 
 }

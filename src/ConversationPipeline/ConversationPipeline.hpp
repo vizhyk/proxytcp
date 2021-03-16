@@ -8,15 +8,16 @@
 
 namespace Proxy
 {
-    class ConversationManager;
+
+    class SocketConversationManager;
 
     class ConversationPipeline : public std::enable_shared_from_this<ConversationPipeline>
     {
     public:
         virtual ~ConversationPipeline() = default;
 
-        ConversationPipeline(int32_t epollfd, ConversationManager& conversationManager) noexcept;
-        ConversationPipeline(int32_t epollfd, std::unique_ptr<ConversationFlow> flow, ConversationManager& conversationManager) noexcept;
+        ConversationPipeline(int32_t epollfd, SocketConversationManager& conversationManager) noexcept;
+        ConversationPipeline(int32_t epollfd, std::unique_ptr<ConversationFlow> flow, SocketConversationManager& conversationManager) noexcept;
 
         ConversationPipeline(ConversationPipeline&& rhs) noexcept = delete;
         ConversationPipeline& operator=(ConversationPipeline&& rhs) noexcept = delete;
@@ -47,7 +48,7 @@ namespace Proxy
         bool IsClientConnectionInitialized() const noexcept;
         bool IsServerConnectionInitialized() const noexcept;
 
-        ConversationManager& PipelineManager() noexcept;
+        SocketConversationManager& PipelineManager() noexcept;
         bool PayloadIsInitialized() const noexcept;
 
     protected:
@@ -55,7 +56,7 @@ namespace Proxy
         std::unique_ptr<SocketConnection> m_serverConnection;
         std::unique_ptr<ConversationFlow> m_conversationFlow;
         std::unique_ptr<PayloadBuffer> m_payload;
-        ConversationManager& m_conversationManager;
+        SocketConversationManager& m_conversationManager;
         int32_t m_epollfd;
 
 

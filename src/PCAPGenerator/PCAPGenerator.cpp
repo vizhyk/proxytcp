@@ -1,10 +1,12 @@
 #include <netinet/in.h>
+#include <iostream>
 
 #include "PCAPGenerator.hpp"
 
 namespace Proxy::PCAP
 {
     const DefaultEndpoints PCAPGenerator::defaultEndpoints{{0x0b0b0b0b, 1080}, {0x16161616, 39510}};
+    uint32_t PCAPGenerator::pipelinesCount = 0;
 
     uint32_t PCAPGenerator::GetPacketSize(const uint8_t* data, std::size_t dataSize) noexcept
     {
@@ -207,7 +209,7 @@ namespace Proxy::PCAP
         return tmpTCPHeader;
     }
 
-    ByteStream PCAPGenerator::GenerateTCPHeader(SYNACKData& senderSYNACKData, SYNACKData& recipientSYNACKData, uint32_t tcpPayloadSize, uint32_t sourcePort, uint32_t destinationPort, uint16_t flags) noexcept
+    ByteStream PCAPGenerator::GenerateTCPHeader(PCAPData& senderPCAPData, PCAPData& recipientPCAPData, uint32_t tcpPayloadSize, uint32_t sourcePort, uint32_t destinationPort, uint16_t flags) noexcept
     {
         ByteStream tmpTCPHeader(HeaderSize::TCP);
 
@@ -216,9 +218,9 @@ namespace Proxy::PCAP
         //destination port
         tmpTCPHeader.Insert(static_cast<uint16_t>(htons(destinationPort)));
         //sequence number
-        tmpTCPHeader.Insert(static_cast<uint32_t>(htonl(senderSYNACKData.m_sequenceNumber)));
+        tmpTCPHeader.Insert(static_cast<uint32_t>(htonl(senderPCAPData.m_sequenceNumber)));
         //acknowledgment number
-        tmpTCPHeader.Insert(static_cast<uint32_t>(htonl(senderSYNACKData.m_acknowledgmentNumber)));
+        tmpTCPHeader.Insert(static_cast<uint32_t>(htonl(senderPCAPData.m_acknowledgmentNumber)));
         //flags
         tmpTCPHeader.Insert(static_cast<uint16_t>(htons(0x8000 + flags)));
         //window size
@@ -247,8 +249,8 @@ namespace Proxy::PCAP
         //option::Timestamps::Echo reply
         tmpTCPHeader.Insert(static_cast<uint32_t>(0x22334455));
 
-        senderSYNACKData.m_sequenceNumber += tcpPayloadSize;
-        recipientSYNACKData.m_acknowledgmentNumber += tcpPayloadSize;
+        senderPCAPData.m_sequenceNumber += tcpPayloadSize;
+        recipientPCAPData.m_acknowledgmentNumber += tcpPayloadSize;
 
         return tmpTCPHeader;
     }
@@ -316,14 +318,14 @@ namespace Proxy::PCAP
         return tmpTCPHeader;
     }
 
-    ByteStream PCAPGenerator::GenerateNoTCPPayloadPacket(SYNACKData& lhsSYNACKData, SYNACKData& rhsSYNACKData, uint32_t sourceIPv4, uint16_t sourcePort, uint32_t destinationIPv4, uint16_t destinationPort, uint16_t flags) noexcept
+    ByteStream PCAPGenerator::GenerateNoTCPPayloadPacket(PCAPData& lhsPCAPData, PCAPData& rhsPCAPData, uint32_t sourceIPv4, uint16_t sourcePort, uint32_t destinationIPv4, uint16_t destinationPort, uint16_t flags) noexcept
     {
         ByteStream tmpAckPacket;
 
         tmpAckPacket.Insert(GeneratePCAPPacketHeader(0));
         tmpAckPacket.Insert( GenerateEthHeader());
         tmpAckPacket.Insert( GenerateIPv4Header(0,sourceIPv4,destinationIPv4));
-        tmpAckPacket.Insert( GenerateTCPHeader(lhsSYNACKData,rhsSYNACKData,0,sourcePort,destinationPort,flags));
+        tmpAckPacket.Insert( GenerateTCPHeader(lhsPCAPData, rhsPCAPData, 0, sourcePort, destinationPort, flags));
 
         return tmpAckPacket;
     }
@@ -351,5 +353,17 @@ namespace Proxy::PCAP
         tmp3WayHandshake.Insert(GenerateTCPHeader(1, 1,0, defaultEndpoints.client.port, defaultEndpoints.server.port, static_cast<uint16_t>(TCP::Flags::ACK)));
 
         return  tmp3WayHandshake;
+    }
+
+    DefaultEndpoints PCAPGenerator::GenerateNewPipelineEndpoints() noexcept
+    {
+        std::cout << "PipelinesCount: " << pipelinesCount << "\n";
+        DefaultEndpoints tmp = defaultEndpoints;
+        tmp.server.ipv4 += pipelinesCount;
+        tmp.client.ipv4 += pipelinesCount;
+        tmp.client.port += pipelinesCount;
+        //server port == 1080 by default
+        pipelinesCount += 1;
+        return tmp;
     }
 }

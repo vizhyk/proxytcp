@@ -29,7 +29,8 @@ ADD_LIBRARY(SourceFiles STATIC
         src/ConversationPipeline/CapturingConversationPipeline.cpp
         src/ConversationPipeline/PayloadBuffer/PayloadBuffer.cpp
         src/ConversationPipeline/PayloadBuffer/TLSPayloadBuffer.cpp
-        src/ConversationManager/ConversationManager.cpp
+        src/ConversationManager/SocketConversationManager.cpp
+        src/ConversationManager/SocketCapturingConversationManager.cpp
         src/ConnectionManager/ConnectionManager.cpp
         src/ConnectionManager/SocketConnectionManager.cpp
         src/ConnectionManager/SocketCapturingConnectionManager.cpp
@@ -40,8 +41,8 @@ ADD_LIBRARY(SourceFiles STATIC
         src/PCAP/PCAPCapturingFile.cpp
         src/PCAP/PCAPReplayFile.cpp
         src/CommandLineOptions/CommandLineOptions.cpp
-        src/ExecutionModes/DefaultExecutionMode.cpp
-        src/ExecutionModes/CapturingExecutionMode.cpp
+#        src/ExecutionModes/DefaultExecutionMode.cpp
+#        src/ExecutionModes/CapturingExecutionMode.cpp
         )
 
 add_executable(proxytcp main.cpp)

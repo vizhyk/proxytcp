@@ -8,11 +8,10 @@ namespace Proxy
     class SocketCapturingConnectionManager : public SocketConnectionManager
     {
     public:
-        SocketCapturingConnectionManager() noexcept;
+        explicit SocketCapturingConnectionManager(std::string  outputFilePath) noexcept;
 
-        Status ProcessConnections(uint16_t port) override;
+        Status FindPipelineAndPerformTransaction(int32_t sockfd) override;
 
-        void SetOutputFilePath(std::string outputFilePath) noexcept;
     private:
         std::string m_outputFilePath;
     };

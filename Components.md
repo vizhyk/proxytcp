@@ -9,7 +9,7 @@ After new connection occurs, it's being handled.
 After that `ConversationPipeline` is being created from `ClientConnection`
 in case if connection to the server after SOCSK5 Connetion Request was successful.
 
-### ConversationManager
+### SocketConversationManager
 Operates `ConversationPipeline`:
 - create new pipeline
 - find existing pipeline
