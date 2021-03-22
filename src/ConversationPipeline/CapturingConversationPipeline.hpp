@@ -13,8 +13,6 @@ namespace Proxy
         CapturingConversationPipeline(int32_t epollfd, SocketConversationManager& conversationManager) noexcept;
         CapturingConversationPipeline(int32_t epollfd, std::unique_ptr<ConversationFlow> flow, SocketConversationManager& conversationManager) noexcept;
 
-        void OpenPCAPFile(const std::string& filename) noexcept;
-
         PCAP::PCAPCapturingFile& PCAPFile() noexcept;
 
         PCAPData& ClientPCAPData() noexcept;
@@ -30,9 +28,9 @@ namespace Proxy
         void InitPCAPServerData(uint32_t sequenceNumber, uint32_t acknowledgmentNumber, uint32_t IPv4) noexcept;
 
     private:
-        std::unique_ptr<PCAP::PCAPCapturingFile> m_pcapfile;
-        PCAPData m_clientSYNACKData;
-        PCAPData m_serverSYNACKData;
+        PCAPData m_clientPCAPData;
+        PCAPData m_serverPCAPData;
+        PCAP::PCAPCapturingFile& m_pcapfile;
     };
 
 } //namespace Proxy

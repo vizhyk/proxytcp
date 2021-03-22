@@ -17,7 +17,6 @@ namespace Proxy
             Mode = 0x00,
             OutputFilePath = 0x01,
             ListeningPort = 0x02,
-
         };
     public:
         CommandLineOptions(uint32_t argc, char** argv) noexcept;

@@ -1,6 +1,5 @@
 #include <netinet/in.h>
 #include <iostream>
-
 #include "PCAPGenerator.hpp"
 
 namespace Proxy::PCAP
@@ -42,7 +41,7 @@ namespace Proxy::PCAP
         return tmpPCAPGlobalHeader;
     }
 
-    ByteStream PCAPGenerator::GeneratePCAPPacketHeader(uint32_t tcpPayloadSize) noexcept
+    ByteStream PCAPGenerator::GeneratePCAPPacketHeader(uint32_t tcpPayloadSize, uint32_t TSsec, uint32_t TSusec) noexcept
     {
 
         ByteStream tmpPCAPPacketHeader(HeaderSize::PCAP_PACKET_HEADER);
@@ -50,9 +49,9 @@ namespace Proxy::PCAP
         uint32_t networkPacketSize = tcpPayloadSize + HeaderSize::TCP + HeaderSize::IP + HeaderSize::ETH;
 
         //timestamp seconds
-        tmpPCAPPacketHeader.Insert(static_cast<uint32_t>(0x00));
+        tmpPCAPPacketHeader.Insert(static_cast<uint32_t>(TSsec));
         //timestamp microseconds
-        tmpPCAPPacketHeader.Insert(static_cast<uint32_t>(0x00));
+        tmpPCAPPacketHeader.Insert(static_cast<uint32_t>(TSusec));
         //bytes saved in file
         tmpPCAPPacketHeader.Insert(networkPacketSize);
         //actual length of packet
@@ -62,16 +61,16 @@ namespace Proxy::PCAP
         return tmpPCAPPacketHeader;
     }
 
-    ByteStream PCAPGenerator::GeneratePCAPPacketHeader(uint32_t tcpPayloadSize, uint16_t TCPHeaderSize) noexcept
+    ByteStream PCAPGenerator::GeneratePCAPPacketHeader(uint32_t tcpPayloadSize, uint16_t TCPHeaderSize, uint32_t TSsec, uint32_t TSusec) noexcept
     {
         ByteStream tmpPCAPPacketHeader(HeaderSize::PCAP_PACKET_HEADER);
 
         uint32_t networkPacketSize = tcpPayloadSize + TCPHeaderSize + HeaderSize::IP + HeaderSize::ETH;
 
         //timestamp seconds
-        tmpPCAPPacketHeader.Insert(static_cast<uint32_t>(0x00));
+        tmpPCAPPacketHeader.Insert(static_cast<uint32_t>(TSsec));
         //timestamp microseconds
-        tmpPCAPPacketHeader.Insert(static_cast<uint32_t>(0x00));
+        tmpPCAPPacketHeader.Insert(static_cast<uint32_t>(TSusec));
         //bytes saved in file
         tmpPCAPPacketHeader.Insert(networkPacketSize);
         //actual length of packet
@@ -166,7 +165,7 @@ namespace Proxy::PCAP
         return tmpIPv4Header;
     }
 
-    ByteStream PCAPGenerator::GenerateTCPHeader(uint32_t sequenceNumber, uint32_t acknowledgmentNumber, uint32_t tcpPayloadSize, uint32_t sourcePort, uint32_t destinationPort, uint16_t flags) noexcept
+    ByteStream PCAPGenerator::GenerateTCPHeader(uint32_t sequenceNumber, uint32_t acknowledgmentNumber, uint32_t tcpPayloadSize, uint32_t sourcePort, uint32_t destinationPort, uint16_t flags, uint32_t TSval, uint32_t TSecr) noexcept
     {
         ByteStream tmpTCPHeader(HeaderSize::TCP);
 
@@ -202,9 +201,9 @@ namespace Proxy::PCAP
         //option::Timestamps::Length
         tmpTCPHeader.Insert(static_cast<uint8_t>(0x0a));
         //option::Timestamps::Value
-        tmpTCPHeader.Insert(static_cast<uint32_t>(0x11223344));
+        tmpTCPHeader.Insert(static_cast<uint32_t>(TSval));
         //option::Timestamps::Echo reply
-        tmpTCPHeader.Insert(static_cast<uint32_t>(0x22334455));
+        tmpTCPHeader.Insert(static_cast<uint32_t>(TSecr));
 
         return tmpTCPHeader;
     }
@@ -245,9 +244,9 @@ namespace Proxy::PCAP
         //option::Timestamps::Length
         tmpTCPHeader.Insert(static_cast<uint8_t>(0x0a));
         //option::Timestamps::Value
-        tmpTCPHeader.Insert(static_cast<uint32_t>(0x11223344));
+        tmpTCPHeader.Insert(static_cast<uint32_t>(senderPCAPData.m_timestamp.TSval));
         //option::Timestamps::Echo reply
-        tmpTCPHeader.Insert(static_cast<uint32_t>(0x22334455));
+        tmpTCPHeader.Insert(static_cast<uint32_t>(senderPCAPData.m_timestamp.TSval));
 
         senderPCAPData.m_sequenceNumber += tcpPayloadSize;
         recipientPCAPData.m_acknowledgmentNumber += tcpPayloadSize;
@@ -255,7 +254,7 @@ namespace Proxy::PCAP
         return tmpTCPHeader;
     }
 
-    ByteStream PCAPGenerator::GenerateTCPHeaderSYNACKOptions(uint32_t sequenceNumber, uint32_t acknowledgmentNumber, uint32_t sourcePort, uint32_t destinationPort, uint16_t flags) noexcept
+    ByteStream PCAPGenerator::GenerateTCPHeaderSYNACKOptions(uint32_t sequenceNumber, uint32_t acknowledgmentNumber, uint32_t sourcePort, uint32_t destinationPort, uint16_t flags, uint32_t TSval, uint32_t TSecr) noexcept
     {
         ByteStream tmpTCPHeader(HeaderSize::TCP);
 
@@ -298,9 +297,9 @@ namespace Proxy::PCAP
         //option::Timestamps::Length
         tmpTCPHeader.Insert(static_cast<uint8_t>(0x0a));
         //option::Timestamps::Value
-        tmpTCPHeader.Insert(static_cast<uint32_t>(0x11223344));
+        tmpTCPHeader.Insert(static_cast<uint32_t>(TSval));
         //option::Timestamps::Echo reply
-        tmpTCPHeader.Insert(static_cast<uint32_t>(0x22334455));
+        tmpTCPHeader.Insert(static_cast<uint32_t>(TSecr));
 
         //option::NO-OP
         //option::NO-OP::Kind
@@ -322,7 +321,14 @@ namespace Proxy::PCAP
     {
         ByteStream tmpAckPacket;
 
-        tmpAckPacket.Insert(GeneratePCAPPacketHeader(0));
+        auto now = std::chrono::system_clock::now();
+        auto pcapTimestamp = GeneratePCAPTimestampFromNow(now);
+
+        lhsPCAPData.m_timestamp.TSval = pcapTimestamp.TSsec;
+        rhsPCAPData.m_timestamp.TSecr = pcapTimestamp.TSsec;
+
+
+        tmpAckPacket.Insert(GeneratePCAPPacketHeader(0, lhsPCAPData.m_timestamp.TSval, pcapTimestamp.TSusec));
         tmpAckPacket.Insert( GenerateEthHeader());
         tmpAckPacket.Insert( GenerateIPv4Header(0,sourceIPv4,destinationIPv4));
         tmpAckPacket.Insert( GenerateTCPHeader(lhsPCAPData, rhsPCAPData, 0, sourcePort, destinationPort, flags));
@@ -330,34 +336,51 @@ namespace Proxy::PCAP
         return tmpAckPacket;
     }
 
-    ByteStream PCAPGenerator::Generate3WayTCPHandshake() noexcept
+    ByteStream PCAPGenerator::Generate3WayTCPHandshake(PCAPData& client, PCAPData& server) noexcept
     {
         ByteStream tmp3WayHandshake;
 
+        auto now = std::chrono::system_clock::now();
+        auto pcapTimestamp = GeneratePCAPTimestampFromNow(now);
+
+        client.m_timestamp.TSval = pcapTimestamp.TSsec;
+        server.m_timestamp.TSecr = pcapTimestamp.TSsec;
+
         //SYN
-        tmp3WayHandshake.Insert(GeneratePCAPPacketHeader(0, HeaderSize::TCP_SYNACK));
+        tmp3WayHandshake.Insert(GeneratePCAPPacketHeader(0, HeaderSize::TCP_SYNACK, client.m_timestamp.TSval, pcapTimestamp.TSusec));
         tmp3WayHandshake.Insert(GenerateEthHeader());
-        tmp3WayHandshake.Insert(GenerateIPv4Header(0,defaultEndpoints.client.ipv4,defaultEndpoints.server.ipv4, HeaderSize::TCP_SYNACK));
-        tmp3WayHandshake.Insert(GenerateTCPHeaderSYNACKOptions(0, 0, defaultEndpoints.client.port, defaultEndpoints.server.port, static_cast<uint16_t>(TCP::Flags::SYN)));
+        tmp3WayHandshake.Insert(GenerateIPv4Header(0,client.m_ipv4,server.m_ipv4, HeaderSize::TCP_SYNACK));
+        tmp3WayHandshake.Insert(GenerateTCPHeaderSYNACKOptions(0, 0, client.m_port, server.m_port, static_cast<uint16_t>(TCP::Flags::SYN), client.m_timestamp.TSval, client.m_timestamp.TSecr));
+
+        now = std::chrono::system_clock::now();
+        pcapTimestamp = GeneratePCAPTimestampFromNow(now);
+
+        server.m_timestamp.TSval = pcapTimestamp.TSsec;
+        client.m_timestamp.TSecr = pcapTimestamp.TSsec;
 
         //SYNACK
-        tmp3WayHandshake.Insert(GeneratePCAPPacketHeader(0, HeaderSize::TCP_SYNACK));
+        tmp3WayHandshake.Insert(GeneratePCAPPacketHeader(0, HeaderSize::TCP_SYNACK, server.m_timestamp.TSval, pcapTimestamp.TSusec));
         tmp3WayHandshake.Insert(GenerateEthHeader());
-        tmp3WayHandshake.Insert(GenerateIPv4Header(0,defaultEndpoints.server.ipv4,defaultEndpoints.client.ipv4, HeaderSize::TCP_SYNACK));
-        tmp3WayHandshake.Insert(GenerateTCPHeaderSYNACKOptions(0, 1, defaultEndpoints.server.port, defaultEndpoints.client.port, static_cast<uint16_t>(TCP::Flags::SYNACK)));
+        tmp3WayHandshake.Insert(GenerateIPv4Header(0,server.m_ipv4,client.m_ipv4, HeaderSize::TCP_SYNACK));
+        tmp3WayHandshake.Insert(GenerateTCPHeaderSYNACKOptions(0, 1, server.m_ipv4, client.m_port, static_cast<uint16_t>(TCP::Flags::SYNACK), server.m_timestamp.TSval, server.m_timestamp.TSecr));
+
+        now = std::chrono::system_clock::now();
+        pcapTimestamp = GeneratePCAPTimestampFromNow(now);
+
+        client.m_timestamp.TSval = pcapTimestamp.TSsec;
+        server.m_timestamp.TSecr = pcapTimestamp.TSsec;
 
         //ACK
-        tmp3WayHandshake.Insert(GeneratePCAPPacketHeader(0));
+        tmp3WayHandshake.Insert(GeneratePCAPPacketHeader(0, client.m_timestamp.TSval, pcapTimestamp.TSusec));
         tmp3WayHandshake.Insert(GenerateEthHeader());
-        tmp3WayHandshake.Insert(GenerateIPv4Header(0,defaultEndpoints.client.ipv4,defaultEndpoints.server.ipv4, HeaderSize::TCP));
-        tmp3WayHandshake.Insert(GenerateTCPHeader(1, 1,0, defaultEndpoints.client.port, defaultEndpoints.server.port, static_cast<uint16_t>(TCP::Flags::ACK)));
+        tmp3WayHandshake.Insert(GenerateIPv4Header(0,client.m_ipv4,server.m_ipv4, HeaderSize::TCP));
+        tmp3WayHandshake.Insert(GenerateTCPHeader(1, 1, 0, client.m_port, server.m_port, static_cast<uint16_t>(TCP::Flags::ACK), client.m_timestamp.TSval, client.m_timestamp.TSecr));
 
         return  tmp3WayHandshake;
     }
 
     DefaultEndpoints PCAPGenerator::GenerateNewPipelineEndpoints() noexcept
     {
-        std::cout << "PipelinesCount: " << pipelinesCount << "\n";
         DefaultEndpoints tmp = defaultEndpoints;
         tmp.server.ipv4 += pipelinesCount;
         tmp.client.ipv4 += pipelinesCount;
@@ -366,4 +389,19 @@ namespace Proxy::PCAP
         pipelinesCount += 1;
         return tmp;
     }
+
+    uint32_t PCAPGenerator::ChronoNowSecondsUint32_t() noexcept
+    {
+        auto now = std::chrono::system_clock::now();
+
+        return std::chrono::time_point_cast<std::chrono::seconds>(now).time_since_epoch().count();
+    }
+
+    PCAPTimestamp PCAPGenerator::GeneratePCAPTimestampFromNow(const std::chrono::time_point<std::chrono::system_clock>& now)
+    {
+        uint32_t second = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+        uint32_t microsecond = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count() - second * 1'000'000;
+        return {second,microsecond};
+    }
+
 }

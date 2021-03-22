@@ -25,6 +25,7 @@ namespace Proxy
 
         if (receivedData == 0)
         {
+
             status = Status(Status::Success::Success);
             return status;
         }
@@ -43,7 +44,7 @@ namespace Proxy
         {
             CaptureData(currentPipeline->PCAPFile(), m_buffer, currentPipeline->ClientPCAPData(), currentPipeline->ServerPCAPData());
         }
-            //if data was sended from server
+        //if data was sended from server
         else
         {
             CaptureData(currentPipeline->PCAPFile(), m_buffer, currentPipeline->ServerPCAPData(), currentPipeline->ClientPCAPData());
@@ -54,19 +55,26 @@ namespace Proxy
 
 
 
-    void SocketCapturingConnection::CaptureData(PCAP::PCAPCapturingFile& file, const ByteStream& data, PCAPData& senderPCAPData, PCAPData& recipientPCAPData)
+    void SocketCapturingConnection::CaptureData(PCAP::PCAPCapturingFile& file, const ByteStream& tcpPayload, PCAPData& senderPCAPData, PCAPData& recipientPCAPData)
     {
-        uint32_t sourceIPv4 = senderPCAPData.m_IPv4;
-        uint16_t sourcePort = senderPCAPData.port;
-        uint32_t destinationIPv4 = recipientPCAPData.m_IPv4;
-        uint16_t destinationPort = recipientPCAPData.port;
+        uint32_t sourceIPv4 = senderPCAPData.m_ipv4;
+        uint16_t sourcePort = senderPCAPData.m_port;
+        uint32_t destinationIPv4 = recipientPCAPData.m_ipv4;
+        uint16_t destinationPort = recipientPCAPData.m_port;
 
-        file.Write(PCAP::PCAPGenerator::GeneratePCAPPacketHeader(data.GetUsedBytes()));
+        auto now = std::chrono::system_clock::now();
+        auto pcapTimestamp = PCAP::PCAPGenerator::GeneratePCAPTimestampFromNow(now);
+
+        senderPCAPData.m_timestamp.TSval = pcapTimestamp.TSsec;
+        recipientPCAPData.m_timestamp.TSecr = pcapTimestamp.TSsec;
+
+
+        file.Write(PCAP::PCAPGenerator::GeneratePCAPPacketHeader(tcpPayload.GetUsedBytes(), senderPCAPData.m_timestamp.TSval, pcapTimestamp.TSusec));
         file.Write(PCAP::PCAPGenerator::GenerateEthHeader());
-        file.Write(PCAP::PCAPGenerator::GenerateIPv4Header(data.GetUsedBytes(), sourceIPv4, destinationIPv4));
-        file.Write(PCAP::PCAPGenerator::GenerateTCPHeader(senderPCAPData, recipientPCAPData , data.GetUsedBytes(),
+        file.Write(PCAP::PCAPGenerator::GenerateIPv4Header(tcpPayload.GetUsedBytes(), sourceIPv4, destinationIPv4));
+        file.Write(PCAP::PCAPGenerator::GenerateTCPHeader(senderPCAPData, recipientPCAPData , tcpPayload.GetUsedBytes(),
                                                           sourcePort, destinationPort, static_cast<uint16_t>(TCP::Flags::PSHACK)));
-        file.Write(data);
+        file.Write(tcpPayload);
 
         file.Write(PCAP::PCAPGenerator::GenerateNoTCPPayloadPacket(recipientPCAPData, senderPCAPData, destinationIPv4, destinationPort,
                                                                    sourceIPv4, sourcePort, static_cast<uint16_t>(TCP::Flags::ACK)));
@@ -108,6 +116,11 @@ namespace Proxy
         }
 
         return status;
+    }
+
+    void SocketCapturingConnection::CaptureFINACKData(PCAP::PCAPCapturingFile& file, PCAPData& senderPCAPData, PCAPData& recipientPCAPData)
+    {
+
     }
 
 

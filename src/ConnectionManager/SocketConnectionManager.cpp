@@ -204,8 +204,6 @@ namespace Proxy
         status = EpollAdd(epollfd,listeningSocket, EPOLLIN);
         if(status.Failed()) { return status; }
 
-        std::string filename = "capture.pcap";
-
         while(true)
         {
             status = EpollWait(epollfd, events,EVENTS_SIZE, socketsWithEvent);

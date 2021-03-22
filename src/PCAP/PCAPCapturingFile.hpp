@@ -11,9 +11,12 @@ namespace Proxy::PCAP
         PCAPCapturingFile() = default;
         explicit PCAPCapturingFile(const std::string& filename) noexcept;
 
-        void Open(const std::string& filename) noexcept;
+        void Open(const std::string& filename, std::ios_base::openmode openmode) noexcept;
+        void Close() noexcept;
 
         bool IsOpened() noexcept;
+
+        void seekp(std::_Ios_Seekdir seekdir) noexcept;
 
         Status ReadAllDataFromFile() override { return Status(Status::Error::NoDataReadFromSocket); };
 

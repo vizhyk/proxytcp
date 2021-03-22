@@ -31,9 +31,9 @@ namespace Proxy::PCAP
         }
     }
 
-    void PCAPCapturingFile::Open(const std::string& filename) noexcept
+    void PCAPCapturingFile::Open(const std::string& filename, std::ios_base::openmode openmode) noexcept
     {
-        m_pcapfile.open(filename, std::ios_base::binary | std::ios_base::app);
+        m_pcapfile.open(filename, openmode);
         if(!m_pcapfile.is_open())
         {
             std::cout << "[No pcap file was opened]\n";
@@ -44,5 +44,15 @@ namespace Proxy::PCAP
     bool PCAPCapturingFile::IsOpened() noexcept
     {
         return m_pcapfile.is_open();
+    }
+
+    void PCAPCapturingFile::seekp(std::_Ios_Seekdir seekdir) noexcept
+    {
+        m_pcapfile.seekp(seekdir);
+    }
+
+    void PCAPCapturingFile::Close() noexcept
+    {
+        m_pcapfile.close();
     }
 }

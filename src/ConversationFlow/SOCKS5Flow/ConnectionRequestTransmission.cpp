@@ -180,7 +180,6 @@ namespace Proxy::SOCKS5Flow
                         pipeline->PipelineManager().LinkSockfdToExistingPipeline(serverSockfd,pipeline);
                     }
 
-
                     m_connetionState = ConnectionState::WaitingForResponse;
                     return nullptr;
                 }

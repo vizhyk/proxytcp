@@ -7,10 +7,12 @@
 
 namespace Proxy
 {
-    SocketCapturingConnectionManager::SocketCapturingConnectionManager(std::string outputFilePath) noexcept
-        : m_outputFilePath(std::move(outputFilePath))
+    SocketCapturingConnectionManager::SocketCapturingConnectionManager(const std::string& outputFilePath) noexcept
     {
         m_conversationManager = std::make_unique<SocketCapturingConversationManager>();
+
+        dynamic_cast<SocketCapturingConversationManager*>(m_conversationManager.get())->OpenPCAPFile(outputFilePath);
+        dynamic_cast<SocketCapturingConversationManager*>(m_conversationManager.get())->PCAPCapturingFile().Write(PCAP::PCAPGenerator::GeneratePCAPGlobalHeader());
     }
 
     Status SocketCapturingConnectionManager::FindPipelineAndPerformTransaction(int32_t sockfd)
@@ -22,13 +24,6 @@ namespace Proxy
         {
             status = Status(Status::Error::NoPipelineFound);
             return status;
-        }
-
-        if(!pipeline->PCAPFile().IsOpened())
-        {
-            pipeline->PCAPFile().Open(m_outputFilePath);
-            pipeline->PCAPFile().Write(PCAP::PCAPGenerator::GeneratePCAPGlobalHeader());
-            pipeline->PCAPFile().Write(PCAP::PCAPGenerator::Generate3WayTCPHandshake());
         }
 
         pipeline->PerformTransaction(sockfd);

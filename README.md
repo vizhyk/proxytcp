@@ -3,7 +3,7 @@
 
 # ProxyTCP
 Proxy that allows to visit some HTTPS websites.
-Proxy uses 1080 port by default
+Proxy uses 1080 m_port by default
 ## Build
 
 Build project using commands below:
