@@ -5,7 +5,6 @@
 #include "Connection/SocketConnection.hpp"
 #include "ConversationPipeline/ConversationPipeline.hpp"
 #include "ConversationPipeline/PayloadBuffer/TLSPayloadBuffer.hpp"
-#include <iostream>
 
 namespace Proxy::TLSFlow
 {

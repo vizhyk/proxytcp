@@ -15,14 +15,14 @@ namespace Proxy
     {
     public:
 
-        enum class ConnectionState : uint8_t
+        enum class ConnectionSide : uint8_t
         {
-            Connected = 0x00,
-            NotConnected = 0xff,
+            Client = 0x00,
+            Server = 0xff,
         };
 
     public:
-        Connection(int32_t socket, ConnectionState state, const std::shared_ptr<ConversationPipeline>& pipeline) noexcept;
+        Connection(int32_t socket, ConnectionSide state, const std::shared_ptr<ConversationPipeline>& pipeline) noexcept;
         virtual ~Connection();
 
         virtual Status ReadData() = 0;
@@ -32,16 +32,16 @@ namespace Proxy
         Connection& operator=(Connection&& rhs) noexcept = delete;
 
     public:
-        ConnectionState GetState() const noexcept;
+        ConnectionSide GetConnectionSide() const noexcept;
         int32_t GetSocketfd() const noexcept;
 
-        void ChangeState(ConnectionState state) noexcept;
+        void ChangeState(ConnectionSide state) noexcept;
 
         ByteStream& Buffer() noexcept;
         std::weak_ptr<ConversationPipeline>& Pipeline() noexcept;
     protected:
         int32_t m_socket;
-        ConnectionState m_state;
+        ConnectionSide m_connectionSide;
         ByteStream m_buffer;
         std::weak_ptr<ConversationPipeline> m_pipeline;
 

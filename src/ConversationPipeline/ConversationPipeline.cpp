@@ -1,18 +1,18 @@
 #include "ConversationPipeline.hpp"
-#include "src/ConversationManager/ConversationManager.hpp"
-#include "src/Connection/SocketConnection.hpp"
+#include "ConversationManager/SocketConversationManager.hpp"
+#include "Connection/SocketConnection.hpp"
 #include <memory>
 #include <utility>
 
 namespace Proxy
 {
-    ConversationPipeline::ConversationPipeline(int32_t epollfd, ConversationManager& conversationManager) noexcept
+    ConversationPipeline::ConversationPipeline(int32_t epollfd, SocketConversationManager& conversationManager) noexcept
         : m_payload(nullptr), m_conversationManager(conversationManager), m_epollfd(epollfd)
     {
         m_conversationFlow = std::make_unique<SOCKS5Flow::ClientHelloTransmission>();
     }
 
-    ConversationPipeline::ConversationPipeline(int32_t epollfd, std::unique_ptr<ConversationFlow> flow, ConversationManager& conversationManager) noexcept
+    ConversationPipeline::ConversationPipeline(int32_t epollfd, std::unique_ptr<ConversationFlow> flow, SocketConversationManager& conversationManager) noexcept
         : m_conversationFlow(std::move(flow)), m_payload(nullptr),m_conversationManager(conversationManager), m_epollfd(epollfd)
     {
     }
@@ -48,16 +48,16 @@ namespace Proxy
     void
     ConversationPipeline::InitClientConnection(int32_t sockfd) noexcept
     {
-        m_clientConnection = std::make_unique<SocketConnection>(sockfd, Connection::ConnectionState::Connected, shared_from_this());
+        m_clientConnection = std::make_unique<SocketConnection>(sockfd, Connection::ConnectionSide::Client, shared_from_this());
     }
 
     void
     ConversationPipeline::InitServerConnection(int32_t sockfd) noexcept
     {
-        m_serverConnection = std::make_unique<SocketConnection>(sockfd, Connection::ConnectionState::Connected, shared_from_this());
+        m_serverConnection = std::make_unique<SocketConnection>(sockfd, Connection::ConnectionSide::Server, shared_from_this());
     }
 
-    ConversationManager&
+    SocketConversationManager&
     ConversationPipeline::PipelineManager() noexcept
     {
         return m_conversationManager;
@@ -78,5 +78,11 @@ namespace Proxy
     {
         return m_serverConnection != nullptr;
     }
+
+    ConversationFlow::FlowState ConversationPipeline::GetConversationFlowState() const noexcept
+    {
+        return m_conversationFlow->GetState();
+    }
+
 
 }

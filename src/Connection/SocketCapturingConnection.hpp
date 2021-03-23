@@ -1,19 +1,24 @@
 #ifndef PROXYTCP_SOCKETCAPTURINGCONNECTION_HPP
 #define PROXYTCP_SOCKETCAPTURINGCONNECTION_HPP
-#include "Connection.hpp"
+
 #include <fstream>
+#include "SocketConnection.hpp"
+#include "Utilities/PCAPData.hpp"
+#include "PCAP/PCAPCapturingFile.hpp"
 
 namespace Proxy
 {
-
-    class SocketCapturingConnection: public Connection
+    class SocketCapturingConnection: public SocketConnection
     {
-        class PCAPcapturingFile;
     public:
-        SocketCapturingConnection(int32_t sockfd, ConnectionState state, const std::shared_ptr<ConversationPipeline>& pipeline) noexcept;
+
+    public:
+        SocketCapturingConnection(int32_t sockfd, ConnectionSide state, const std::shared_ptr<ConversationPipeline>& pipeline) noexcept;
+
         Status ReadData() override;
-        Status SendData(const ByteStream& data) override;
-        void CaptureData(PCAPcapturingFile& file);
+        Status SendDataTo(const ByteStream& data, SocketConnection& recipientConnection) noexcept override;
+
+        static void CaptureData(PCAP::PCAPCapturingFile& file, const ByteStream& tcpPayload, PCAPData& senderPCAPData, PCAPData& recipientPCAPData);
     };
 }
 
