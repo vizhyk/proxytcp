@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <ConversationManager/ConversationManager.hpp>
+#include <ConversationManager/SocketConversationManager.hpp>
 #include "ConversationPipeline/ConversationPipeline.hpp"
 #include "ConversationFlow/SOCKS5Flow/ClientHelloTransmission.hpp"
 namespace Proxy
@@ -7,7 +7,7 @@ namespace Proxy
 
     TEST(ConversationPipelineTests, TestGetters)
     {
-        ConversationManager manager;
+        SocketConversationManager manager;
         std::unique_ptr<ConversationFlow> newFlow = std::make_unique<SOCKS5Flow::ClientHelloTransmission>();
 
         auto pipeline = std::make_shared<ConversationPipeline>(0,std::move(newFlow),manager);

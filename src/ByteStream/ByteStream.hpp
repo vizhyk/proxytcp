@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <cstring>
+#include <iterator>
 
 namespace Proxy
 {
@@ -50,6 +51,7 @@ namespace Proxy
         void Insert(uint32_t value) noexcept;
         void Insert(uint64_t value) noexcept;
         void Insert(const ByteStream& rhs) noexcept;
+        void Insert(std::basic_istream<uint8_t>& is) noexcept;
         void Insert(const uint8_t* data, uint32_t dataSize) noexcept;
 
         void Erase(std::vector<uint8_t>::const_iterator position);
