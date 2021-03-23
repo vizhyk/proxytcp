@@ -4,7 +4,6 @@
 #include <cstdint>
 #include "src/Utilities/NonCopyable.hpp"
 #include "src/ConnectionManager/ConnectionManager.hpp"
-#include "ExecutionModeType/ExecutionModeType.hpp"
 
 namespace Proxy
 {
