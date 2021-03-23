@@ -10,27 +10,8 @@ namespace Proxy
 
     Status SocketCapturingConnection::ReadData()
     {
-        Status status;
-        int32_t receivedData;
-        uint8_t tmpBuffer[2048];
-        signal(SIGPIPE, SIG_IGN);
-
-        receivedData = recv(m_socket, tmpBuffer, sizeof(tmpBuffer), 0);
-
-        if (receivedData == -1)
-        {
-            status = Status(Status::Error::BadRecievingDataFromSocket);
-            return status;
-        }
-
-        if (receivedData == 0)
-        {
-
-            status = Status(Status::Success::Success);
-            return status;
-        }
-
-        m_buffer.Insert(tmpBuffer, receivedData);
+        Status status = SocketConnection::ReadData();
+        if(status.Failed()) { return status; }
 
         const auto currentPipeline = dynamic_cast<CapturingConversationPipeline*>(m_pipeline.lock().get());
         if(!currentPipeline)
@@ -117,11 +98,5 @@ namespace Proxy
 
         return status;
     }
-
-    void SocketCapturingConnection::CaptureFINACKData(PCAP::PCAPCapturingFile& file, PCAPData& senderPCAPData, PCAPData& recipientPCAPData)
-    {
-
-    }
-
 
 }

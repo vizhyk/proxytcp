@@ -19,7 +19,6 @@ namespace Proxy
         Status SendDataTo(const ByteStream& data, SocketConnection& recipientConnection) noexcept override;
 
         static void CaptureData(PCAP::PCAPCapturingFile& file, const ByteStream& tcpPayload, PCAPData& senderPCAPData, PCAPData& recipientPCAPData);
-        static void CaptureFINACKData(PCAP::PCAPCapturingFile& file, PCAPData& senderPCAPData, PCAPData& recipientPCAPData);
     };
 }
 

@@ -41,8 +41,6 @@ ADD_LIBRARY(SourceFiles STATIC
         src/PCAP/PCAPCapturingFile.cpp
         src/PCAP/PCAPReplayFile.cpp
         src/CommandLineOptions/CommandLineOptions.cpp
-#        src/ExecutionModes/DefaultExecutionMode.cpp
-#        src/ExecutionModes/CapturingExecutionMode.cpp
         )
 
 add_executable(proxytcp main.cpp)
@@ -56,7 +54,6 @@ add_executable(proxytcp_tests
         Tests/UnitTests/TrafficParsing/SOCKS5Parser.cpp
         Tests/UnitTests/TrafficParsing/TLSParser.cpp
         Tests/UnitTests/SOCKS5/SOCKS5FlowTest.cpp
-        Tests/UnitTests/Connection/Connection.cpp
         Tests/UnitTests/ConnectionManager/ConnectionManagerTest.cpp
         Tests/UnitTests/SOCKS5/SOCKS5FlowTest.cpp
         Tests/UnitTests/ConversationPipeline/ConversationPipelineTest.cpp

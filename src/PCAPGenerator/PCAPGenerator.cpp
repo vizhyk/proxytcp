@@ -7,18 +7,6 @@ namespace Proxy::PCAP
     const DefaultEndpoints PCAPGenerator::defaultEndpoints{{0x0b0b0b0b, 1080}, {0x16161616, 39510}};
     uint32_t PCAPGenerator::pipelinesCount = 0;
 
-    uint32_t PCAPGenerator::GetPacketSize(const uint8_t* data, std::size_t dataSize) noexcept
-    {
-        if(dataSize < 16)
-            return 0;
-
-        uint32_t packetSize = 0;
-
-        memcpy(&packetSize,data + 12,dataSize);
-
-        return packetSize;
-    }
-
     ByteStream PCAPGenerator::GeneratePCAPGlobalHeader() noexcept
     {
         ByteStream tmpPCAPGlobalHeader;
@@ -382,19 +370,12 @@ namespace Proxy::PCAP
     DefaultEndpoints PCAPGenerator::GenerateNewPipelineEndpoints() noexcept
     {
         DefaultEndpoints tmp = defaultEndpoints;
-        tmp.server.ipv4 += pipelinesCount;
-        tmp.client.ipv4 += pipelinesCount;
+        tmp.server.ipv4 += 0xb * pipelinesCount;
+        tmp.client.ipv4 += 0xb * pipelinesCount;
         tmp.client.port += pipelinesCount;
         //server port == 1080 by default
         pipelinesCount += 1;
         return tmp;
-    }
-
-    uint32_t PCAPGenerator::ChronoNowSecondsUint32_t() noexcept
-    {
-        auto now = std::chrono::system_clock::now();
-
-        return std::chrono::time_point_cast<std::chrono::seconds>(now).time_since_epoch().count();
     }
 
     PCAPTimestamp PCAPGenerator::GeneratePCAPTimestampFromNow(const std::chrono::time_point<std::chrono::system_clock>& now)

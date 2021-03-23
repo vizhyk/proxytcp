@@ -23,9 +23,6 @@ namespace Proxy::PCAP
     class PCAPGenerator
     {
     public:
-        static uint32_t GetPacketSize(const uint8_t* data, std::size_t dataSize) noexcept;
-
-    public:
         static ByteStream GenerateEthHeader() noexcept;
         static ByteStream GeneratePCAPPacketHeader(uint32_t tcpPayloadSize, uint32_t TSsec, uint32_t TSusec) noexcept;
         static ByteStream GeneratePCAPPacketHeader(uint32_t tcpPayloadSize, uint16_t TCPHeaderSize, uint32_t TSsec, uint32_t TSusec) noexcept;
@@ -40,7 +37,6 @@ namespace Proxy::PCAP
 
         static DefaultEndpoints GenerateNewPipelineEndpoints() noexcept;
 
-        static uint32_t ChronoNowSecondsUint32_t() noexcept;
         static PCAPTimestamp GeneratePCAPTimestampFromNow(const std::chrono::time_point<std::chrono::system_clock>& now);
 
     private:
