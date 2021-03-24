@@ -3,7 +3,7 @@
 namespace Proxy
 {
 
-    SocketConnection::SocketConnection(int32_t sockfd, ConnectionState state, const std::shared_ptr<ConversationPipeline>& pipeline) noexcept
+    SocketConnection::SocketConnection(int32_t sockfd, ConnectionSide state, const std::shared_ptr<ConversationPipeline>& pipeline) noexcept
             : Connection(sockfd, state, pipeline)
     {}
 
@@ -51,9 +51,21 @@ namespace Proxy
             endpointSockfd = currentPipeline->GetClientSockfd();
         }
 
-
-
         auto onetimeDataSent = send(endpointSockfd, data.GetBuffer(), data.GetUsedBytes(),
+                                    MSG_NOSIGNAL);
+        if (onetimeDataSent == -1)
+        {
+            status = Status(Status::Error::BadSendingData);
+            return status;
+        }
+
+        return status;
+    }
+
+    Status SocketConnection::SendDataTo(const ByteStream& data, SocketConnection& recipientConnection) noexcept
+    {
+        Status status;
+        auto onetimeDataSent = send(recipientConnection.GetSocketfd(), data.GetBuffer(), data.GetUsedBytes(),
                                     MSG_NOSIGNAL);
         if (onetimeDataSent == -1)
         {

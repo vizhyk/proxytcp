@@ -4,8 +4,8 @@
 
 namespace Proxy
 {
-    Connection::Connection(int32_t socket, ConnectionState state, const std::shared_ptr<ConversationPipeline>& pipeline) noexcept
-        : m_socket(socket), m_state(state), m_buffer(), m_pipeline(pipeline)
+    Connection::Connection(int32_t socket, ConnectionSide state, const std::shared_ptr<ConversationPipeline>& pipeline) noexcept
+        : m_socket(socket), m_connectionSide(state), m_buffer(), m_pipeline(pipeline)
     {}
 
     Connection::~Connection()
@@ -14,15 +14,15 @@ namespace Proxy
     }
 
     void
-    Connection::ChangeState(ConnectionState state) noexcept
+    Connection::ChangeState(ConnectionSide state) noexcept
     {
-        m_state = state;
+        m_connectionSide = state;
     }
 
-    Connection::ConnectionState
-    Connection::GetState() const noexcept
+    Connection::ConnectionSide
+    Connection::GetConnectionSide() const noexcept
     {
-        return m_state;
+        return m_connectionSide;
     }
 
     int32_t

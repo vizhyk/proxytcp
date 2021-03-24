@@ -11,11 +11,14 @@ namespace Proxy::SOCKS5Flow
     class ClientHelloTransmission : public ConversationFlow
     {
     public:
+        ClientHelloTransmission() noexcept { m_flowState = FlowState::SOCKS5ClientHello; }
         std::unique_ptr<ConversationFlow>
         PerformTransaction(SocketConnection& clientConnection, SocketConnection& serverConnection, int32_t epollfd, int32_t sockfdWithEvent) noexcept override;
 
     private:
         static ByteStream GenerateClientInitiationResponse() noexcept;
+
+
     };
 }
 

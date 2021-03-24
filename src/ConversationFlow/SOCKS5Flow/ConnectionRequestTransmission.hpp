@@ -13,6 +13,8 @@ namespace Proxy::SOCKS5Flow
     class ConnectionRequestTransmission : public ConversationFlow
     {
     public:
+        ConnectionRequestTransmission() noexcept { m_flowState = FlowState::SOCKS5ConnectionRequest; }
+    public:
         static Status TryConnectToTheServer(SocketConnection& clientConnection, const uint8_t* serverAddress, uint16_t serverPort, uint8_t addressType, int32_t epollfd, int32_t& serverSockfd) noexcept;
         static int32_t CreateSocketForForwardingByHostname(Status& status, int32_t destinationPort, const uint8_t* hostname, int32_t epollfd) noexcept;
         static Status MakeSocketNonblocking(int32_t socket) noexcept;

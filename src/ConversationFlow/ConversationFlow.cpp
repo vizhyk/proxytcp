@@ -1,7 +1,8 @@
 #include "ConversationFlow.hpp"
 #include "ConversationPipeline/ConversationPipeline.hpp"
-#include "ConversationManager/ConversationManager.hpp"
+#include "ConversationManager/SocketConversationManager.hpp"
 #include "Connection/SocketConnection.hpp"
+#include "Connection/SocketCapturingConnection.hpp"
 
 namespace Proxy
 {
@@ -12,23 +13,24 @@ namespace Proxy
     }
 
     Status
-    ConversationFlow::SendAllDataFromConnection(const ByteStream& data, SocketConnection& destination) noexcept
+    ConversationFlow::SendAllDataFromConnection(const ByteStream& data, SocketConnection& connection) noexcept
     {
-        return destination.SendData(data);
+        return connection.SendData(data);
     }
 
-    Status ConversationFlow::SendAllDataToConnection(const ByteStream& data, SocketConnection& destination) noexcept
+    Status ConversationFlow::SendAllDataToConnection(const ByteStream& data, SocketConnection& recipient) noexcept
     {
-        Status status;
-        auto onetimeDataSent = send(destination.GetSocketfd(), data.GetBuffer(), data.GetUsedBytes(),
-                                    MSG_NOSIGNAL);
-        if (onetimeDataSent == -1)
-        {
-            status = Status(Status::Error::BadSendingData);
-            return status;
-        }
+        return recipient.SendDataTo(data,recipient);
+    }
 
-        return status;
+    void ConversationFlow::LogData(const std::string& sender, const ByteStream& data) noexcept
+    {
+        std::cout << "[" << sender << "]: ";
+        for(std::size_t i = 0; i < data.GetUsedBytes(); ++i)
+        {
+            printf("%02x ", data.GetBuffer()[i]);
+        }
+        std::cout << "\n";
     }
 
 }
