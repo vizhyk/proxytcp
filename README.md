@@ -18,7 +18,7 @@ Move to the `bin` folder and run `proxytcp` :
 
 `cd bin/`
 
-`sudo ./proxytcp --mode capture --output ./meme.pcap --port 1080` - for capturing
+`sudo ./proxytcp --mode capture --output ./meme.pcap --port 1080` - for capturing <br>
 `sudo ./proxytcp --mode default --port 1080`  - for default execution
 
 Then run browser with appropriate flags or edit its configuratin in settings.
