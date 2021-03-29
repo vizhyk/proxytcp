@@ -43,14 +43,14 @@ namespace Proxy
         return m_serverPCAPData;
     }
 
-    void CapturingConversationPipeline::PerformTransaction(int32_t sockfdWithEvent) noexcept
-    {
-        auto newFlow = m_conversationFlow->PerformTransaction(*m_clientConnection, *m_serverConnection, m_epollfd, sockfdWithEvent);
-        if (newFlow != nullptr)
-        {
-            m_conversationFlow = std::move(newFlow);
-        }
-    }
+//    Status CapturingConversationPipeline::PerformTransaction(int32_t sockfdWithEvent) noexcept
+//    {
+//        auto newFlow = m_conversationFlow->PerformTransaction(*m_clientConnection, *m_serverConnection, m_epollfd, sockfdWithEvent);
+//        if (newFlow != nullptr)
+//        {
+//            m_conversationFlow = std::move(newFlow);
+//        }
+//    }
 
     void CapturingConversationPipeline::InitPCAPClientData(const PCAPData& pcapData) noexcept
     {

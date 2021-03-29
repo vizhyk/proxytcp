@@ -9,9 +9,6 @@ namespace Proxy
     {
     public:
         explicit SocketCapturingConnectionManager(const std::string& outputFilePath) noexcept;
-
-        Status FindPipelineAndPerformTransaction(int32_t sockfd) override;
-
     };
 }
 

@@ -28,6 +28,11 @@ namespace Proxy
         return m_buffer.at(idx);
     }
 
+    const uint8_t& ByteStream::operator[](std::size_t idx) const
+    {
+        return m_buffer.at(idx);
+    }
+
     ByteStream& ByteStream::operator<<(const ByteStream& rhs) noexcept
     {
         Insert(rhs);
@@ -68,11 +73,11 @@ namespace Proxy
         return m_buffer.begin();
     }
 
+
     std::vector<uint8_t>::const_iterator ByteStream::End()
     {
         return  m_buffer.end();
     }
-
 
     std::size_t ByteStream::GetAvailableBytes() const noexcept
     {
@@ -184,6 +189,8 @@ namespace Proxy
         m_usedBytes += sizeof(value);
     }
 
+
+
     void ByteStream::Insert(uint64_t value) noexcept
     {
         auto valueSizeof = sizeof(value);
@@ -196,8 +203,6 @@ namespace Proxy
         memcpy(m_buffer.data() + m_usedBytes, &value, valueSizeof);
         m_usedBytes += sizeof(value);
     }
-
-
 
     void ByteStream::Resize(size_t newSize) noexcept
     {
@@ -231,8 +236,6 @@ namespace Proxy
         m_buffer.erase(first,last);
         m_usedBytes -= numberOfElements;
     }
-
-
 
 
     bool operator==(const ByteStream& lhs, const ByteStream& rhs) noexcept { return lhs.cmp(rhs); }

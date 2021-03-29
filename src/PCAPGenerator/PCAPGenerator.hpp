@@ -30,10 +30,12 @@ namespace Proxy::PCAP
         static ByteStream GenerateIPv4Header(uint16_t tcpPayloadSize, uint32_t sourceIPv4, uint32_t desinationIPv4) noexcept;
         static ByteStream GenerateIPv4Header(uint16_t tcpPayloadSize, uint32_t sourceIPv4, uint32_t desinationIPv4, uint16_t TCPHeaderSize) noexcept;
         static ByteStream GenerateTCPHeader(uint32_t sequenceNumber, uint32_t acknowledgmentNumber, uint32_t tcpPayloadSize, uint32_t sourcePort, uint32_t destinationPort, uint16_t flags, uint32_t TSval, uint32_t TSecr) noexcept;
-        static ByteStream GenerateTCPHeader(PCAPData& senderPCAPData, PCAPData& recipientPCAPData, uint32_t tcpPayloadSize, uint32_t sourcePort, uint32_t destinationPort, uint16_t flags) noexcept;
+        static ByteStream GenerateTCPHeader(PCAPData& senderPCAPData, PCAPData& recipientPCAPData, uint32_t tcpPayloadSize, uint16_t flags) noexcept;
         static ByteStream GenerateTCPHeaderSYNACKOptions(uint32_t sequenceNumber, uint32_t acknowledgmentNumber, uint32_t sourcePort, uint32_t destinationPort, uint16_t flags, uint32_t TSval, uint32_t TSecr) noexcept;
         static ByteStream GenerateNoTCPPayloadPacket(PCAPData& lhsPCAPData, PCAPData& rhsPCAPData, uint32_t sourceIPv4, uint16_t sourcePort, uint32_t destinationIPv4, uint16_t destinationPort, uint16_t flags) noexcept;
         static ByteStream Generate3WayTCPHandshake(PCAPData& client, PCAPData& server) noexcept;
+        static ByteStream GenerateFINACKHandshake(PCAPData& client, PCAPData& server) noexcept;
+        static ByteStream GenerateTLSHeader(uint16_t tcpPayloadSize) noexcept;
 
         static DefaultEndpoints GenerateNewPipelineEndpoints() noexcept;
 

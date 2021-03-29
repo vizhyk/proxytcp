@@ -1,9 +1,9 @@
-#include <src/TrafficParsing/TLS/TLSParser.hpp>
-#include <src/ConversationPipeline/PayloadBuffer/TLSPayloadBuffer.hpp>
+#include "src/TrafficParsing/TLS/TLSParser.hpp"
+#include "src/ConversationPipeline/PayloadBuffer/TLSPayloadBuffer.hpp"
 #include "TLSDefault.hpp"
 #include "Connection/SocketConnection.hpp"
 #include "ConversationPipeline/ConversationPipeline.hpp"
-
+#include "ConversationFlow/BreakConnection.hpp"
 namespace Proxy::TLSFlow
 {
     std::unique_ptr<ConversationFlow>
@@ -17,12 +17,20 @@ namespace Proxy::TLSFlow
         {
             clientSideEvent = true;
             status = ReadAllDataFromConnection(clientConnection);
+            if(status  == Status::Success::DataTransferEnded)
+            {
+                return std::make_unique<BreakConnection>();
+            }
             if(clientConnection.Buffer().GetUsedBytes() == 0) { return nullptr; }
         }
         else
         {
             clientSideEvent = false;
             status = ReadAllDataFromConnection(serverConnection);
+            if(status  == Status::Success::DataTransferEnded)
+            {
+                return std::make_unique<BreakConnection>();
+            }
             if(serverConnection.Buffer().GetUsedBytes() == 0) { return nullptr; }
         }
 

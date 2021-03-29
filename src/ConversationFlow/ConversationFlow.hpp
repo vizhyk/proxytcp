@@ -18,6 +18,7 @@ namespace Proxy
             TLSClientHello = 0x0f,
             TLSServerHello = 0xf0,
             TLSDefault = 0xff,
+            BreakConnection = 0xaa,
         };
     public:
         virtual ~ConversationFlow() noexcept = default;

@@ -12,7 +12,7 @@ namespace Proxy
     public:
         virtual ~ConnectionManager() = default;
         virtual Status ProcessConnections(uint16_t port) = 0;
-        virtual Status FindPipelineAndPerformTransaction(int32_t sockfd) = 0;
+        virtual Status FindPipelineAndPerformTransaction(int32_t sockfd, int32_t epollfd) = 0;
     protected:
         std::unique_ptr<ConversationManager> m_conversationManager;
     };

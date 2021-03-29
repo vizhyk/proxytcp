@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 set -o pipefail
-../../bin/proxytcp &
+../../bin/proxytcp --mode default --port 1080 &
 CLOCK_PID=$!
 sleep 1
 

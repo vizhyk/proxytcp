@@ -2,7 +2,7 @@
 #include "Connection/SocketConnection.hpp"
 #include "ConnectionManager/SocketConnectionManager.hpp"
 #include "ConnectionManager/SocketCapturingConnectionManager.hpp"
-
+#include "ExecutionModeType/ExecutionModeType.hpp"
 
 namespace Proxy
 {

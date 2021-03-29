@@ -52,6 +52,24 @@ namespace Proxy
         return status;
     }
 
+    Status SocketConnectionManager::EpollRemove(int32_t epollfd, int32_t sockfd, uint32_t eventFlags) noexcept
+    {
+        Status status;
+
+        epoll_event ev {};
+
+        ev.events = eventFlags;
+        ev.data.fd = sockfd;
+
+        if(epoll_ctl(epollfd, EPOLL_CTL_DEL, sockfd, &ev) == -1)
+        {
+            status = Status::Error::BadEpollCTL;
+            return status;
+        }
+
+        return status;
+    }
+
     Status
     SocketConnectionManager::BindSocketToPort(int32_t& _sockfd, uint16_t port) noexcept
     {
@@ -219,8 +237,9 @@ namespace Proxy
                     continue;
                 }
 
-                status = FindPipelineAndPerformTransaction(events[sockfdID].data.fd);
+                status = FindPipelineAndPerformTransaction(events[sockfdID].data.fd, epollfd);
                 if(status.Failed()) { return status; }
+
             }
 
         }
@@ -228,7 +247,7 @@ namespace Proxy
         return status;
     }
 
-    Status SocketConnectionManager::FindPipelineAndPerformTransaction(int32_t sockfd)
+    Status SocketConnectionManager::FindPipelineAndPerformTransaction(int32_t sockfd, int32_t epollfd)
     {
         Status status;
 
@@ -239,7 +258,19 @@ namespace Proxy
             return status;
         }
 
-        pipeline->PerformTransaction(sockfd);
+        status = pipeline->PerformTransaction(sockfd);
+        if(status == Status::Success::DataTransferEnded)
+        {
+            m_conversationManager->ErasePipeline(pipeline->GetServerSockfd());
+            m_conversationManager->ErasePipeline(pipeline->GetClientSockfd());
+
+            status = EpollRemove(epollfd,pipeline->GetServerSockfd(), 0);
+            if(status.Failed()) { return status; }
+
+            status = EpollRemove(epollfd,pipeline->GetClientSockfd(), 0);
+            if(status.Failed()) { return status; }
+
+        }
 
         return status;
     }

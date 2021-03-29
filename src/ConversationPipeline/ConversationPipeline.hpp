@@ -36,7 +36,7 @@ namespace Proxy
             return *static_cast<PayloadType*>(m_payload.get());
         }
 
-        virtual void PerformTransaction(int32_t sockfdWithEvent) noexcept;
+        virtual Status PerformTransaction(int32_t sockfdWithEvent) noexcept;
         virtual void InitServerConnection(int32_t sockfd) noexcept;
         virtual void InitClientConnection(int32_t sockfd) noexcept;
 

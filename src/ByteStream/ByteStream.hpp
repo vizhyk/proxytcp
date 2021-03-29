@@ -24,6 +24,7 @@ namespace Proxy
 
         explicit operator bool() const noexcept;
         uint8_t& operator[](std::size_t idx);
+        const uint8_t& operator[](std::size_t idx) const;
 
         ByteStream& operator<<(uint8_t value)  noexcept;
         ByteStream& operator<<(uint16_t value) noexcept;

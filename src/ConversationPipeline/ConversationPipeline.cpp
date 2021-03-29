@@ -17,14 +17,20 @@ namespace Proxy
     {
     }
 
-    void
+    Status
     ConversationPipeline::PerformTransaction(int32_t sockfdWithEvent) noexcept
     {
         auto newFlow = m_conversationFlow->PerformTransaction(*m_clientConnection, *m_serverConnection, m_epollfd, sockfdWithEvent);
+        if(newFlow && newFlow->GetState() == ConversationFlow::FlowState::BreakConnection )
+        {
+            return Status(Status::Success::DataTransferEnded);
+        }
         if (newFlow != nullptr)
         {
             m_conversationFlow = std::move(newFlow);
         }
+
+        return Status(Status::Success::Success);
     }
 
     int32_t
