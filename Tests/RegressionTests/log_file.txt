@@ -2,7 +2,7 @@
 <A HREF="https://www.google.com/">here</A>.
         <meta property="og:url" content="https://stackoverflow.com/"/>
         <meta name="twitter:domain" content="stackoverflow.com"/>
-        StackExchange.init({"locale":"en","serverTime":1612781935,"routeName":"Home/Index","stackAuthUrl":"https://stackauth.com","networkMetaHostname":"meta.stackexchange.com","site":{"name":"Stack Overflow","description":"Q&A for professional and enthusiast programmers","isNoticesTabEnabled":true,"enableNewTagCreationWarning":true,"insertSpaceAfterNameTabCompletion":false,"id":1,"childUrl":"https://meta.stackoverflow.com","styleCodeWithHighlightjs":true,"negativeVoteScoreFloor":null,"enableSocialMediaInSharePopup":true,"protocol":"https"},"user":{"fkey":"74d8271b28d9cc414c326a3c8954fa4c95ae6dce2cfffa8bcbe9344fe21d7f6f","tid":"368b67f0-03d7-9d7f-9f63-ec29fbee7411","rep":0,"isAnonymous":true,"isAnonymousNetworkWide":true},"events":{"postType":{"question":1},"postEditionSection":{"title":1,"body":2,"tags":3}},"story":{"minCompleteBodyLength":75,"likedTagsMaxLength":300,"dislikedTagsMaxLength":300},"jobPreferences":{"maxNumDeveloperRoles":2,"maxNumIndustries":4},"svgIconPath":"https://cdn.sstatic.net/Img/stacks-icons","svgIconHash":"5acef7872715"}, {"userProfile":{"openGraphAPIKey":"4a307e43-b625-49bb-af15-ffadf2bda017"},"userMessaging":{"showNewFeatureNotice":true},"tags":{},"subscriptions":{"defaultMaxTrueUpSeats":1000},"snippets":{"renderDomain":"stacksnippets.net","snippetsEnabled":true},"slack":{"sidebarAdDismissCookie":"slack-sidebar-ad","sidebarAdDismissCookieExpirationDays":60.0},"site":{"allowImageUploads":true,"enableImgurHttps":true,"enableUserHovercards":true,"forceHttpsImages":true,"styleCode":true},"intercom":{"appId":"inf0secd","hostBaseUrl":"https://stacksnippets.net"},"paths":{},"monitoring":{"clientTimingsAbsoluteTimeout":30000,"clientTimingsDebounceTimeout":1000},"mentions":{"maxNumUsersInDropdown":50},"markdown":{"enableTables":true},"legal":{"oneTrustConfigId":"c3d9f1e3-55f3-4eba-b268-46cee4c6789c"},"flags":{"allowRetractingCommentFlags":true,"allowRetractingFlags":true},"comments":{},"accounts":{"currentPasswordRequiredForChangingStackIdPassword":true}});
+        StackExchange.init({"locale":"en","serverTime":1617020271,"routeName":"Home/Index","stackAuthUrl":"https://stackauth.com","networkMetaHostname":"meta.stackexchange.com","site":{"name":"Stack Overflow","description":"Q&A for professional and enthusiast programmers","isNoticesTabEnabled":true,"enableNewTagCreationWarning":true,"insertSpaceAfterNameTabCompletion":false,"id":1,"cookieDomain":".stackoverflow.com","childUrl":"https://meta.stackoverflow.com","styleCodeWithHighlightjs":true,"negativeVoteScoreFloor":null,"enableSocialMediaInSharePopup":true,"protocol":"https"},"user":{"fkey":"74d8271b28d9cc414c326a3c8954fa4c95ae6dce2cfffa8bcbe9344fe21d7f6f","tid":"f2c2d50b-e910-4706-e847-3ace6a7ac96f","rep":0,"isAnonymous":true,"isAnonymousNetworkWide":true},"events":{"postType":{"question":1},"postEditionSection":{"title":1,"body":2,"tags":3}},"story":{"minCompleteBodyLength":75,"likedTagsMaxLength":300,"dislikedTagsMaxLength":300},"jobPreferences":{"maxNumDeveloperRoles":2,"maxNumIndustries":4},"svgIconPath":"https://cdn.sstatic.net/Img/stacks-icons","svgIconHash":"5acef7872715"}, {"userProfile":{"openGraphAPIKey":"4a307e43-b625-49bb-af15-ffadf2bda017"},"userMessaging":{"showNewFeatureNotice":true},"tags":{},"subscriptions":{"defaultBasicMaxTrueUpSeats":250,"defaultFreemiumMaxTrueUpSeats":50,"defaultMaxTrueUpSeats":1000},"snippets":{"renderDomain":"stacksnippets.net","snippetsEnabled":true},"slack":{"sidebarAdDismissCookie":"slack-sidebar-ad","sidebarAdDismissCookieExpirationDays":60.0},"site":{"allowImageUploads":true,"enableImgurHttps":true,"enableUserHovercards":true,"forceHttpsImages":true,"styleCode":true},"questions":{"enableQuestionTitleLengthLiveWarning":true,"maxTitleSize":150,"questionTitleLengthStartLiveWarningChars":50},"intercom":{"appId":"inf0secd","hostBaseUrl":"https://stacksnippets.net"},"paths":{},"monitoring":{"clientTimingsAbsoluteTimeout":30000,"clientTimingsDebounceTimeout":1000},"mentions":{"maxNumUsersInDropdown":50},"markdown":{"enableTables":true},"legal":{"oneTrustConfigId":"c3d9f1e3-55f3-4eba-b268-46cee4c6789c"},"flags":{"allowRetractingCommentFlags":true,"allowRetractingFlags":true},"comments":{},"accounts":{"currentPasswordRequiredForChangingStackIdPassword":true}});
                     <a href="https://stackoverflow.com" class="-logo js-gps-track"
                         <a href="https://stackoverflow.com/talent" class="bar-sm p6 d-block h:bg-black-100 js-gps-track"
                         <a href="https://stackoverflow.com/advertising" class="bar-sm p6 d-block h:bg-black-100 js-gps-track"
@@ -14,17 +14,30 @@
             <a href="https://chat.stackoverflow.com/?tab=site&amp;host=stackoverflow.com" class="js-gps-track" data-gps-track="site_switcher.click({ item_type:6 })">chat</a>
                             <a href="https://meta.stackoverflow.com"
 <a href="https://stackoverflow.com/users/signup?ssrc=site_switcher&amp;returnurl=%2fusers%2fstory%2fcurrent" class="login-link js-gps-track" data-gps-track="site_switcher.click({ item_type:10 })">Sign up</a> or <a href="https://stackoverflow.com/users/login?ssrc=site_switcher&amp;returnurl=https%3a%2f%2fstackoverflow.com%2f" class="login-link js-gps-track" data-gps-track="site_switcher.click({ item_type:11 })">log in</a> to customize your list.                </div>
-                                    <a href="https://stackoverflow.com/teams"
-                                        data-ga="[&quot;teams left navigation - anonymous&quot;,&quot;left nav team click&quot;,&quot;stackoverflow.com/teams&quot;,null,null]">
+        <a href="https://stackoverflow.com/teams/create/free?utm_source=so-owned&amp;utm_medium=side-bar&amp;utm_campaign=campaign-38&amp;utm_content=cta" 
+           data-ga="[&quot;teams left navigation - anonymous&quot;,&quot;left nav free cta&quot;,&quot;stackoverflow.com/teams/create/free&quot;,null,null]">Create a free Team</a>
+        <a href="https://stackoverflow.com/teams" 
+           data-ga="[&quot;teams left navigation - anonymous&quot;,&quot;left nav free cta&quot;,&quot;stackoverflow.com/teams&quot;,null,null]">What is Teams?</a>
+                                    <a href="https://stackoverflow.com/teams/create/free?utm_source=so-owned&amp;utm_medium=side-bar&amp;utm_campaign=campaign-38&amp;utm_content=cta"
+                                       data-ga="[&quot;teams left navigation - anonymous&quot;,&quot;left nav team click&quot;,&quot;stackoverflow.com/teams/create/free&quot;,null,null]">
                 <a href="https://stackoverflow.com/teams"
                    data-ga="[&quot;teams left navigation - anonymous&quot;,&quot;left nav cta&quot;,&quot;stackoverflow.com/teams&quot;,null,null]">
-                <a href="https://stackoverflow.com/talent"
-                <a href="https://stackoverflow.com/advertising"
+                    <a href="https://stackoverflow.com/teams/create/free" class="s-btn w100 wmx2 fs-body2 px32 bar-md bg-blue-500 h:bg-blue-600 fc-white d:fc-black-900 p-ff-source-bold mt-auto" data-ga="[&quot;home page&quot;,&quot;header cta&quot;,&quot;create a team&quot;,null,null]">Create a free Team</a>
+                    <p class="mb0 mt12 fc-black-600">or <a class="s-link s-link__underlined fc-black-700 h:fc-blue-600" href="https://stackoverflow.com/teams">discover Teams</a></p>
+                <a href="https://stackoverflow.com/teams" class="h48 d-block"><svg aria-hidden="true" class="native svg-icon iconLogoTeamsAltMd" width="185" height="37" viewBox="0 0 185 37"><path d="M26 33v-9h4v13H0V24h4v9h22z" fill="#BCBBBB"/><path d="M23.1 25.99l.68-2.95-16.1-3.35L7 23l16.1 2.99zM9.1 15.2l15 7 1.4-3-15-7-1.4 3zm4.2-7.4L26 18.4l2.1-2.5L15.4 5.3l-2.1 2.5zM21.5 0l-2.7 2 9.9 13.3 2.7-2L21.5 0zM7 30h16v-3H7v3z" fill="#F48024"/><path d="M75.51 13.2h-10c-.3 0-.5.2-.5.5v15.67c0 .3.2.5.5.5h2.4c.3 0 .5-.2.5-.5v-6.11h6c.3 0 .5-.2.5-.5V20.6c0-.3-.2-.5-.5-.5h-6v-3.75h7.15c.3 0 .5-.2.5-.5v-2.16c-.05-.25-.3-.5-.55-.5zm14.09 3.5a5.02 5.02 0 00-1.15-1.8 6.18 6.18 0 00-4.5-1.8 6.07 6.07 0 00-5.4 3.1c-.2.45-.4.95-.5 1.45-.1.5-.15 1.05-.2 1.6-.05.55-.05 1.35-.05 2.3 0 1.26.05 2.2.1 2.9.05.71.2 1.36.45 2.01.25.65.65 1.2 1.15 1.8 1.2 1.2 2.7 1.8 4.45 1.8a5.8 5.8 0 005.65-3.66c.25-.59.35-1.29.4-2 .05-.64.05-1.64.05-2.9 0-1.25 0-2.2-.05-2.9a5 5 0 00-.4-1.9zm-8.25 1.65c.1-.55.3-1 .6-1.35.2-.25.5-.45.85-.6.35-.15.75-.2 1.1-.2.4 0 .75.1 1.1.2.35.15.65.35.85.6.3.35.5.75.6 1.3.1.6.15 1.7.15 3.2 0 1 0 1.8-.05 2.4a4 4 0 01-.25 1.31c-.1.3-.25.55-.5.8-.5.55-1.15.8-1.95.8a2.69 2.69 0 01-1.95-.75c-.2-.2-.35-.4-.4-.6-.05-.1-.15-.35-.2-.75l-.15-1.25c0-.5-.05-1.15-.05-1.96.1-1.45.15-2.55.25-3.15zm20.72 4.41a4.6 4.6 0 002.9-4.46 4.71 4.71 0 00-2.55-4.4 5.64 5.64 0 00-2.8-.66h-6.1c-.3 0-.5.2-.5.5v15.68c0 .3.2.5.5.5h2.4c.3 0 .5-.2.5-.5V23.3h2.15l3.15 6.3c.1.16.25.3.45.3h2.75a.6.6 0 00.45-.24c.1-.15.1-.35 0-.5l-3.3-6.41zm-5.65-6.41h3c.7 0 1.2.15 1.6.55.4.35.55.8.55 1.45 0 .6-.2 1.05-.55 1.4-.4.35-.9.55-1.6.55h-3v-3.95zm27.62-3.15h-11c-.3 0-.5.2-.5.5v2.15c0 .3.2.5.5.5h3.8v13.02c0 .3.2.5.5.5h2.35c.3 0 .5-.2.5-.5V16.35h3.8c.3 0 .5-.2.5-.5v-2.16c.05-.25-.2-.5-.45-.5zm13.48 0h-10c-.3 0-.5.2-.5.5v15.67c0 .3.2.5.5.5h10c.3 0 .5-.2.5-.5V27.2c0-.3-.2-.5-.5-.5h-7.15V23h6c.3 0 .5-.2.5-.5v-2.1c0-.3-.2-.5-.5-.5h-6v-3.56h7.15c.3 0 .5-.2.5-.5v-2.16c0-.25-.25-.5-.5-.5zm10.42.34a.48.48 0 00-.45-.35h-1.9c-.2 0-.4.15-.45.35l-5.75 15.68c-.05.15-.05.3.05.45.1.15.25.2.4.2h2.55c.2 0 .4-.15.45-.35l.95-2.8h5.45l.95 2.8c.05.2.25.35.45.35h2.55c.15 0 .3-.1.4-.2.1-.15.1-.3.05-.45l-5.7-15.68zm.3 10.17h-3.4l1.75-4.9 1.65 4.9zm21.75-10.51h-2.4c-.2 0-.35.1-.45.3l-4 8.76-4.1-8.77c-.1-.2-.25-.3-.45-.3h-2.4c-.3 0-.5.2-.5.5v15.68c0 .3.2.5.5.5h2.4c.3 0 .5-.2.5-.5V21.1l2.75 5.66c.1.15.25.3.45.3h1.75c.2 0 .35-.1.45-.3l2.65-5.6v8.26c0 .3.2.5.5.5h2.4c.3 0 .5-.2.5-.5V13.74c-.05-.3-.25-.55-.55-.55zm13.45 8.15a3.8 3.8 0 00-1.3-.8 7.7 7.7 0 00-1.85-.45l-1.8-.25c-.3-.05-.6-.1-.9-.25a2.1 2.1 0 01-.6-.35c-.3-.25-.4-.6-.4-1.1 0-.4.1-.7.25-1 .2-.3.45-.5.75-.65.35-.15.8-.25 1.3-.25.45 0 .85.05 1.2.1s.7.2 1 .35c.3.15.6.35.9.65.2.2.5.2.7 0l1.55-1.5c.1-.1.15-.25.15-.35a.45.45 0 00-.15-.35 7.11 7.11 0 00-2.3-1.46 8.4 8.4 0 00-2.9-.45c-1.15 0-2.15.2-3 .6a4.67 4.67 0 00-2 1.8c-.45.76-.7 1.66-.7 2.66 0 1.4.45 2.55 1.3 3.36.8.75 1.85 1.2 3.25 1.4l1.85.25c.4.05.75.15.95.2.2.05.35.15.5.35.3.25.45.7.45 1.25 0 .6-.2 1.05-.65 1.35-.5.35-1.2.55-2.1.55-.5 0-1-.05-1.4-.15-.4-.1-.8-.25-1.2-.45-.35-.2-.7-.45-1.05-.8a.45.45 0 00-.35-.15.45.45 0 00-.35.15l-1.6 1.55c-.1.1-.15.2-.15.35 0 .15.05.25.15.35a7.1 7.1 0 002.6 1.7c.95.36 2.05.5 3.3.5.85 0 1.7-.1 2.4-.34a5.16 5.16 0 003.25-2.66c.3-.65.45-1.35.45-2.1-.05-1.6-.55-2.8-1.5-3.6z" fill="var(--black-800)"/><path fill="#D6D9DC" d="M47 13h1v17h-1z"/></svg></a>
+                <a href="https://stackoverflow.com/teams/create/free" class="s-btn w100 ws-nowrap wmx2 fs-body2 px32 bar-md bg-blue-500 h:bg-blue-600 fc-white d:fc-black-900 p-ff-source-bold mt-auto" data-ga="[&quot;home page&quot;,&quot;body cta&quot;,&quot;create a team&quot;,null,null]">Create a free Team</a>
+                <p class="mb0 mt12 fc-black-400">or <a class="s-link s-link__underlined fc-black-400 h:fc-blue-600" href="https://stackoverflow.com/teams">discover Teams</a></p>
             <div>Your own private space hosted on stackoverflow.com</div>
-                   href="https://stackoverflow.com/talent" 
-                   href="https://stackoverflow.com/advertising"
-                <a href="https://stackoverflow.com/questions/55884514/what-is-the-incentive-for-curl-to-release-the-library-for-free/55885729#55885729" 
-                <p>Answer questions and <a href="https://insights.stackoverflow.com/" class="js-gps-track" data-gps-track="product_homepage.learn_and_grow.click({ link: 'Insights' })"
+            href="https://stackoverflow.com/teams/create/free"
+            data-ga="[&quot;teams landing&quot;,&quot;plans menu click&quot;,&quot;stackoverflow.com/teams/create/free&quot;,null,null]"
+            <div>Your own private space hosted on stackoverflow.com</div>
+            href="https://stackoverflow.com/teams/create/basic"
+            data-ga="[&quot;teams landing&quot;,&quot;plans menu click&quot;,&quot;stackoverflow.com/teams/create/basic&quot;,null,null]"
+            href="https://stackoverflow.com/teams/create/business"
+            data-ga="[&quot;teams landing&quot;,&quot;plans menu click&quot;,&quot;stackoverflow.com/teams/create/business&quot;,null,null]"
+            href="https://stackoverflow.com/enterprise/get-started"
+            data-ga="[&quot;teams landing&quot;,&quot;plans menu click&quot;,&quot;stackoverflow.com/enterprise/get-started&quot;,null,null]"
+    <a href="https://stackoverflow.com/teams/create/free" class="grid--cell s-btn fs-body2 px32 bar-md s-btn__outlined p-ff-source-bold" data-ga="[&quot;home page&quot;,&quot;footer callout cta&quot;,&quot;create a team&quot;,null,null]">Create a free Team</a>
                     <a href="https://stackoverflow.com"><svg aria-hidden="true" class="native svg-icon iconLogoGlyphMd" width="32" height="37" viewBox="0 0 32 37"><path d="M26 33v-9h4v13H0V24h4v9h22z" fill="#BCBBBB"/><path d="M21.5 0l-2.7 2 9.9 13.3 2.7-2L21.5 0zM26 18.4L13.3 7.8l2.1-2.5 12.7 10.6-2.1 2.5zM9.1 15.2l15 7 1.4-3-15-7-1.4 3zm14 10.79l.68-2.95-16.1-3.35L7 23l16.1 2.99zM23 30H7v-3h16v3z" fill="#F48024"/></svg></a>
                         <h5 class="-title"><a href="https://stackoverflow.com" class="js-gps-track" data-gps-track="footer.click({ location: 1, link: 15})">Stack Overflow</a></h5>
                                 <li class="-item"><a href="https://stackoverflow.com/jobs" class="js-gps-track -link" data-gps-track="footer.click({ location: 1, link: 17})">Jobs</a></li>
@@ -43,11 +56,12 @@
                         <li class="-item"><a class="js-gps-track -link" data-gps-track="footer.click({ location: 1, link: 8 })" href="https://stackoverflow.com/legal/privacy-policy">Privacy Policy</a></li>
                         <li class="-item"><a class="js-gps-track -link" data-gps-track="footer.click({ location: 1, link: 37 })" href="https://stackoverflow.com/legal/terms-of-service">Terms of Service</a></li>
                             <li class="-item"><a class="js-gps-track -link" data-gps-track="footer.click({ location: 1, link: 13 })" href="https://stackoverflow.com/company/contact">Contact Us</a></li>
+                        <li class="-item"><a class="js-gps-track -link" data-gps-track="footer.click({ location: 1, link: 39 })" href="https://stackoverflow.com/legal/cookie-policy">Cookie Policy</a></li>
                 <li class="-item"><a href="https://stackoverflow.com" class="-link js-gps-track" data-gps-track="footer.click({ location: 2, link: 25 })" title="professional and enthusiast programmers">Stack Overflow</a></li>
                 <li class="-item"><a href="https://pt.stackoverflow.com" class="-link js-gps-track" data-gps-track="footer.click({ location: 2, link: 25 })" title="programadores profissionais e entusiastas">Stack Overflow em Portugu&#xEA;s</a></li>
                 <li class="-item"><a href="https://ru.stackoverflow.com" class="-link js-gps-track" data-gps-track="footer.click({ location: 2, link: 25 })" title="&#x43F;&#x440;&#x43E;&#x433;&#x440;&#x430;&#x43C;&#x43C;&#x438;&#x441;&#x442;&#x43E;&#x432;">Stack Overflow &#x43D;&#x430; &#x440;&#x443;&#x441;&#x441;&#x43A;&#x43E;&#x43C;</a></li>
                 <li class="-item"><a href="https://es.stackoverflow.com" class="-link js-gps-track" data-gps-track="footer.click({ location: 2, link: 25 })" title="programadores y profesionales de la inform&#xE1;tica">Stack Overflow en espa&#xF1;ol</a></li>
-site design / logo &#169; 2021 Stack Exchange Inc; user contributions licensed under <a href="https://stackoverflow.com/help/licensing">cc by-sa</a>.                    <span id="svnrev">rev&nbsp;2021.2.5.38499</span>
+site design / logo &#169; 2021 Stack Exchange Inc; user contributions licensed under <a href="https://stackoverflow.com/help/licensing">cc by-sa</a>.                    <span id="svnrev">rev&nbsp;2021.3.26.38924</span>
 	<meta name="description" content="Лучшие переводы английских песен на сайте en.lyrsense.com. Читайте переводы, слушайте любимые песни прямо на сайте." />
 	<link rel="alternate" media="only screen and (max-width: 640px)" href="https://m.en.lyrsense.com/"/>
 			<div style="padding-right:20px;"><p><strong>en.lyrsense.com</strong> — это сайт с невероятным количеством <strong>переводов песен</strong> англоязычных исполнителей. <a href="/madonna">Мадонна</a>, <a href="/britney_spears">Бритни Спирс</a>, <a href="/beatles">Битлз</a>, <a href="/queen">Квин</a> и многие, многие другие — более тысячи различных исполнителей и групп. Наслаждайтесь переводами любимых песен, слушайте альбомы кумиров прямо на сайте и играйте в <a href="/game">игру «Угадай мелодию!»</a>.</p></div>
@@ -93,6 +107,7 @@ Login.SiteName = 'football.ua';
         <a href="https://football.ua/footballtest.html" 
         <a href="https://football.ua/life-principles.html" 
         <a href="https://euro2020.football.ua/" 
+        <a href="https://football.ua/worldcup.html" 
         <a href="https://football.ua/fansector.html" 
         <a href="https://football.ua/bet-ratings.html" 
         <a href="https://football.ua/ukraine.html" 
@@ -124,278 +139,273 @@ Login.SiteName = 'football.ua';
                 <a href="https://football.ua/club/1302-rukh.html">
                 <a href="https://football.ua/club/24-shakhtar.html">
 <script type="text/javascript" src="https://football.ua/mod/News/CategoryFootballMain.js?v=20130116"></script>
-        <a href="https://football.ua/fiction/443495-na-zametku-kovalenko-kak-debjutirovali-ukraincy-v-top-chempionatakh.html" class="photo" style="">
-            data-alt="Андрей Ярмоленко и Евгений Коноплянка" data-copyright="Андрей Ярмоленко и Евгений Коноплянка" data-href="https://football.ua/fiction/443495-na-zametku-kovalenko-kak-debjutirovali-ukraincy-v-top-chempionatakh.html">
-            <h3><a href="https://football.ua/fiction/443495-na-zametku-kovalenko-kak-debjutirovali-ukraincy-v-top-chempionatakh.html">На заметку Коваленко: как дебютировали украинцы в ТОП-чемпионатах</a></h3>
-            data-alt="Криштиану Роналду, Getty Images" data-copyright="Криштиану Роналду, Getty Images" data-href="https://football.ua/countrieselse/443463-yuventus-nameren-prodlit-mucheniya-rabotnikov-fiat-do-2023-goda-luchshie-kommentarii-nedeli-na-footballua.html">
-            <h3><a href="https://football.ua/countrieselse/443463-yuventus-nameren-prodlit-mucheniya-rabotnikov-fiat-do-2023-goda-luchshie-kommentarii-nedeli-na-footballua.html">&quot;Ювентус намерен продлить мучения работников Fiat до 2023 года&quot;, — лучшие комментарии недели на Football.ua</a></h3>
-            data-alt=", Getty Images" data-copyright=", Getty Images" data-href="https://football.ua/england/443451-zinchenko-pomog-manchester-siti-raspravitsja-s-liverpulem-na-ehnfilde.html">
-            <h3><a href="https://football.ua/england/443451-zinchenko-pomog-manchester-siti-raspravitsja-s-liverpulem-na-ehnfilde.html">Зинченко помог Манчестер Сити расправиться с Ливерпулем на Энфилде</a></h3>
-            data-alt="Бетис — Барселона, Getty Images" data-copyright="Бетис — Барселона, Getty Images" data-href="https://football.ua/spain/443468-barselona-v-dozhala-betis-v-koncovke-rezultativnogo-poedinka.html">
-            <h3><a href="https://football.ua/spain/443468-barselona-v-dozhala-betis-v-koncovke-rezultativnogo-poedinka.html">Барселона дожала Бетис в концовке результативного поединка</a></h3>
+        <a href="https://football.ua/worldcup/447642-oshibka-mikolenko-rezultat-ustalosti-analiz-matcha-ukraina-finljandija.html" class="photo" style="">
+            data-alt="Ошибка Миколенко — результат усталости: анализ матча Украина — Финляндия" data-copyright="" data-href="https://football.ua/worldcup/447642-oshibka-mikolenko-rezultat-ustalosti-analiz-matcha-ukraina-finljandija.html">
+            <h3><a href="https://football.ua/worldcup/447642-oshibka-mikolenko-rezultat-ustalosti-analiz-matcha-ukraina-finljandija.html">Ошибка Миколенко — результат усталости: анализ матча Украина — Финляндия</a></h3>
+            data-alt="Украина — Финляндия. Наши оценки" data-copyright="" data-href="https://football.ua/worldcup/447609-ukraina-finljandija-nashi-ocenki.html">
+            <h3><a href="https://football.ua/worldcup/447609-ukraina-finljandija-nashi-ocenki.html">Украина — Финляндия. Наши оценки</a></h3>
+            data-alt="фото: УАФ" data-copyright="фото: УАФ" data-href="https://football.ua/countrieselse/447610-zhal-chto-u-sbornoj-ukrainy-net-v-gruppe-malty-vot-eto-byla-by-zaruba-luchshie-kommentarii-nedeli-na-footballua.html">
+            <h3><a href="https://football.ua/countrieselse/447610-zhal-chto-u-sbornoj-ukrainy-net-v-gruppe-malty-vot-eto-byla-by-zaruba-luchshie-kommentarii-nedeli-na-footballua.html">&quot;Жаль, что у сборной Украины нет в группе Мальты. Вот это была бы заруба!&quot; — лучшие комментарии недели на Football.ua</a></h3>
+            data-alt="Украина — Финляндия" data-copyright="Украина — Финляндия" data-href="https://football.ua/worldcup/447598-ukraina-upustila-pobedu-nad-finljandiejj.html">
+            <h3><a href="https://football.ua/worldcup/447598-ukraina-upustila-pobedu-nad-finljandiejj.html">Украина упустила победу над Финляндией</a></h3>
         <h3 class="feed-header rss green">главное за сутки<a class="rss" href="//football.ua/rss2.ashx"></a></h3>
-                <a  href="https://football.ua/ukraine/443505-oficialno-shakhab-igrok-zari.html">
-                <a  href="https://football.ua/ukraine/443500-dinamo-razgromilo-bateh-v-kontrolnom-matche.html">
-                <a class='video' href="https://football.ua/countrieselse/443497-samye-bezumnye-transfery-v-istorii-novoe-video-na-kanale-footballua.html">
-                <a  href="https://football.ua/ukraine/443498-dinamo-khochet-priobresti-perspektivnogo-rumynskogo-zashhitnika.html">
-                <a  href="https://football.ua/countrieselse/443457-matchi-nedeli.html">
-                <a  href="https://football.ua/ukraine/443487-ordec-rakickijj-zaveril-menja-chto-rossijjskijj-chempionat-luchshe-ukrainskogo.html">
-                <a  href="https://football.ua/countrieselse/443480-sbornaja-marokko-pobedila-v-chempionate-afrikanskikh-nacijj.html">
-                <a  href="https://football.ua/countrieselse/443461-uanl-tigres-finalist-klubnogo-chempionata-mira.html">
-                <a  href="https://football.ua/england/443454-zinchenko-poluchil-srednjuju-ocenku-za-match-protiv-liverpulja.html">
-                <a  href="https://football.ua/germany/443448-stali-izvestny-rezultaty-zherebevki-14-finala-kubka-germanii.html">
-			<a href="https://football.ua/fiction/443495-na-zametku-kovalenko-kak-debjutirovali-ukraincy-v-top-chempionatakh.html">
-			<a href="https://football.ua/countrieselse/443224-top-10-transferov-zimnego-transfernogo-okna.html">
-			<a href="https://football.ua/england/443185-mourino-bez-kejna-kak-bez-ruk-spornyj-arbitrazh-i-drugie-itogi-22-go-tura-apl.html">
-			<a href="https://football.ua/italy/443204-nesostojavshijjsja-pretendent-pochemu-napoli-ne-boretsja-za-skudetto.html">
-			<a href="https://football.ua/ukraine/443074-seleznev-i-kompanija-svjazannye-s-ukrainojj-igroki-kotorykh-vygonjali-iz-futbolnykh-klubov-za-narushenie-rezhima.html">
-			<a href="https://football.ua/italy/420281-luchshie-v-istorii-trenery-milana.html">
-			<a href="https://football.ua/countrieselse/443073-top-10-transferov-poslednego-dnja-transfernogo-okna-kotorye-vy-mogli-propustit.html">
-			<a href="https://football.ua/italy/443028-universal-sposobnyjj-zamenit-papu-gomesa-reakcija-bolelshhikov-i-smi-na-transfer-ukrainca.html">
-			<a href="https://football.ua/italy/442971-perspektivy-kovalenko-v-atalante.html">
-			<a href="https://football.ua/italy/420276-luchshie-v-istorii-napadajushhie-milana.html">
-			<a href="https://football.ua/england/442834-kejjn-transformirovalsja-pri-mourino-chto-imenno-izmenilos-v-igre-kharri-i-kak-tak-poluchilos.html">
-			<a href="https://football.ua/italy/436704-ikh-privjol-manchini-top-10-debjutantov-sbornojj-italii.html">
-			<a href="https://football.ua/countrieselse/442772-taribo-uehst-istorija-zelenovolosogo-frika-kidavshego-majjku-v-luchesku-i-stavshego-pastorom.html">
-			<a href="https://football.ua/england/442695-pozor-manchester-junajjted-klopp-razbil-mourino-i-drugie-itogi-20-go-tura-apl.html">
-			<a href="https://football.ua/england/442625-pedofil-v-svoe-vremja-shokirovavshijj-talantom-arsena-vengera-delo-tajjrella-robinsona.html">
-			<a href="https://football.ua/england/442608-kakim-budet-londonskijj-chelsi-pod-rukovodstvom-tomasa-tukhelja.html">
-			<a href="https://football.ua/fiction/441539-amad-traore-takoj-zhe-kak-messi-no-s-problemami-ronaldu.html">
-			<a href="https://football.ua/countrieselse/442127-gonka-za-besplatnymi-zvezdami-top-10-budushhikh-svobodnykh-agentov.html">
-			<a href="https://football.ua/fiction/442367-italjanskie-strasti-mirchi-luchesku-metanie-mezhdu-ligami-otkrytie-pirlo-proval-v-likhoradochnom-intere.html">
-			<a href="https://football.ua/england/442364-ozil-ustupaet-dorogu-pochemu-arteta-dolzhen-doverit-smit-rou-rol-glavnogo-kreativshhika-arsenala.html">
-			<a href="https://football.ua/footballtest/442287-khavi-41-chto-vy-znaete-ob-odnom-iz-glavnykh-igrokov-v-istorii-ispanskogo-futbola.html">
-			<a href="https://football.ua/fiction/442265-korol-i-khuligan-jak-kantona-vibiv-lajjno-z-fanata.html">
-			<a href="https://football.ua/germany/442085-nemeckie-top-kluby-neozhidanno-borovshiesja-za-vyzhivanie-v-minuvshem-desjatiletii.html">
-			<a href="https://football.ua/italy/441220-monca-favorit-serii-v-novaja-zhizn-berluskoni-mechta-galliani-i-poslednijj-shans-balotelli.html">
-			<a href="https://football.ua/italy/420274-luchshie-v-istorii-poluzashhitnik-milana.html">
-			<a href="https://football.ua/spain/442028-na-ehl-kollao-real-dostig-dna-lunin-nachal-khorosho-igral-normalno-no-zavershil-provalom-zidan-khudshijj-trener-reala-ispanskaja.html">
-			<a href="https://football.ua/fiction/442001-genrikhu-mkhitarjanu-32-vspominaem-samye-zapominajushhiesja-ehpizody-karery-legendy-armjanskogo-futbola.html">
-			<a href="https://football.ua/northamerica/441946-vtoraja-popytka-bekkhehma-anri-i-stama-mls-v-ozhidanii-novogo-sezona.html">
-			<a href="https://football.ua/countrieselse/441849-pochemu-superliga-absoljutnoe-zlo.html">
-			<a href="https://football.ua/countrieselse/440843-neozhidannoe-popadanie-transfery-v-uspekh-kotorykh-malo-kto-veril.html">
-			<a href="https://football.ua/fiveoclock/418940-zabytaja-istorija-o-tom-kak-ferenc-pushkash-sygral-v-blagotvoritelnom-matche-v-liverpule.html">
-			<a href="https://football.ua/italy/441681-derbi-vseja-italii-samye-gorjachie-matchi-xxi-veka.html">
-			<a href="https://football.ua/spain/441677-pepe-ja-perekhodil-iz-organizovannogo-portu-v-real-v-kotorom-byl-polnyjj-khaos-v-oborone.html">
-			<a href="https://football.ua/countrieselse/441644-uehjjn-runi-posleslovie-vspominaem-samye-jarkie-momenty-karery-legendarnogo-anglichanina.html">
-			<a href="https://football.ua/italy/441613-samye-gorjachie-rimskie-derbi-xxi-veka.html">
-			<a href="https://football.ua/ukraine/441576-pjat-igrokov-zari-kotorym-pora-pokinut-klub.html">
-			<a href="https://football.ua/ukraine/441556-zakhedi-shakhab-ukhodit-nelzja-ostatsja.html">
-			<a href="https://football.ua/germany/441548-kak-stat-luchshim-futbolistom-v-mire-film-drama-v-trekh-aktakh-ot-roberta-levandovski.html">
-			<a href="https://football.ua/england/441359-travmatichnyj-talant-stoletiya-i-nadezhda-arsenala-istoriya-gabrielya-martinelli.html">
-			<a href="https://football.ua/england/441440-esli-uberjote-var-to-fanaty-tut-zhe-zastavjat-ego-vernut-unikalnoe-intervju-s-referi-majjklom-oliverom.html">
-			<a href="https://football.ua/ukraine/441368-byvshijj-assistent-luchesku-diego-longo-o-mirche-a-takzhe-o-principakh-igry-dinamo.html">
-			<a href="https://football.ua/ukraine/441346-pjat-igrokov-shakhtera-kotorym-pora-pokinut-klub.html">
-			<a href="https://football.ua/ukraine/441208-pjat-igrokov-dinamo-kotorym-pora-pokinut-klub.html">
-			<a href="https://football.ua/italy/420268-luchshie-v-istorii-zashitniki-milana.html">
-			<a href="https://football.ua/england/440731-iz-knjazi-v-grjazi-pochemu-degradiroval-sheffild.html">
-			<td class="left-team"><a href="https://football.ua/club/56-atletico.html">Атлетико</a></td>
-                    <a href="https://football.ua/games_online/74648.html">
-			<td class="right-team"><a href="https://football.ua/club/67-celta.html">Сельта</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/40-tottenham.html">Тоттенхэм</a></td>
-                        <a href="https://football.ua/england/game/74800.html">
-                    <td class="right-team"><a href="https://football.ua/club/47-west-bromwich.html">Вест Бромвич</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/448-vulverkhehmpton.html">Вулверхэмптон</a></td>
-                        <a href="https://football.ua/england/game/74793.html">
-                    <td class="right-team"><a href="https://football.ua/club/478-leicester.html">Лестер Сити</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/5-liverpool.html">Ливерпуль</a></td>
-                        <a href="https://football.ua/england/game/74796.html">
-                    <td class="right-team"><a href="https://football.ua/club/34-manchester-city.html">Манчестер Сити</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/249-sheffild-junajjted.html">Шеффилд Юнайтед</a></td>
-                        <a href="https://football.ua/england/game/74802.html">
-                    <td class="right-team"><a href="https://football.ua/club/42-chelsea.html">Челси</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/457-hoffenheim.html">Хоффенхайм</a></td>
-                        <a href="https://football.ua/germany/game/74724.html">
-                    <td class="right-team"><a href="https://football.ua/club/129-eintracht-frankfurt.html">Айнтрахт Франкфурт</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/1305-benevento.html">Беневенто</a></td>
-                        <a href="https://football.ua/game/75226.html">
-                    <td class="right-team"><a href="https://football.ua/club/86-sampdoria.html">Сампдория</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/92-udinese.html">Удинезе</a></td>
-                        <a href="https://football.ua/game/75227.html">
-                    <td class="right-team"><a href="https://football.ua/club/795-verona.html">Верона</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/33-milan.html">Милан</a></td>
-                        <a href="https://football.ua/game/75220.html">
-                    <td class="right-team"><a href="https://football.ua/club/954-krotone.html">Кротоне</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/91-parma.html">Парма</a></td>
-                        <a href="https://football.ua/game/75228.html">
-                    <td class="right-team"><a href="https://football.ua/club/490-bolonja.html">Болонья</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/32-lazio.html">Лацио</a></td>
-                        <a href="https://football.ua/game/75229.html">
-                    <td class="right-team"><a href="https://football.ua/club/93-cagliari.html">Кальяри</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/60-real-sociedad.html">Реал Сосьедад</a></td>
-                        <a href="https://football.ua/spain/game/74652.html">
-                    <td class="right-team"><a href="https://football.ua/club/76-kadis.html">Кадис</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/53-athletic.html">Атлетик</a></td>
-                        <a href="https://football.ua/spain/game/74647.html">
-                    <td class="right-team"><a href="https://football.ua/club/64-valencia.html">Валенсия</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/59-osasuna.html">Осасуна</a></td>
-                        <a href="https://football.ua/spain/game/74651.html">
-                    <td class="right-team"><a href="https://football.ua/club/1040-eibar.html">Эйбар</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/62-betis.html">Бетис</a></td>
-                        <a href="https://football.ua/spain/game/74649.html">
-                    <td class="right-team"><a href="https://football.ua/club/51-barcelona.html">Барселона</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/334-braga.html">Брага</a></td>
-                        <a href="https://football.ua/portugal/game/75269.html">
-                    <td class="right-team"><a href="https://football.ua/club/151-porto.html">Порту</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/1356-ehrzurumspor.html">Эрзурумспор</a></td>
-                        <a href="https://football.ua/default.aspx?menu_id=football_turkey_game&game_id=75327">
-                    <td class="right-team"><a href="https://football.ua/club/308-kajjzerispor.html">Кайсериспор</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/671-ankaragjudzhju.html">Анкарагюджю</a></td>
-                        <a href="https://football.ua/default.aspx?menu_id=football_turkey_game&game_id=75328">
-                    <td class="right-team"><a href="https://football.ua/club/602-sivasspor.html">Сивасспор</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/1113-denizlispor.html">Денизлиспор</a></td>
-                        <a href="https://football.ua/default.aspx?menu_id=football_turkey_game&game_id=75329">
-                    <td class="right-team"><a href="https://football.ua/club/662-antaljaspor.html">Антальяспор</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/300-besiktas.html">Бешикташ</a></td>
-                        <a href="https://football.ua/default.aspx?menu_id=football_turkey_game&game_id=75330">
-                    <td class="right-team"><a href="https://football.ua/club/664-konjaspor.html">Коньяспор</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/650-brest.html">Брест</a></td>
-                        <a href="https://football.ua/france/game/75165.html">
-                    <td class="right-team"><a href="https://football.ua/club/99-bordeaux.html">Бордо</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/614-montpellier.html">Монпелье</a></td>
-                        <a href="https://football.ua/france/game/75166.html">
-                    <td class="right-team"><a href="https://football.ua/club/758-dizhon.html">Дижон</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/1359-nim.html">Ним</a></td>
-                        <a href="https://football.ua/france/game/75167.html">
-                    <td class="right-team"><a href="https://football.ua/club/110-monaco.html">Монако</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/108-nice.html">Ницца</a></td>
-                        <a href="https://football.ua/france/game/75168.html">
-                    <td class="right-team"><a href="https://football.ua/club/863-anzhe.html">Анже</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/109-saint-etienne.html">Сент-Этьен</a></td>
-                        <a href="https://football.ua/france/game/75169.html">
-                    <td class="right-team"><a href="https://football.ua/club/116-metz.html">Метц</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/111-nantes.html">Нант</a></td>
-                        <a href="https://football.ua/france/game/75170.html">
-                    <td class="right-team"><a href="https://football.ua/club/100-lille.html">Лилль</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/102-marseille.html">Марсель</a></td>
-                        <a href="https://football.ua/france/game/75171.html">
-                    <td class="right-team"><a href="https://football.ua/club/104-psg.html">ПСЖ</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/573-palmeiras.html">Палмейрас</a></td>
-                        <a href="https://football.ua/game/75336.html">
-                    <td class="right-team"><a href="https://football.ua/club/781-tigres.html">Тигрес</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/964-ulsan-khendeh.html">Ульсан Хендэ</a></td>
-                        <a href="https://football.ua/game/75341.html">
-                    <td class="right-team"><a href="https://football.ua/club/1661-al-dukhail.html">Аль-Духаиль</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/1303-dnepr-1.html">Днепр-1</a></td>
-                        <a href="https://football.ua/game/75047.html">
-                    <td class="right-team"><a href="https://football.ua/club/1470-lokomotiv-tashkent.html">Локомотив Ташкент</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/1350-kajjsar.html">Кайсар</a></td>
-                        <a href="https://football.ua/game/75338.html">
-                    <td class="right-team"><a href="https://football.ua/club/290-desna.html">Десна</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/1303-dnepr-1.html">Днепр-1</a></td>
-                        <a href="https://football.ua/game/75339.html">
-                    <td class="right-team"><a href="https://football.ua/club/373-zeta.html">Зета</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/460-lids.html">Лидс</a></td>
-                        <a href="https://football.ua/england/game/74797.html">
-                    <td class="right-team"><a href="https://football.ua/club/775-crystal-palace.html">Кристал Пэлас</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/56-atletico.html">Атлетико</a></td>
-                        <a href="https://football.ua/spain/game/74648.html">
-                    <td class="right-team"><a href="https://football.ua/club/67-celta.html">Сельта</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/1335-farense.html">Фаренсе</a></td>
-                        <a href="https://football.ua/portugal/game/75270.html">
-                    <td class="right-team"><a href="https://football.ua/club/819-moreirense.html">Морейренсе</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/143-benfica.html">Бенфика</a></td>
-                        <a href="https://football.ua/portugal/game/75271.html">
-                    <td class="right-team"><a href="https://football.ua/club/1539-famalikan.html">Фамаликан</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/419-maritimo.html">Маритиму</a></td>
-                        <a href="https://football.ua/portugal/game/75272.html">
-                    <td class="right-team"><a href="https://football.ua/club/1337-santa-klara.html">Санта-Клара</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/414-belenenses.html">Белененсеш</a></td>
-                        <a href="https://football.ua/portugal/game/75273.html">
-                    <td class="right-team"><a href="https://football.ua/club/416-vitoria-guimaraes.html">Витория Гимараэш</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/665-gaziantepspor.html">Газиянтепспор</a></td>
-                        <a href="https://football.ua/default.aspx?menu_id=football_turkey_game&game_id=75331">
-                    <td class="right-team"><a href="https://football.ua/club/1309-gjoztepe.html">Гёзтепе</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/1308-jjeni-malatjaspor.html">Йени Малатьяспор</a></td>
-                        <a href="https://football.ua/default.aspx?menu_id=football_turkey_game&game_id=75332">
-                    <td class="right-team"><a href="https://football.ua/club/335-trabzonspor.html">Трабзонспор</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/840-al-ahli.html">Аль-Ахли</a></td>
-                        <a href="https://football.ua/game/75337.html">
-                    <td class="right-team"><a href="https://football.ua/club/118-bayern.html">Бавария</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/23-dynamo.html">Динамо Киев</a></td>
-                        <a href="https://football.ua/game/75362.html">
-                    <td class="right-team"><a href="https://football.ua/club/386-bateh.html">БАТЭ</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/406-aleksandrija.html">Александрия</a></td>
-                        <a href="https://football.ua/game/75335.html">
-                    <td class="right-team"><a href="https://football.ua/club/1475-saburtalo.html">Сабуртало</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/30-juventus.html">Ювентус</a></td>
-                        <a href="https://football.ua/game/75236.html">
-                    <td class="right-team"><a href="https://football.ua/club/28-inter.html">Интер</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/421-pacos-ferreira.html">Пасуш Феррейра</a></td>
-                        <a href="https://football.ua/portugal/game/75274.html">
-                    <td class="right-team"><a href="https://football.ua/club/659-portimonense.html">Портимоненсе</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/559-rio-ave.html">Риу Аве</a></td>
-                        <a href="https://football.ua/portugal/game/75275.html">
-                    <td class="right-team"><a href="https://football.ua/club/1225-tondela.html">Тондела</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/415-boavista.html">Боавишта</a></td>
-                        <a href="https://football.ua/portugal/game/75276.html">
-                    <td class="right-team"><a href="https://football.ua/club/339-nacional.html">Насьонал</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/760-gil-vicente.html">Жил Висенте</a></td>
-                        <a href="https://football.ua/portugal/game/75277.html">
-                    <td class="right-team"><a href="https://football.ua/club/255-sporting.html">Спортинг Л</a></td>
-                    <td class="left-team"><a href="https://football.ua/club/290-desna.html">Десна</a></td>
-                        <a href="https://football.ua/game/75340.html">
-                    <td class="right-team"><a href="https://football.ua/club/383-ventspils.html">Вентспилс</a></td>
+                <a  href="https://football.ua/worldcup/447646-levandovski-propustit-match-s-angliejj-iz-za-travmy.html">
+                <a  href="https://football.ua/bet-ratings/447645-matchi-nedeli-zakljuchitelnyjj-match-martovskogo-cikla-dlja-sbornojj-ukrainy-i-triumfalnoe-vozvrashhenie-klubnogo-futbola.html">
+                <a  href="https://football.ua/worldcup/447644-trener-sbornojj-kazakhstana-postaraemsja-ispravit-neuteshitelnuju-statistiku-s-ukrainojj.html">
+                <a  href="https://football.ua/worldcup/447632-levandovski-7-jj-evropeec-zabivshijj-65-golov-za-svoju-sbornuju.html">
+                <a  href="https://football.ua/worldcup/447625-uefa-nazval-koronavirus-kak-prichinu-otsutstvija-var-posle-zhalob-ronaldu.html">
+                <a  href="https://football.ua/spain/447624-real-podpishet-kontrakt-s-alabojj-do-2025-goda.html">
+                <a  href="https://football.ua/worldcup/447616-nastavnik-sbornojj-finljandii-igrat-s-ukrainojj-na-vyezde-bolshojj-vyzov.html">
+                <a  href="https://football.ua/worldcup/447602-shevchenko-my-podderzhali-mikolenko-oshibki-sluchajutsja-so-vsemi.html">
+                <a  href="https://football.ua/worldcup/447594-mikolenko-ostavil-ukrainu-vdesjaterom-v-matche-protiv-finljandii.html">
+			<a href="https://football.ua/italy/447516-roberto-de-dzerbi-otlichnyjj-variant-dlja-shakhtjora-objasnjaem-pochemu.html">
+			<a href="https://football.ua/fiction/447398-chernomorcu-85-vspominaem-samye-pamjatnye-matchi-v-istorii-morjakov.html">
+			<a href="https://football.ua/worldcup/447393-ukraina-finljandija-vspominaem-predydushhuju-vstrechu-komand-v-otbore-na-chm-2018.html">
+			<a href="https://football.ua/italy/447250-nikolo-barella-igrok-s-kotorym-inter-vsegda-v-bolshinstve.html">
+			<a href="https://football.ua/fiction/447346-vratari-bombardiry-vspominaem-neozhidannye-golevye-podvigi-golkiperov-v-ehtom-veke.html">
+			<a href="https://football.ua/worldcup/447315-ehta-sbornaja-francii-dvulikaja-francuzy-raznesli-v-kritike-svoju-nacionalnuju-komandu.html">
+			<a href="https://football.ua/worldcup/447309-shevchenko-priekhal-v-parizh-oboronjatsja-i-ego-plan-s-pjatju-zashhitnikami-srabotal.html">
+			<a href="https://football.ua/england/447206-kogda-u-vas-est-chetkie-idei-i-printsipy-nuzhno-ih-primenyat-evolyutsiya-arsenala-imeni-mikelya-artety.html">
+			<a href="https://football.ua/fiction/447214-ot-milana-cherez-monpele-i-do-londona-s-lesterom-chempiony-rukhnuvshie-v-sledujushhem-sezone.html">
+			<a href="https://football.ua/fiction/447200-francuzka-tragedija-v-dvokh-dijakh.html">
+			<a href="https://football.ua/footballtest/447148-fernando-jjerro-43-chto-vy-znaete-o-legendarnom-ispanskom-zashhitnike.html">
+			<a href="https://football.ua/fiction/447109-propadav-u-zali-zranku-do-nochi-zajjmavsja-po-5-6-godin-grav-proti-ronaldu-nazivaje-milevskogo-najjkrashhim-zakinchiv-cherez-vaz.html">
+			<a href="https://football.ua/fiction/446558-nol-golov-i-nol-assistov-v-istorii-adamy-traore-est-veschi-povazhnee-chem-rezultativnye-dejstviya.html">
+			<a href="https://football.ua/fiction/446971-ronaldinju-ljudina-jaka-smijetsja.html">
+			<a href="https://football.ua/fiction/446833-roma-vynudila-shakhter-igrat-flangami-analiz-matcha.html">
+			<a href="https://football.ua/uefa/446716-solnoe-predstavlenie-kaka-v-teatre-mechty-vspominaem-benefis-brazilca.html">
+			<a href="https://football.ua/italy/446704-chto-ne-tak-s-juventusom-kak-zhelanie-ponravitsja-meshaet-starojj-sinore.html">
+			<a href="https://football.ua/countrieselse/421408-kak-vygljadel-by-sostav-dinamo-zagreb-esli-by-klub-ne-prodaval-kljuchevykh-igrokov.html">
+			<a href="https://football.ua/ukraine/419939-luchshie-v-istorii-napadajushhie-shakhtera.html">
+                <img src="https://s.ill.in.ua/i/news/210x151/419/419939.jpg" alt="фото football.ua" />
+			<a href="https://football.ua/england/446528-arteta-postavil-na-mesto-mourino-i-obameyanga-zatsiklivshijsya-chelsi-i-drugie-itogi-28-go-tura-apl.html">
+			<a href="https://football.ua/england/418973-izvestnye-futbolisty-o-vystuplenii-kotorykh-za-manchester-siti-vy-mogli-zabyt.html">
+			<a href="https://football.ua/germany/419559-ot-boatenga-do-son-hyn-mina-zvezdnyj-sostav-gamburga-kotoryj-poshumel-by-v-evrope.html">
+			<a href="https://football.ua/fiction/446286-11-silnejjshikh-latinoamerikancev-upl-simvolicheskaja-podborka.html">
+			<a href="https://football.ua/uefa/446250-fonseka-obezvredil-shakhter-kashtru-analiz-matcha-roma-shakhter.html">
+			<a href="https://football.ua/uefa/446204-viljarreal-vskryl-problemy-na-standartakh-a-v-atake-dinamo-ne-khvatilo-kreativ-razbor-matcha.html">
+			<a href="https://football.ua/fiction/446234-pochemu-ehnfild-bolshe-ne-krepost.html">
+			<a href="https://football.ua/fiction/446138-agostino-di-bartolomeji-final-cinoju-v-zhittja.html">
+			<a href="https://football.ua/england/445899-udivitelnoe-derbi-manchestera-novaja-bombardirovka-po-ehnfildu-i-drugie-itogi-27-go-tura-apl.html">
+			<a href="https://football.ua/ukraine/445944-uverennye-pobedy-zari-desny-i-dinamo-i-skandaly-skandaly-skandaly-itogi-17-go-tura-upl.html">
+			<a href="https://football.ua/ukraine/420013-luchshie-v-istorii-poluzashhitniki-shakhtera.html">
+			<a href="https://football.ua/ukraine/445766-gol-olimpika-v-vorota-shakhtera-byl-otmenen-spravedlivo.html">
+			<a href="https://football.ua/ukraine/445711-jaroslavskijj-kurchenko-raskroil-mne-serdce-razrezav-na-kuski-kover-iz-vip-tribuny-s-logotipom-metallista.html">
+			<a href="https://football.ua/germany/445712-v-preddverii-der-klassiker-luchshie-matchi-borussii-d-i-bavarii-poslednikh-let.html">
+			<a href="https://football.ua/fansector/445175-po-spravzhnomu-vichno-perspektivnijj-istorija-marko-ballotti.html">
+			<a href="https://football.ua/fiction/421417-sensacionnye-triumfatory-evro-kak-slozhilas-sudba-igrokov-sbornoj-grecii-2004-goda.html">
+			<a href="https://football.ua/fiction/445499-smert-czjansu-sunin-nachalo-krizisa-i-borby-s-futbolom-v-kitae.html">
+			<a href="https://football.ua/ukraine/445559-proval-shakhtera-v-kubke-ukrainy-sluchajjnost-ili-zakonomernost.html">
+			<a href="https://football.ua/fiction/445525-liga-konferentsij-uefa-zachem-sozdali-etot-turnir-i-chto-on-znachit-dlya-ukrainy.html">
+			<a href="https://football.ua/germany/445457-komanda-mechty-ostanovivshayasya-v-shage-ot-futbolnogo-olimpa-tragicheskaya-istoriya-bajera.html">
+			<a href="https://football.ua/ukraine/420361-zashhitniki.html">
+			<a href="https://football.ua/england/445357-bolid-gvardioly-ukhodit-v-otryv-lester-povtorit-sudbu-liverpulja-i-drugie-itogi-26-go-tura-apl.html">
+			<a href="https://football.ua/fiction/444771-greguar-akselrod-esli-vy-ne-slyshali-ehtogo-imeni-to-ne-znaete-kak-mozhno-razvesti-kluby-na-transfery.html">
+			<a href="https://football.ua/italy/445205-sin-diktatora-najjgirshijj-gravec-v-istoriji-seriji-a.html">
+                    <td class="left-team"><a href="https://football.ua/club/616-ukraina-u21.html">Украина U-21</a></td>
+                        <a href="https://football.ua/game/76409.html">
+                    <td class="right-team"><a href="https://football.ua/club/1703-uzbekistan-u23.html">Узбекистан U23</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/1311-podole.html">Подолье</a></td>
+                        <a href="https://football.ua/default.aspx?menu_id=football_ukraine2_game&game_id=76332">
+                    <td class="right-team"><a href="https://football.ua/club/1664-epicentr.html">Эпицентр</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/553-bukovina.html">Буковина</a></td>
+                        <a href="https://football.ua/default.aspx?menu_id=football_ukraine2_game&game_id=76402">
+                    <td class="right-team"><a href="https://football.ua/club/1544-dinaz.html">Диназ</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/1210-balkany.html">Балканы</a></td>
+                        <a href="https://football.ua/default.aspx?menu_id=football_ukraine2_game&game_id=76403">
+                    <td class="right-team"><a href="https://football.ua/club/1669-peremoga.html">Перемога</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/72-krivbass.html">Кривбасс</a></td>
+                        <a href="https://football.ua/default.aspx?menu_id=football_ukraine2_game&game_id=76404">
+                    <td class="right-team"><a href="https://football.ua/club/1073-real-farma.html">Реал Фарма</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/1663-fk-chernigov.html">Чернигов</a></td>
+                        <a href="https://football.ua/default.aspx?menu_id=football_ukraine2_game&game_id=76405">
+                    <td class="right-team"><a href="https://football.ua/club/1665-rubikon.html">Рубикон</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/1074-ehnergija-nk.html">Энергия</a></td>
+                        <a href="https://football.ua/default.aspx?menu_id=football_ukraine2_game&game_id=76406">
+                    <td class="right-team"><a href="https://football.ua/club/1324-nikolaev-2.html">Николаев-2</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/462-niva-v.html">Нива Винница</a></td>
+                        <a href="https://football.ua/default.aspx?menu_id=football_ukraine2_game&game_id=76407">
+                    <td class="right-team"><a href="https://football.ua/club/1667-volyn-2.html">Волынь-2</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/1085-chajjka.html">Чайка</a></td>
+                        <a href="https://football.ua/default.aspx?menu_id=football_ukraine2_game&game_id=76408">
+                    <td class="right-team"><a href="https://football.ua/club/1666-karpaty-galich.html">Карпаты Галич</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/398-chernogorija.html">Черногория</a></td>
+                        <a href="https://football.ua/game/76095.html">
+                    <td class="right-team"><a href="https://football.ua/club/1083-gibraltar.html">Гибралтар</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/198-russia.html">Россия</a></td>
+                        <a href="https://football.ua/game/76096.html">
+                    <td class="right-team"><a href="https://football.ua/club/211-slovenija.html">Словения</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/206-belarus.html">Беларусь</a></td>
+                        <a href="https://football.ua/game/76097.html">
+                    <td class="right-team"><a href="https://football.ua/club/199-ehstonija.html">Эстония</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/212-norvegija.html">Норвегия</a></td>
+                        <a href="https://football.ua/game/76098.html">
+                    <td class="right-team"><a href="https://football.ua/club/200-turkey.html">Турция</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/168-niderlandy.html">Нидерланды</a></td>
+                        <a href="https://football.ua/game/76099.html">
+                    <td class="right-team"><a href="https://football.ua/club/272-latvija.html">Латвия</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/178-khorvatija.html">Хорватия</a></td>
+                        <a href="https://football.ua/game/76100.html">
+                    <td class="right-team"><a href="https://football.ua/club/265-kipr.html">Кипр</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/167-serbija.html">Сербия</a></td>
+                        <a href="https://football.ua/game/76101.html">
+                    <td class="right-team"><a href="https://football.ua/club/172-portugal.html">Португалия</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/266-ireland.html">Ирландия</a></td>
+                        <a href="https://football.ua/game/76102.html">
+                    <td class="right-team"><a href="https://football.ua/club/192-ljuksemburg.html">Люксембург</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/174-chekhija.html">Чехия</a></td>
+                        <a href="https://football.ua/game/76103.html">
+                    <td class="right-team"><a href="https://football.ua/club/259-belgija.html">Бельгия</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/268-slovakija.html">Словакия</a></td>
+                        <a href="https://football.ua/game/76104.html">
+                    <td class="right-team"><a href="https://football.ua/club/217-malta.html">Мальта</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/75-metalurgzaporizhzhya.html">Металлург Запорожье</a></td>
+                        <a href="https://football.ua/default.aspx?menu_id=football_ukraine2_game&game_id=76410">
+                    <td class="right-team"><a href="https://football.ua/club/1212-nikopol-npgu.html">Никополь</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/1545-uzhgorod.html">Ужгород</a></td>
+                        <a href="https://football.ua/default.aspx?menu_id=football_ukraine2_game&game_id=76411">
+                    <td class="right-team"><a href="https://football.ua/club/1546-obolon-brovar-2.html">Оболонь-2</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/1668-jarud.html">Яруд</a></td>
+                        <a href="https://football.ua/default.aspx?menu_id=football_ukraine2_game&game_id=76412">
+                    <td class="right-team"><a href="https://football.ua/club/83-tavrija.html">Таврия</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/1670-metall.html">Металл</a></td>
+                        <a href="https://football.ua/default.aspx?menu_id=football_ukraine2_game&game_id=76413">
+                    <td class="right-team"><a href="https://football.ua/club/835-cherkasskijj-dnepr.html">Днепр Черкассы</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/260-kazakhstan.html">Казахстан</a></td>
+                        <a href="https://football.ua/game/76105.html">
+                    <td class="right-team"><a href="https://football.ua/club/181-france.html">Франция</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/210-gruzija.html">Грузия</a></td>
+                        <a href="https://football.ua/game/76106.html">
+                    <td class="right-team"><a href="https://football.ua/club/185-ispanija.html">Испания</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/189-danija.html">Дания</a></td>
+                        <a href="https://football.ua/game/76107.html">
+                    <td class="right-team"><a href="https://football.ua/club/264-moldova.html">Молдова</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/274-albanija.html">Албания</a></td>
+                        <a href="https://football.ua/game/76108.html">
+                    <td class="right-team"><a href="https://football.ua/club/162-england.html">Англия</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/261-armenija.html">Армения</a></td>
+                        <a href="https://football.ua/game/76109.html">
+                    <td class="right-team"><a href="https://football.ua/club/271-iceland.html">Исландия</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/949-kosovo.html">Косово</a></td>
+                        <a href="https://football.ua/game/76110.html">
+                    <td class="right-team"><a href="https://football.ua/club/165-sweden.html">Швеция</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/275-bolgarija.html">Болгария</a></td>
+                        <a href="https://football.ua/game/76111.html">
+                    <td class="right-team"><a href="https://football.ua/club/173-italija.html">Италия</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/182-shvejjcarija.html">Швейцария</a></td>
+                        <a href="https://football.ua/game/76112.html">
+                    <td class="right-team"><a href="https://football.ua/club/257-litva.html">Литва</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/186-ukraine.html">Украина</a></td>
+                        <a href="https://football.ua/game/76113.html">
+                    <td class="right-team"><a href="https://football.ua/club/262-finljandija.html">Финляндия</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/277-austria.html">Австрия</a></td>
+                        <a href="https://football.ua/game/76114.html">
+                    <td class="right-team"><a href="https://football.ua/club/258-farery.html">Фареры</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/270-izrail.html">Израиль</a></td>
+                        <a href="https://football.ua/game/76115.html">
+                    <td class="right-team"><a href="https://football.ua/club/256-shotlandija.html">Шотландия</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/160-polsha.html">Польша</a></td>
+                        <a href="https://football.ua/game/76116.html">
+                    <td class="right-team"><a href="https://football.ua/club/269-andorra.html">Андорра</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/267-san-marino.html">Сан-Марино</a></td>
+                        <a href="https://football.ua/game/76117.html">
+                    <td class="right-team"><a href="https://football.ua/club/207-hungary.html">Венгрия</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/190-makedonija.html">Северная Македония</a></td>
+                        <a href="https://football.ua/game/76118.html">
+                    <td class="right-team"><a href="https://football.ua/club/213-likhtenshtejjn.html">Лихтенштейн</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/276-romania.html">Румыния</a></td>
+                        <a href="https://football.ua/game/76119.html">
+                    <td class="right-team"><a href="https://football.ua/club/158-germanija.html">Германия</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/247-azerbajjdzhan.html">Азербайджан</a></td>
+                        <a href="https://football.ua/game/76120.html">
+                    <td class="right-team"><a href="https://football.ua/club/167-serbija.html">Сербия</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/265-kipr.html">Кипр</a></td>
+                        <a href="https://football.ua/game/76121.html">
+                    <td class="right-team"><a href="https://football.ua/club/211-slovenija.html">Словения</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/192-ljuksemburg.html">Люксембург</a></td>
+                        <a href="https://football.ua/game/76122.html">
+                    <td class="right-team"><a href="https://football.ua/club/172-portugal.html">Португалия</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/259-belgija.html">Бельгия</a></td>
+                        <a href="https://football.ua/game/76123.html">
+                    <td class="right-team"><a href="https://football.ua/club/206-belarus.html">Беларусь</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/193-wales.html">Уэльс</a></td>
+                        <a href="https://football.ua/game/76124.html">
+                    <td class="right-team"><a href="https://football.ua/club/174-chekhija.html">Чехия</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/1083-gibraltar.html">Гибралтар</a></td>
+                        <a href="https://football.ua/game/76125.html">
+                    <td class="right-team"><a href="https://football.ua/club/168-niderlandy.html">Нидерланды</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/398-chernogorija.html">Черногория</a></td>
+                        <a href="https://football.ua/game/76126.html">
+                    <td class="right-team"><a href="https://football.ua/club/212-norvegija.html">Норвегия</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/200-turkey.html">Турция</a></td>
+                        <a href="https://football.ua/game/76127.html">
+                    <td class="right-team"><a href="https://football.ua/club/272-latvija.html">Латвия</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/178-khorvatija.html">Хорватия</a></td>
+                        <a href="https://football.ua/game/76128.html">
+                    <td class="right-team"><a href="https://football.ua/club/217-malta.html">Мальта</a></td>
+                    <td class="left-team"><a href="https://football.ua/club/268-slovakija.html">Словакия</a></td>
+                        <a href="https://football.ua/game/76129.html">
+                    <td class="right-team"><a href="https://football.ua/club/198-russia.html">Россия</a></td>
 <script type="text/javascript" src="https://football.ua/mod/Football/GameBlockMain.js?v=20130130" ></script>
     var TeamLinkFake = 'https://football.ua/default.aspx?menu_id=football_team&team_id=-1';
                 <a href="https://football.ua/club/23-dynamo.html">Динамо Киев</a>
                 <a href="https://football.ua/club/24-shakhtar.html">Шахтер</a>
-                <a href="https://football.ua/club/290-desna.html">Десна</a>
                 <a href="https://football.ua/club/219-zorya.html">Заря</a>
                 <a href="https://football.ua/club/78-vorskla.html">Ворскла</a>
+                <a href="https://football.ua/club/290-desna.html">Десна</a>
                 <a href="https://football.ua/club/1207-kolos.html">Колос</a>
-                <a href="https://football.ua/club/407-olimpik-d.html">Олимпик</a>
                 <a href="https://football.ua/club/406-aleksandrija.html">Александрия</a>
-                <a href="https://football.ua/club/81-mariupol.html">Мариуполь</a>
+                <a href="https://football.ua/club/1303-dnepr-1.html">Днепр-1</a>
                 <a href="https://football.ua/club/1209-ingulec.html">Ингулец</a>
+                <a href="https://football.ua/club/81-mariupol.html">Мариуполь</a>
+                <a href="https://football.ua/club/407-olimpik-d.html">Олимпик</a>
+                <a href="https://football.ua/club/293-fk-lvov.html">ПФК Львов</a>
                 <a href="https://football.ua/club/1363-minajj.html">Минай</a>
                 <a href="https://football.ua/club/1302-rukh.html">Рух</a>
-                <a href="https://football.ua/club/293-fk-lvov.html">ПФК Львов</a>
-                <a href="https://football.ua/club/1303-dnepr-1.html">Днепр-1</a>
 	<p class="more"><a href="https://football.ua/ukraine/table.html">подробная таблица</a></p>
-                <a href="https://football.ua/club/1313-agrobiznes.html">Агробизнес</a>
-                <a href="https://football.ua/club/533-veres.html">Верес</a>
                 <a href="https://football.ua/club/73-chornomorets.html">Черноморец</a>
-                <a href="https://football.ua/club/677-gornjak-sport.html">Горняк-Спорт</a>
-                <a href="https://football.ua/club/409-nikolaev.html">Николаев</a>
+                <a href="https://football.ua/club/533-veres.html">Верес</a>
+                <a href="https://football.ua/club/1313-agrobiznes.html">Агробизнес</a>
                 <a href="https://football.ua/club/1312-metallist-1925.html">Металлист 1925</a>
                 <a href="https://football.ua/club/77-volyn.html">Волынь</a>
-                <a href="https://football.ua/club/1548-aljans.html">Альянс</a>
+                <a href="https://football.ua/club/409-nikolaev.html">Николаев</a>
+                <a href="https://football.ua/club/677-gornjak-sport.html">Горняк-Спорт</a>
                 <a href="https://football.ua/club/289-obolon-brovar.html">Оболонь</a>
+                <a href="https://football.ua/club/1548-aljans.html">Альянс</a>
                 <a href="https://football.ua/club/1314-polese.html">Полесье</a>
-                <a href="https://football.ua/club/411-niva-t.html">Нива Тернополь</a>
                 <a href="https://football.ua/club/464-kremen.html">Кремень</a>
+                <a href="https://football.ua/club/411-niva-t.html">Нива Тернополь</a>
                 <a href="https://football.ua/club/1547-vpk-agro.html">ВПК-Агро</a>
                 <a href="https://football.ua/club/470-prikarpate.html">Прикарпатье</a>
                 <a href="https://football.ua/club/810-avangard.html">Авангард</a>
                 <a href="https://football.ua/club/1075-kristall.html">Кристалл</a>
 	<p class="more"><a href="https://football.ua/ukraine1league/table.html">подробная таблица</a></p>
                 <a href="https://football.ua/club/1544-dinaz.html">Диназ</a>
+                <a href="https://football.ua/club/1545-uzhgorod.html">Ужгород</a>
                 <a href="https://football.ua/club/1311-podole.html">Подолье</a>
+                <a href="https://football.ua/club/1666-karpaty-galich.html">Карпаты Галич</a>
                 <a href="https://football.ua/club/1664-epicentr.html">Эпицентр</a>
                 <a href="https://football.ua/club/1085-chajjka.html">Чайка</a>
-                <a href="https://football.ua/club/1666-karpaty-galich.html">Карпаты Галич</a>
-                <a href="https://football.ua/club/1545-uzhgorod.html">Ужгород</a>
                 <a href="https://football.ua/club/553-bukovina.html">Буковина</a>
-                <a href="https://football.ua/club/1667-volyn-2.html">Волынь-2</a>
-                <a href="https://football.ua/club/1546-obolon-brovar-2.html">Оболонь-2</a>
-                <a href="https://football.ua/club/1663-fk-chernigov.html">Чернигов</a>
                 <a href="https://football.ua/club/1665-rubikon.html">Рубикон</a>
                 <a href="https://football.ua/club/462-niva-v.html">Нива Винница</a>
+                <a href="https://football.ua/club/1546-obolon-brovar-2.html">Оболонь-2</a>
+                <a href="https://football.ua/club/1667-volyn-2.html">Волынь-2</a>
+                <a href="https://football.ua/club/1663-fk-chernigov.html">Чернигов</a>
                 <a href="https://football.ua/club/220-karpaty.html">Карпаты Львов</a>
                 <a href="https://football.ua/club/1362-kalush.html">Калуш</a>
                 <a href="https://football.ua/club/1670-metall.html">Металл</a>
-                <a href="https://football.ua/club/83-tavrija.html">Таврия</a>
-                <a href="https://football.ua/club/75-metalurgzaporizhzhya.html">Металлург Запорожье</a>
                 <a href="https://football.ua/club/72-krivbass.html">Кривбасс</a>
+                <a href="https://football.ua/club/75-metalurgzaporizhzhya.html">Металлург Запорожье</a>
+                <a href="https://football.ua/club/83-tavrija.html">Таврия</a>
                 <a href="https://football.ua/club/1364-cherkashhina.html">Черкащина</a>
                 <a href="https://football.ua/club/1074-ehnergija-nk.html">Энергия</a>
                 <a href="https://football.ua/club/1669-peremoga.html">Перемога</a>
-                <a href="https://football.ua/club/1073-real-farma.html">Реал Фарма</a>
-                <a href="https://football.ua/club/835-cherkasskijj-dnepr.html">Днепр Черкассы</a>
-                <a href="https://football.ua/club/1210-balkany.html">Балканы</a>
-                <a href="https://football.ua/club/1212-nikopol-npgu.html">Никополь</a>
                 <a href="https://football.ua/club/1668-jarud.html">Яруд</a>
+                <a href="https://football.ua/club/1210-balkany.html">Балканы</a>
+                <a href="https://football.ua/club/835-cherkasskijj-dnepr.html">Днепр Черкассы</a>
+                <a href="https://football.ua/club/1212-nikopol-npgu.html">Никополь</a>
+                <a href="https://football.ua/club/1073-real-farma.html">Реал Фарма</a>
                 <a href="https://football.ua/club/1324-nikolaev-2.html">Николаев-2</a>
 	<p class="more"><a href="https://football.ua/ukraine2league/table.html">подробная таблица</a></p>
                 <a href="https://football.ua/club/173-italija.html">Италия</a>
@@ -457,20 +467,20 @@ Login.SiteName = 'football.ua';
                 <a href="https://football.ua/club/34-manchester-city.html">Манчестер Сити</a>
                 <a href="https://football.ua/club/50-manchester-united.html">Манчестер Юнайтед</a>
                 <a href="https://football.ua/club/478-leicester.html">Лестер Сити</a>
-                <a href="https://football.ua/club/5-liverpool.html">Ливерпуль</a>
                 <a href="https://football.ua/club/42-chelsea.html">Челси</a>
                 <a href="https://football.ua/club/48-west-ham.html">Вест Хэм</a>
-                <a href="https://football.ua/club/49-everton.html">Эвертон</a>
                 <a href="https://football.ua/club/40-tottenham.html">Тоттенхэм</a>
-                <a href="https://football.ua/club/31-aston-villa.html">Астон Вилла</a>
+                <a href="https://football.ua/club/5-liverpool.html">Ливерпуль</a>
+                <a href="https://football.ua/club/49-everton.html">Эвертон</a>
                 <a href="https://football.ua/club/25-arsenal.html">Арсенал</a>
+                <a href="https://football.ua/club/31-aston-villa.html">Астон Вилла</a>
                 <a href="https://football.ua/club/460-lids.html">Лидс</a>
-                <a href="https://football.ua/club/446-southampton.html">Саутгемптон</a>
                 <a href="https://football.ua/club/775-crystal-palace.html">Кристал Пэлас</a>
                 <a href="https://football.ua/club/448-vulverkhehmpton.html">Вулверхэмптон</a>
+                <a href="https://football.ua/club/446-southampton.html">Саутгемптон</a>
+                <a href="https://football.ua/club/432-burnley.html">Бернли</a>
                 <a href="https://football.ua/club/774-brajjton.html">Брайтон</a>
                 <a href="https://football.ua/club/8-newcastle.html">Ньюкасл</a>
-                <a href="https://football.ua/club/432-burnley.html">Бернли</a>
                 <a href="https://football.ua/club/41-fulkhehm.html">Фулхэм</a>
                 <a href="https://football.ua/club/47-west-bromwich.html">Вест Бромвич</a>
                 <a href="https://football.ua/club/249-sheffild-junajjted.html">Шеффилд Юнайтед</a>
@@ -479,37 +489,37 @@ Login.SiteName = 'football.ua';
                 <a href="https://football.ua/club/1068-rb-lejjpcig.html">РБ Лейпциг</a>
                 <a href="https://football.ua/club/130-wolfsburg.html">Вольфсбург</a>
                 <a href="https://football.ua/club/129-eintracht-frankfurt.html">Айнтрахт Франкфурт</a>
-                <a href="https://football.ua/club/124-bayer.html">Байер</a>
                 <a href="https://football.ua/club/126-borussia-dortmund.html">Боруссия Д</a>
-                <a href="https://football.ua/club/123-borussia-moenchengladbach.html">Боруссия М</a>
-                <a href="https://football.ua/club/612-freiburg.html">Фрайбург</a>
+                <a href="https://football.ua/club/124-bayer.html">Байер</a>
                 <a href="https://football.ua/club/917-union-berlin.html">Унион Берлин</a>
+                <a href="https://football.ua/club/612-freiburg.html">Фрайбург</a>
                 <a href="https://football.ua/club/122-stuttgart.html">Штутгарт</a>
+                <a href="https://football.ua/club/123-borussia-moenchengladbach.html">Боруссия М</a>
                 <a href="https://football.ua/club/119-werder.html">Вердер</a>
                 <a href="https://football.ua/club/457-hoffenheim.html">Хоффенхайм</a>
                 <a href="https://football.ua/club/753-augsburg.html">Аугсбург</a>
-                <a href="https://football.ua/club/134-koeln.html">Кельн</a>
                 <a href="https://football.ua/club/127-hertha.html">Герта</a>
-                <a href="https://football.ua/club/128-arminija.html">Арминия</a>
                 <a href="https://football.ua/club/133-mainz.html">Майнц</a>
+                <a href="https://football.ua/club/134-koeln.html">Кельн</a>
+                <a href="https://football.ua/club/128-arminija.html">Арминия</a>
                 <a href="https://football.ua/club/121-schalke.html">Шальке</a>
 	<p class="more"><a href="https://football.ua/germany/table.html">подробная таблица</a></p>
-                <a href="https://football.ua/club/33-milan.html">Милан</a>
                 <a href="https://football.ua/club/28-inter.html">Интер</a>
+                <a href="https://football.ua/club/33-milan.html">Милан</a>
                 <a href="https://football.ua/club/30-juventus.html">Ювентус</a>
+                <a href="https://football.ua/club/278-atalanta.html">Аталанта</a>
+                <a href="https://football.ua/club/395-napoli.html">Наполи</a>
                 <a href="https://football.ua/club/27-roma.html">Рома</a>
                 <a href="https://football.ua/club/32-lazio.html">Лацио</a>
-                <a href="https://football.ua/club/395-napoli.html">Наполи</a>
-                <a href="https://football.ua/club/278-atalanta.html">Аталанта</a>
                 <a href="https://football.ua/club/875-sassuolo.html">Сассуоло</a>
                 <a href="https://football.ua/club/795-verona.html">Верона</a>
                 <a href="https://football.ua/club/86-sampdoria.html">Сампдория</a>
+                <a href="https://football.ua/club/490-bolonja.html">Болонья</a>
                 <a href="https://football.ua/club/92-udinese.html">Удинезе</a>
                 <a href="https://football.ua/club/394-genoa.html">Дженоа</a>
-                <a href="https://football.ua/club/490-bolonja.html">Болонья</a>
-                <a href="https://football.ua/club/1305-benevento.html">Беневенто</a>
                 <a href="https://football.ua/club/36-fiorentina.html">Фиорентина</a>
                 <a href="https://football.ua/club/923-specija.html">Специя</a>
+                <a href="https://football.ua/club/1305-benevento.html">Беневенто</a>
                 <a href="https://football.ua/club/280-torino.html">Торино</a>
                 <a href="https://football.ua/club/93-cagliari.html">Кальяри</a>
                 <a href="https://football.ua/club/91-parma.html">Парма</a>
@@ -519,103 +529,103 @@ Login.SiteName = 'football.ua';
                 <a href="https://football.ua/club/51-barcelona.html">Барселона</a>
                 <a href="https://football.ua/club/57-real-madrid.html">Реал Мадрид</a>
                 <a href="https://football.ua/club/63-sevilla.html">Севилья</a>
-                <a href="https://football.ua/club/65-villarreal.html">Вильярреал</a>
                 <a href="https://football.ua/club/60-real-sociedad.html">Реал Сосьедад</a>
                 <a href="https://football.ua/club/62-betis.html">Бетис</a>
+                <a href="https://football.ua/club/65-villarreal.html">Вильярреал</a>
                 <a href="https://football.ua/club/763-granada.html">Гранада</a>
-                <a href="https://football.ua/club/251-levante.html">Леванте</a>
                 <a href="https://football.ua/club/53-athletic.html">Атлетик</a>
+                <a href="https://football.ua/club/251-levante.html">Леванте</a>
                 <a href="https://football.ua/club/67-celta.html">Сельта</a>
                 <a href="https://football.ua/club/64-valencia.html">Валенсия</a>
+                <a href="https://football.ua/club/59-osasuna.html">Осасуна</a>
                 <a href="https://football.ua/club/54-getafe.html">Хетафе</a>
                 <a href="https://football.ua/club/76-kadis.html">Кадис</a>
-                <a href="https://football.ua/club/59-osasuna.html">Осасуна</a>
-                <a href="https://football.ua/club/68-alaves.html">Алавес</a>
-                <a href="https://football.ua/club/1040-eibar.html">Эйбар</a>
                 <a href="https://football.ua/club/401-valladolid.html">Вальядолид</a>
                 <a href="https://football.ua/club/885-elche.html">Эльче</a>
+                <a href="https://football.ua/club/1040-eibar.html">Эйбар</a>
+                <a href="https://football.ua/club/68-alaves.html">Алавес</a>
                 <a href="https://football.ua/club/1098-huesca.html">Уэска</a>
 	<p class="more"><a href="https://football.ua/spain/table.html">подробная таблица</a></p>
                 <a href="https://football.ua/club/141-ajax.html">Аякс</a>
                 <a href="https://football.ua/club/144-psv.html">ПСВ</a>
+                <a href="https://football.ua/club/309-azalkmaar.html">АЗ Алкмаар</a>
                 <a href="https://football.ua/club/437-vitesse.html">Витесс</a>
                 <a href="https://football.ua/club/316-feyenoord.html">Фейеноорд</a>
-                <a href="https://football.ua/club/309-azalkmaar.html">АЗ Алкмаар</a>
                 <a href="https://football.ua/club/318-groningen.html">Гронинген</a>
-                <a href="https://football.ua/club/433-twente.html">Твенте</a>
                 <a href="https://football.ua/club/436-utrecht.html">Утрехт</a>
+                <a href="https://football.ua/club/433-twente.html">Твенте</a>
+                <a href="https://football.ua/club/498-heracles.html">Хераклес</a>
                 <a href="https://football.ua/club/304-heerenveen.html">Херенвен</a>
                 <a href="https://football.ua/club/1377-fortuna-sittard.html">Фортуна Ситтард</a>
-                <a href="https://football.ua/club/498-heracles.html">Хераклес</a>
                 <a href="https://football.ua/club/442-sparta-r.html">Спарта Р</a>
                 <a href="https://football.ua/club/814-zwolle.html">Зволле</a>
-                <a href="https://football.ua/club/441-venlo.html">Венло</a>
                 <a href="https://football.ua/club/1498-valvejjk.html">Валвейк</a>
                 <a href="https://football.ua/club/440-willem.html">Виллем II</a>
-                <a href="https://football.ua/club/497-denhaag.html">Ден Хааг</a>
+                <a href="https://football.ua/club/441-venlo.html">Венло</a>
                 <a href="https://football.ua/club/1376-ehmmen.html">Эммен</a>
+                <a href="https://football.ua/club/497-denhaag.html">Ден Хааг</a>
 	<p class="more"><a href="https://football.ua/netherlands/table.html">подробная таблица</a></p>
                 <a href="https://football.ua/club/255-sporting.html">Спортинг Л</a>
                 <a href="https://football.ua/club/151-porto.html">Порту</a>
                 <a href="https://football.ua/club/143-benfica.html">Бенфика</a>
                 <a href="https://football.ua/club/334-braga.html">Брага</a>
-                <a href="https://football.ua/club/416-vitoria-guimaraes.html">Витория Гимараэш</a>
                 <a href="https://football.ua/club/421-pacos-ferreira.html">Пасуш Феррейра</a>
+                <a href="https://football.ua/club/416-vitoria-guimaraes.html">Витория Гимараэш</a>
                 <a href="https://football.ua/club/1337-santa-klara.html">Санта-Клара</a>
                 <a href="https://football.ua/club/819-moreirense.html">Морейренсе</a>
-                <a href="https://football.ua/club/1225-tondela.html">Тондела</a>
-                <a href="https://football.ua/club/419-maritimo.html">Маритиму</a>
-                <a href="https://football.ua/club/339-nacional.html">Насьонал</a>
-                <a href="https://football.ua/club/414-belenenses.html">Белененсеш</a>
-                <a href="https://football.ua/club/659-portimonense.html">Портимоненсе</a>
                 <a href="https://football.ua/club/559-rio-ave.html">Риу Аве</a>
-                <a href="https://football.ua/club/1539-famalikan.html">Фамаликан</a>
-                <a href="https://football.ua/club/415-boavista.html">Боавишта</a>
+                <a href="https://football.ua/club/414-belenenses.html">Белененсеш</a>
                 <a href="https://football.ua/club/760-gil-vicente.html">Жил Висенте</a>
+                <a href="https://football.ua/club/1225-tondela.html">Тондела</a>
+                <a href="https://football.ua/club/659-portimonense.html">Портимоненсе</a>
+                <a href="https://football.ua/club/1539-famalikan.html">Фамаликан</a>
                 <a href="https://football.ua/club/1335-farense.html">Фаренсе</a>
+                <a href="https://football.ua/club/339-nacional.html">Насьонал</a>
+                <a href="https://football.ua/club/415-boavista.html">Боавишта</a>
+                <a href="https://football.ua/club/419-maritimo.html">Маритиму</a>
 	<p class="more"><a href="https://football.ua/portugal/table.html">подробная таблица</a></p>
-                <a href="https://football.ua/club/145-fenerbahce.html">Фенербахче</a>
-                <a href="https://football.ua/club/238-galatasaray.html">Галатасарай</a>
                 <a href="https://football.ua/club/300-besiktas.html">Бешикташ</a>
-                <a href="https://football.ua/club/1259-alanijaspor.html">Аланияспор</a>
+                <a href="https://football.ua/club/238-galatasaray.html">Галатасарай</a>
+                <a href="https://football.ua/club/145-fenerbahce.html">Фенербахче</a>
                 <a href="https://football.ua/club/335-trabzonspor.html">Трабзонспор</a>
+                <a href="https://football.ua/club/1259-alanijaspor.html">Аланияспор</a>
                 <a href="https://football.ua/club/665-gaziantepspor.html">Газиянтепспор</a>
                 <a href="https://football.ua/club/1455-khatajjspor.html">Хатайспор</a>
                 <a href="https://football.ua/club/1671-karagjumrjuk.html">Карагюмрюк</a>
+                <a href="https://football.ua/club/602-sivasspor.html">Сивасспор</a>
+                <a href="https://football.ua/club/1309-gjoztepe.html">Гёзтепе</a>
                 <a href="https://football.ua/club/662-antaljaspor.html">Антальяспор</a>
+                <a href="https://football.ua/club/664-konjaspor.html">Коньяспор</a>
+                <a href="https://football.ua/club/897-rizespor.html">Ризеспор</a>
                 <a href="https://football.ua/club/1308-jjeni-malatjaspor.html">Йени Малатьяспор</a>
                 <a href="https://football.ua/club/666-kasympasa.html">Касымпаша</a>
-                <a href="https://football.ua/club/897-rizespor.html">Ризеспор</a>
-                <a href="https://football.ua/club/1309-gjoztepe.html">Гёзтепе</a>
-                <a href="https://football.ua/club/602-sivasspor.html">Сивасспор</a>
-                <a href="https://football.ua/club/667-istanbul-b-b.html">Истанбул Башакшехир</a>
-                <a href="https://football.ua/club/664-konjaspor.html">Коньяспор</a>
                 <a href="https://football.ua/club/308-kajjzerispor.html">Кайсериспор</a>
+                <a href="https://football.ua/club/667-istanbul-b-b.html">Истанбул Башакшехир</a>
+                <a href="https://football.ua/club/671-ankaragjudzhju.html">Анкарагюджю</a>
                 <a href="https://football.ua/club/1356-ehrzurumspor.html">Эрзурумспор</a>
                 <a href="https://football.ua/club/670-genclerbirligi.html">Генчлербирлиги</a>
-                <a href="https://football.ua/club/671-ankaragjudzhju.html">Анкарагюджю</a>
                 <a href="https://football.ua/club/1113-denizlispor.html">Денизлиспор</a>
 	<p class="more"><a href="https://football.ua/turkey/table.html">подробная таблица</a></p>
+                <a href="https://football.ua/club/104-psg.html">ПСЖ</a>
                 <a href="https://football.ua/club/100-lille.html">Лилль</a>
                 <a href="https://football.ua/club/98-lyonnais.html">Лион</a>
-                <a href="https://football.ua/club/104-psg.html">ПСЖ</a>
                 <a href="https://football.ua/club/110-monaco.html">Монако</a>
-                <a href="https://football.ua/club/106-rennais.html">Ренн</a>
-                <a href="https://football.ua/club/116-metz.html">Метц</a>
                 <a href="https://football.ua/club/103-lens.html">Ланс</a>
-                <a href="https://football.ua/club/863-anzhe.html">Анже</a>
                 <a href="https://football.ua/club/102-marseille.html">Марсель</a>
-                <a href="https://football.ua/club/99-bordeaux.html">Бордо</a>
+                <a href="https://football.ua/club/106-rennais.html">Ренн</a>
                 <a href="https://football.ua/club/614-montpellier.html">Монпелье</a>
-                <a href="https://football.ua/club/809-reims.html">Реймс</a>
+                <a href="https://football.ua/club/116-metz.html">Метц</a>
+                <a href="https://football.ua/club/863-anzhe.html">Анже</a>
                 <a href="https://football.ua/club/108-nice.html">Ницца</a>
+                <a href="https://football.ua/club/809-reims.html">Реймс</a>
+                <a href="https://football.ua/club/99-bordeaux.html">Бордо</a>
                 <a href="https://football.ua/club/650-brest.html">Брест</a>
                 <a href="https://football.ua/club/115-strasburg.html">Страсбур</a>
                 <a href="https://football.ua/club/109-saint-etienne.html">Сент-Этьен</a>
-                <a href="https://football.ua/club/111-nantes.html">Нант</a>
                 <a href="https://football.ua/club/223-lorient.html">Лорьян</a>
-                <a href="https://football.ua/club/758-dizhon.html">Дижон</a>
                 <a href="https://football.ua/club/1359-nim.html">Ним</a>
+                <a href="https://football.ua/club/111-nantes.html">Нант</a>
+                <a href="https://football.ua/club/758-dizhon.html">Дижон</a>
 	<p class="more"><a href="https://football.ua/france/table.html">подробная таблица</a></p>
                 <a href="https://football.ua/club/118-bayern.html">Бавария</a>
                 <a href="https://football.ua/club/56-atletico.html">Атлетико</a>
@@ -699,6 +709,62 @@ Login.SiteName = 'football.ua';
                 <a href="https://football.ua/club/323-slovan-liberec.html">Слован Либерец</a>
                 <a href="https://football.ua/club/652-gent.html">Гент</a>
 	<p class="more"><a href="https://football.ua/uefa/table.html">подробная таблица</a></p>
+                <a href="https://football.ua/club/167-serbija.html">Сербия</a>
+                <a href="https://football.ua/club/172-portugal.html">Португалия</a>
+                <a href="https://football.ua/club/192-ljuksemburg.html">Люксембург</a>
+                <a href="https://football.ua/club/247-azerbajjdzhan.html">Азербайджан</a>
+                <a href="https://football.ua/club/266-ireland.html">Ирландия</a>
+                <a href="https://football.ua/club/165-sweden.html">Швеция</a>
+                <a href="https://football.ua/club/185-ispanija.html">Испания</a>
+                <a href="https://football.ua/club/263-grecija.html">Греция</a>
+                <a href="https://football.ua/club/210-gruzija.html">Грузия</a>
+                <a href="https://football.ua/club/949-kosovo.html">Косово</a>
+                <a href="https://football.ua/club/173-italija.html">Италия</a>
+                <a href="https://football.ua/club/182-shvejjcarija.html">Швейцария</a>
+                <a href="https://football.ua/club/257-litva.html">Литва</a>
+                <a href="https://football.ua/club/273-northern-ireland.html">Северная Ирландия</a>
+                <a href="https://football.ua/club/275-bolgarija.html">Болгария</a>
+                <a href="https://football.ua/club/181-france.html">Франция</a>
+                <a href="https://football.ua/club/262-finljandija.html">Финляндия</a>
+                <a href="https://football.ua/club/186-ukraine.html">Украина</a>
+                <a href="https://football.ua/club/208-bosnija-i-gercegovina.html">Босния и Герцеговина</a>
+                <a href="https://football.ua/club/260-kazakhstan.html">Казахстан</a>
+                <a href="https://football.ua/club/174-chekhija.html">Чехия</a>
+                <a href="https://football.ua/club/259-belgija.html">Бельгия</a>
+                <a href="https://football.ua/club/206-belarus.html">Беларусь</a>
+                <a href="https://football.ua/club/193-wales.html">Уэльс</a>
+                <a href="https://football.ua/club/199-ehstonija.html">Эстония</a>
+                <a href="https://football.ua/club/189-danija.html">Дания</a>
+                <a href="https://football.ua/club/277-austria.html">Австрия</a>
+                <a href="https://football.ua/club/256-shotlandija.html">Шотландия</a>
+                <a href="https://football.ua/club/258-farery.html">Фареры</a>
+                <a href="https://football.ua/club/270-izrail.html">Израиль</a>
+                <a href="https://football.ua/club/264-moldova.html">Молдова</a>
+                <a href="https://football.ua/club/200-turkey.html">Турция</a>
+                <a href="https://football.ua/club/398-chernogorija.html">Черногория</a>
+                <a href="https://football.ua/club/168-niderlandy.html">Нидерланды</a>
+                <a href="https://football.ua/club/212-norvegija.html">Норвегия</a>
+                <a href="https://football.ua/club/272-latvija.html">Латвия</a>
+                <a href="https://football.ua/club/1083-gibraltar.html">Гибралтар</a>
+                <a href="https://football.ua/club/198-russia.html">Россия</a>
+                <a href="https://football.ua/club/211-slovenija.html">Словения</a>
+                <a href="https://football.ua/club/178-khorvatija.html">Хорватия</a>
+                <a href="https://football.ua/club/268-slovakija.html">Словакия</a>
+                <a href="https://football.ua/club/265-kipr.html">Кипр</a>
+                <a href="https://football.ua/club/217-malta.html">Мальта</a>
+                <a href="https://football.ua/club/162-england.html">Англия</a>
+                <a href="https://football.ua/club/160-polsha.html">Польша</a>
+                <a href="https://football.ua/club/207-hungary.html">Венгрия</a>
+                <a href="https://football.ua/club/274-albanija.html">Албания</a>
+                <a href="https://football.ua/club/269-andorra.html">Андорра</a>
+                <a href="https://football.ua/club/267-san-marino.html">Сан-Марино</a>
+                <a href="https://football.ua/club/158-germanija.html">Германия</a>
+                <a href="https://football.ua/club/261-armenija.html">Армения</a>
+                <a href="https://football.ua/club/190-makedonija.html">Северная Македония</a>
+                <a href="https://football.ua/club/276-romania.html">Румыния</a>
+                <a href="https://football.ua/club/271-iceland.html">Исландия</a>
+                <a href="https://football.ua/club/213-likhtenshtejjn.html">Лихтенштейн</a>
+	<p class="more"><a href="https://football.ua/worldcup/table.html">подробная таблица</a></p>
                 <a href="https://football.ua/club/200-turkey.html">Турция</a>
                 <a href="https://football.ua/club/173-italija.html">Италия</a>
                 <a href="https://football.ua/club/193-wales.html">Уэльс</a>
@@ -726,100 +792,97 @@ Login.SiteName = 'football.ua';
 	<p class="more"><a href="https://football.ua/euro2020/table.html">подробная таблица</a></p>
 <iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2Ffootball.ua&amp;width=350&amp;height=590&amp;colorscheme=light&amp;show_faces=true&amp;header=true&amp;stream=true&amp;show_border=true&amp;appId=262641663769890" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:350px; height:590px;" allowTransparency="true"></iframe>
 	<h1 class="feed-header rss">Новости футбола<a class="rss" href="//football.ua/rss2.ashx"></a></h1>
-            <a  href="https://football.ua/ukraine/443505-oficialno-shakhab-igrok-zari.html" >Официально: Шахаб — игрок Зари</a>
-            <a  href="https://football.ua/countrieselse/443504-zhenshhina-sudja-vpervye-rabotala-glavnym-arbitrom-na-matche-muzhskikh-komand-pod-ehgidojj-fifa.html" >Женщина-судья впервые работала главным арбитром на матче мужских команд под эгидой ФИФА</a>
-            <a  href="https://champions.football.ua/news/443503-match-atletiko-chelsi-budet-sygran-v-bukhareste-smi.html" >Матч Атлетико — Челси будет сыгран в Бухаресте — СМИ</a>
-            <a  href="https://football.ua/italy/443502-juventus-popytaetsja-prodlit-arendu-moraty.html" >Ювентус попытается продлить аренду Мораты</a>
-            <a  href="https://football.ua/ukraine/443500-dinamo-razgromilo-bateh-v-kontrolnom-matche.html" >Динамо разгромило БАТЭ в контрольном матче</a>
-            <a  href="https://football.ua/england/443501-manchester-siti-projavljaet-interes-k-lukaku.html" >Манчестер Сити проявляет интерес к Лукаку</a>
-            <a  href="https://football.ua/ukraine/443499-markevich-ja-gotov-k-kakomu-to-sereznomu-proektu.html" >Маркевич: Я готов к какому-то серьезному проекту</a>
-            <a  href="https://football.ua/ukraine/443498-dinamo-khochet-priobresti-perspektivnogo-rumynskogo-zashhitnika.html" >Динамо хочет приобрести перспективного румынского защитника</a>
-            <a class='video' href="https://football.ua/countrieselse/443497-samye-bezumnye-transfery-v-istorii-novoe-video-na-kanale-footballua.html" >Самые безумные трансферы в истории футбола</a>
-            <a  href="https://football.ua/fiction/443495-na-zametku-kovalenko-kak-debjutirovali-ukraincy-v-top-chempionatakh.html" >На заметку Коваленко: как дебютировали украинцы в ТОП-чемпионатах</a>
-            <a  href="https://football.ua/england/443496-tiago-silva-mozhet-vernutsja-na-pole-v-matche-protiv-sautgemptona.html" >Тиаго Силва может вернуться на поле в матче против Саутгемптона</a>
-            <a  href="https://football.ua/countrieselse/443457-matchi-nedeli.html" >Матчи недели: итальянские баталии и мировая классика в АПЛ</a>
-            <a  href="https://football.ua/countrieselse/443494-cincinnati-priobrel-brennera-u-san-paulu-za-15-mln-dollarov.html" >Цинциннати приобрел Бреннера у Сан-Паулу за 15 млн долларов</a>
-            <a  href="https://football.ua/spain/443493-overmars-mozhet-vernutsja-v-barselonu.html" >Овермарс может вернуться в Барселону</a>
-            <a  href="https://football.ua/france/443492-marsel-rassmatrivaet-variant-s-naznacheniem-allegri.html" >Марсель рассматривает вариант с назначением Аллегри</a>
-            <a  href="https://football.ua/ukraine/443491-maksimov-dlja-molodykh-sejjchas-dostatochno-dva-raza-nabit-i-vse-mozhno-zagranicu-ekhat.html" >Максимов: Для молодых сейчас достаточно два раза набить и все — можно заграницу ехать</a>
-            <a  href="https://football.ua/france/443490-al-akhli-arendoval-ehks-forvarda-milana-njanga.html" >Аль-Ахли арендовал экс-форварда Милана Ньянга</a>
-            <a class='video' href="https://football.ua/ukraine/443476-dinamo-kiev-bateh-video-onlajjn-transljacija-tovarishheskogo-matcha.html" >Динамо Киев — БАТЭ: видео онлайн-трансляция товарищеского матча</a>
-            <a  href="https://football.ua/england/443489-chelsi-v-pervykh-chetyrekh-matchakh-pri-tukhele-propustil-odin-mjach-luchshijj-debjut-so-vremen-khiddinka.html" >Челси в первых четырех матчах при Тухеле пропустил один мяч &mdash; лучший дебют со времен Хиддинка</a>
-            <a  href="https://football.ua/ukraine/443488-andrievskijj-i-karavaev-sygrajut-s-pervykh-minut-protiv-bateh.html" >Андриевский и Караваев сыграют с первых минут против БАТЭ</a>
-            <a  href="https://football.ua/ukraine/443487-ordec-rakickijj-zaveril-menja-chto-rossijjskijj-chempionat-luchshe-ukrainskogo.html" >Ордец: Ракицкий заверил меня, что российский чемпионат лучше украинского</a>
-            <a class='video' href="https://football.ua/spain/443486-sol-zabil-pobednyjj-gol-v-matche-protiv-rajjo-valekano.html" >Соль забил победный гол в матче против Райо Вальекано</a>
-            <a class='video' href="https://football.ua/england/443485-tonkoe-zavershenie-v-svoi-vorota-avtogol-rjudigera-v-matche-sheffild-junajjted-chelsi.html" >Тонкое завершение в свои ворота — автогол Рюдигера в матче Шеффилд Юнайтед — Челси</a>
-            <a  href="https://football.ua/spain/443484-messi-vyshel-na-vtoroe-mesto-po-golam-v-la-lige-posle-vykhoda-na-zamenu.html" >Месси вышел на второе место по голам в Ла лиге после выхода на замену</a>
-            <a  href="https://football.ua/bet-ratings/443483-lids-kristal-pehlas-prognoz-bukmekerov-na-match-apl.html" >Лидс — Кристал Пэлас: прогноз букмекеров на матч АПЛ</a>
-            <a class='video' href="https://football.ua/italy/443481-lacio-kaljari-10-video-gola-i-obzor-matcha.html" >Лацио &mdash; Кальяри 1:0 Видео гола и обзор матча</a>
-            <a class='video' href="https://football.ua/france/443482-pochti-dognal-varana-vpechatljajushhijj-ryvok-za-golom-marselju-ot-mbappe.html" >Почти догнал варана — впечатляющий рывок за голом Марселю от Мбаппе</a>
-            <a  href="https://football.ua/countrieselse/443480-sbornaja-marokko-pobedila-v-chempionate-afrikanskikh-nacijj.html" >Сборная Марокко победила в чемпионате африканских наций</a>
-            <a class='video' href="https://football.ua/france/443479-marsel-pszh-02-video-golov-i-obzor-matcha.html" >Марсель — ПСЖ 0:2 Видео голов и обзор матча</a>
-            <a  href="https://football.ua/ukraine/443478-sirota-dumaju-my-uzhe-gotovy-k-vozobnovleniju-chempionata.html" >Сирота: Думаю, мы уже готовы к возобновлению чемпионата</a>
-            <a class='video' href="https://football.ua/countrieselse/443477-bezus-otdal-pervyjj-golevojj-pas-v-novom-sezone-chempionata-belgii.html" >Безус отдал первый голевой пас в новом сезоне чемпионата Бельгии</a>
-            <a  href="https://football.ua/countrieselse/443463-yuventus-nameren-prodlit-mucheniya-rabotnikov-fiat-do-2023-goda-luchshie-kommentarii-nedeli-na-footballua.html" >&quot;Ювентус намерен продлить мучения работников Fiat до 2023 года&quot;, — лучшие комментарии недели на Football.ua</a>
-            <a  href="https://football.ua/spain/443475-eshhe-odin-centralnyjj-zashhitnik-barselony-riskuet-vybyt-na-dolgijj-srok.html" >Еще один центральный защитник Барселоны рискует выбыть на долгий срок</a>
-            <a  href="https://football.ua/ukraine/443474-sportivnyjj-direktor-minaja-raskryl-informaciju-o-velichine-shtrafa-za-lishnijj-ves-v-komande.html" >Спортивный директор Миная раскрыл информацию о величине штрафа за лишний вес в команде</a>
-            <a  href="https://football.ua/spain/443471-atletiko-selta-prognoz-na-match-la-ligi.html" >Атлетико &mdash; Сельта: прогноз на матч Ла Лиги</a>
-            <a class='video' href="https://football.ua/england/443473-liverpul-manchester-siti-14-video-golov-i-obzor-matcha.html" >Ливерпуль — Манчестер Сити 1:4 Видео голов и обзор матча</a>
-            <a  href="https://football.ua/ukraine/443472-agrobiznes-sygraet-s-shakhterom-v-kieve-chtoby-ne-povtorit-sudbu-ingulca.html" >Агробизнес сыграет с Шахтером в Киеве, чтобы не повторить судьбу Ингульца</a>
-            <a class='video' href="https://football.ua/spain/443470-atletik-valensija-11-video-golov-i-obzor-matcha.html" >Атлетик &mdash; Валенсия 1:1 Видео голов и обзор матча</a>
-            <a  href="https://football.ua/ukraine/443469-sidklejj-nravitsja-rabotat-pod-rukovodstvom-luchesku.html" >Сидклей: Нравится работать под руководством Луческу</a>
-            <a  href="https://football.ua/spain/443468-barselona-v-dozhala-betis-v-koncovke-rezultativnogo-poedinka.html" >Барселона дожала Бетис в концовке результативного поединка</a>
-            <a  href="https://football.ua/italy/443467-lacio-minimalno-obygral-kaljari.html" >Лацио минимально обыграл Кальяри</a>
-            <a  href="https://football.ua/england/443466-chelsi-obygral-sheffild-junajjted-na-vyezde.html" >Челси обыграл Шеффилд Юнайтед на выезде</a>
-            <a  href="https://football.ua/england/443464-gvardiola-o-pobede-nad-liverpulem-segodnja-my-budem-prazdnovat-no-uzhe-zavtra-vse-na-trenirovku.html" >Гвардиола &mdash; о победе над Ливерпулем: Сегодня мы будем праздновать, но уже завтра все на тренировку</a>
+            <a  href="https://football.ua/france/447652-mbappe-otkazalsja-ekhat-na-olimpiadu-i-budet-reshat-svoju-sudbu-posle-evro-2020.html" >Мбаппе отказался ехать на Олимпиаду и будет решать свою судьбу после Евро-2020</a>
+            <a  href="https://football.ua/worldcup/447651-moraes-samyjj-vozrastnojj-avtor-debjutnogo-gola-za-sbornuju-ukrainy.html" >Мораес &mdash; самый возрастной автор дебютного гола за сборную Украины</a>
+            <a  href="https://football.ua/worldcup/447642-oshibka-mikolenko-rezultat-ustalosti-analiz-matcha-ukraina-finljandija.html" >Ошибка Миколенко — результат усталости: анализ матча Украина — Финляндия</a>
+            <a  href="https://football.ua/ukraine2league/447650-pfl-perenesla-match-podole-ehpicentr.html" >ПФЛ перенесла матч Подолье — Эпицентр</a>
+            <a  href="https://football.ua/worldcup/447649-manchini-ustanovil-rekord-sbornojj-italii-i-blizok-k-eshhe-odnomu-kotoryjj-schitali-vechnym.html" >Манчини установил рекорд сборной Италии и близок к еще одному, который считали вечным</a>
+            <a  href="https://football.ua/brazil/447648-rafinja-prodolzhit-kareru-v-gremio.html" >Рафинья продолжит карьеру в Гремио</a>
+            <a  href="https://football.ua/worldcup/447647-ibragimovich-nikomu-nichego-ne-sobirajus-dokazyvat-ja-prosto-naslazhdajus.html" >Ибрагимович: Никому ничего не собираюсь доказывать, я просто наслаждаюсь</a>
+            <a  href="https://football.ua/worldcup/447646-levandovski-propustit-match-s-angliejj-iz-za-travmy.html" >Левандовски пропустит матч с Англией из-за травмы</a>
+            <a  href="https://football.ua/bet-ratings/447645-matchi-nedeli-zakljuchitelnyjj-match-martovskogo-cikla-dlja-sbornojj-ukrainy-i-triumfalnoe-vozvrashhenie-klubnogo-futbola.html" >Матчи недели: заключительная игра мартовского цикла для сборной Украины и триумфальное возвращение клубного футбола</a>
+            <a  href="https://football.ua/worldcup/447644-trener-sbornojj-kazakhstana-postaraemsja-ispravit-neuteshitelnuju-statistiku-s-ukrainojj.html" >Тренер сборной Казахстана: Постараемся исправить неутешительную статистику с Украиной</a>
+            <a  href="https://football.ua/england/447643-liverpul-i-chelsi-interesujutsja-ehdegorom.html" >Ливерпуль и Челси интересуются Эдегором</a>
+            <a  href="https://football.ua/worldcup/447641-karavaev-luchshijj-igrok-matcha-s-finljandiejj-po-versii-whoscored.html" >Караваев &mdash; лучший игрок матча с Финляндией по версии WhoScored</a>
+            <a  href="https://football.ua/italy/447640-lacio-trebuet-tekhnicheskuju-pobedu-nad-torino-ssylajas-na-reshenie-po-matchu-shvejjcarija-ukraina.html" >Лацио требует техническую победу над Торино, ссылаясь на решение по матчу Швейцария — Украина</a>
+            <a  href="https://football.ua/england/447639-zashhitnik-lejjpciga-konate-blizok-k-perekhodu-v-liverpul.html" >Защитник Лейпцига Конате близок к переходу в Ливерпуль</a>
+            <a  href="https://football.ua/italy/447638-buffon-sobiraetsja-eshhe-raz-poigrat-v-zarubezhnom-klube.html" >Буффон собирается еще раз поиграть в зарубежном клубе</a>
+            <a  href="https://football.ua/france/447637-todibo-nakhoditsja-v-obojjme-barselony-i-ne-igrat-deo.html" >Тодибо: Находится в обойме Барселоны и не играть — де***о</a>
+            <a class='video' href="https://football.ua/worldcup/447636-san-marino-vengrija-03-video-golov-i-obzor-matcha.html" >Сан-Марино — Венгрия 0:3 Видео голов и обзор матча</a>
+            <a class='video' href="https://football.ua/ukraine2league/447635-podole-ehpicentr-video-onlajjn-transljacija-matcha-vtorojj-ligi.html" >Подолье &mdash; Эпицентр: видео онлайн-трансляция матча Второй лиги</a>
+            <a class='video' href="https://football.ua/euro-u21/447634-ukraina-u-21-slovakija-u-21-video-onlajjn-transljacija-matcha.html" >Украина U-21 — Словакия U-21: видео онлайн-трансляция матча</a>
+            <a class='video' href="https://football.ua/worldcup/447633-golevojj-pas-solomona-v-obzore-matcha-izrail-shotlandija.html" >Голевой пас Соломона — в обзоре матча Израиль — Шотландия</a>
+            <a  href="https://football.ua/worldcup/447632-levandovski-7-jj-evropeec-zabivshijj-65-golov-za-svoju-sbornuju.html" >Левандовски — 7-й европеец, забивший 65 голов за свою сборную</a>
+            <a  href="https://football.ua/italy/447629-de-laurentis-gotovit-v-napoli-kadrovuju-revoljuciju.html" >Де Лаурентис готовит в Наполи кадровую революцию</a>
+            <a  href="https://football.ua/italy/447630-v-kontrakte-mandzhukicha-s-milanom-net-opcii-avtomaticheskogo-prodlenija-v-sluchae-vykhoda-v-ligu-chempionov-zhurnalist.html" >В контракте Манджукича с Миланом нет опции автоматического продления в случае выхода в Лигу чемпионов — журналист</a>
+            <a  href="https://football.ua/germany/447628-germanija-ne-proigryvaet-v-otbore-na-chempionat-mira-uzhe-20-let.html" >Германия не проигрывает в отборе на чемпионат мира уже 20 лет</a>
+            <a  href="https://football.ua/worldcup/447627-zinchenko-nam-nuzhna-podderzhka-kazhdogo-ukrainca-chtoby-stat-silnee.html" >Зинченко: Нам нужна поддержка каждого украинца чтобы стать сильнее</a>
+            <a  href="https://football.ua/northamerica/447626-gonduras-ne-pustil-ssha-na-olimpijjskie-igry-v-tokio.html" >Гондурас не пустил США на Олимпийские игры в Токио</a>
+            <a  href="https://football.ua/worldcup/447625-uefa-nazval-koronavirus-kak-prichinu-otsutstvija-var-posle-zhalob-ronaldu.html" >УЕФА назвал коронавирус как причину отсутствия VAR после жалоб Роналду</a>
+            <a  href="https://football.ua/worldcup/447609-ukraina-finljandija-nashi-ocenki.html" >Украина — Финляндия. Наши оценки</a>
+            <a  href="https://football.ua/spain/447624-real-podpishet-kontrakt-s-alabojj-do-2025-goda.html" >Реал подпишет контракт с Алабой до 2025 года</a>
+            <a  href="https://football.ua/worldcup/447623-pukki-ne-znaju-chto-sluchilos-v-tot-moment-v-shtrafnojj.html" >Пукки: Не знаю, что случилось в тот момент в штрафной</a>
+            <a class='video' href="https://football.ua/worldcup/447621-momenty-s-uchastiem-ekateriny-monzul-v-obzore-matcha-avstrija-farerskie-ostrova.html" >Моменты с участием Екатерины Монзуль — в обзоре матча Австрия — Фарерские острова</a>
+            <a  href="https://football.ua/worldcup/447620-ispanija-ne-proigryvaet-v-otbore-chm-rekordnye-65-matchejj-podrjad.html" >Испания не проигрывает в отборе ЧМ рекордные 65 матчей подряд</a>
+            <a class='video' href="https://football.ua/worldcup/447593-ukraina-finljandija-video-gola-i-obzor-matcha.html" >Украина — Финляндия 1:1 Видео голов и обзор матча</a>
+            <a  href="https://football.ua/worldcup/447618-poup-ustanovil-rekord-sredi-vratarejj-sbornojj-anglii.html" >Поуп установил рекорд среди вратарей сборной Англии</a>
+            <a  href="https://football.ua/worldcup/447619-shvejjcarija-litva-10-video-gola-i-obzor-matcha.html" >Швейцария — Литва 1:0 Видео гола и обзор матча</a>
+            <a  href="https://football.ua/worldcup/447616-nastavnik-sbornojj-finljandii-igrat-s-ukrainojj-na-vyezde-bolshojj-vyzov.html" >Наставник сборной Финляндии: Играть с Украиной на выезде &mdash; большой вызов</a>
+            <a  href="https://football.ua/worldcup/447617-mene-o-travmakh-azara-estestvenno-ja-vinovat-ehto-zhe-ja-priekhal-na-proshlojj-nedele-v-madrid-i-vnov-sdelal-protiv-nego-podkat.html" >Менье — о травмах Азара: Естественно, я виноват — это же я приехал на прошлой неделе в Мадрид, и вновь сделал против него подкат</a>
+            <a class='video' href="https://football.ua/worldcup/447614-danija-moldova-80-video-golov-i-obzor-matcha.html" >Дания &mdash; Молдова 8:0 Видео голов и обзор матча</a>
+            <a  href="https://football.ua/worldcup/447615-martial-poluchil-povrezhdenie-kolena-v-matche-protiv-kazakhstana.html" >Мартиаль получил повреждение колена в матче против Казахстана</a>
+            <a  href="https://football.ua/worldcup/447613-ehffektnyjj-pas-pjatkojj-ibragimovicha-v-obzore-matcha-kosovo-shvecija.html" >Эффектный пас пяткой Ибрагимовича — в обзоре матча Косово — Швеция</a>
+            <a  href="https://football.ua/countrieselse/447610-zhal-chto-u-sbornoj-ukrainy-net-v-gruppe-malty-vot-eto-byla-by-zaruba-luchshie-kommentarii-nedeli-na-footballua.html" >&quot;Жаль, что у сборной Украины нет в группе Мальты. Вот это была бы заруба!&quot; — лучшие комментарии недели на Football.ua</a>
+            <a  href="https://football.ua/italy/447612-roma-podyskivaet-zamenu-dzheko-v-anglii-i-ispanii.html" >Рома подыскивает замену Джеко в Англии и Испании</a>
 <p class="more"><a href="https://football.ua/newsarc/">все новости</a></p>
-            <h4><a href="https://football.ua/tag/kovalenko-move-atalanta .html">Виктор Коваленко переходит в Аталанту</a></h4>
-            <h4><a href="https://football.ua/tag/dynamo-v-evrokubkah.html">Динамо в Еврокубках</a></h4>
             <h4><a href="https://football.ua/tag/luchshie-v-istorii.html">Лучшие в истории</a></h4>
             <h4><a href="https://football.ua/tag/podkasty-footballua.html">Подкасты Football.ua</a></h4>
             <h4><a href="https://football.ua/tag/transfers.html">Трансферный рынок</a></h4>
-            <h4><a href="https://football.ua/tag/shakhtar-in-eurocups.html">Шахтер в Еврокубках</a></h4>
-        <a href="https://football.ua/countrieselse/443497-samye-bezumnye-transfery-v-istorii-novoe-video-na-kanale-footballua.html">
-                <a href="https://football.ua/countrieselse/443497-samye-bezumnye-transfery-v-istorii-novoe-video-na-kanale-footballua.html">
-                <a href="https://football.ua/ukraine/443476-dinamo-kiev-bateh-video-onlajjn-transljacija-tovarishheskogo-matcha.html">
+            <h4><a href="https://football.ua/tag/ukraine-chm-2020.html">Украина в отборе на ЧМ-2022</a></h4>
+        <a href="https://football.ua/worldcup/447636-san-marino-vengrija-03-video-golov-i-obzor-matcha.html">
+                <a href="https://football.ua/worldcup/447636-san-marino-vengrija-03-video-golov-i-obzor-matcha.html">
+                <a href="https://football.ua/ukraine2league/447635-podole-ehpicentr-video-onlajjn-transljacija-matcha-vtorojj-ligi.html">
 	<p class="more"><a href="https://football.ua/video/">все видео</a></p>
-            <a href="https://football.ua/gallery/2779.html">
-			    <h4><a href="https://football.ua/gallery/2779.html">Непростая победа Украины над Швейцарией</a></h4>
-            <a href="https://football.ua/gallery/2779.html">
-			    <h4><a href="https://football.ua/gallery/2779.html">Непростая победа Украины над Швейцарией</a></h4>
-            <a href="https://football.ua/gallery/2779.html">
-			    <h4><a href="https://football.ua/gallery/2779.html">Непростая победа Украины над Швейцарией</a></h4>
-            <a href="https://football.ua/gallery/2779.html">
-			    <h4><a href="https://football.ua/gallery/2779.html">Непростая победа Украины над Швейцарией</a></h4>
-            <a href="https://football.ua/gallery/2779.html">
-			    <h4><a href="https://football.ua/gallery/2779.html">Непростая победа Украины над Швейцарией</a></h4>
-            <a href="https://football.ua/gallery/2779.html">
-			    <h4><a href="https://football.ua/gallery/2779.html">Непростая победа Украины над Швейцарией</a></h4>
-            <a href="https://football.ua/gallery/2779.html">
-			    <h4><a href="https://football.ua/gallery/2779.html">Непростая победа Украины над Швейцарией</a></h4>
-            <a href="https://football.ua/gallery/2779.html">
-			    <h4><a href="https://football.ua/gallery/2779.html">Непростая победа Украины над Швейцарией</a></h4>
-            <a href="https://football.ua/gallery/2779.html">
-			    <h4><a href="https://football.ua/gallery/2779.html">Непростая победа Украины над Швейцарией</a></h4>
-            <a href="https://football.ua/gallery/2779.html">
-			    <h4><a href="https://football.ua/gallery/2779.html">Непростая победа Украины над Швейцарией</a></h4>
+            <a href="https://football.ua/gallery/2780.html">
+			    <h4><a href="https://football.ua/gallery/2780.html">Ничья с привкусом победы. Франция - Украина 1:1</a></h4>
+            <a href="https://football.ua/gallery/2780.html">
+			    <h4><a href="https://football.ua/gallery/2780.html">Ничья с привкусом победы. Франция - Украина 1:1</a></h4>
+            <a href="https://football.ua/gallery/2780.html">
+			    <h4><a href="https://football.ua/gallery/2780.html">Ничья с привкусом победы. Франция - Украина 1:1</a></h4>
+            <a href="https://football.ua/gallery/2780.html">
+			    <h4><a href="https://football.ua/gallery/2780.html">Ничья с привкусом победы. Франция - Украина 1:1</a></h4>
+            <a href="https://football.ua/gallery/2780.html">
+			    <h4><a href="https://football.ua/gallery/2780.html">Ничья с привкусом победы. Франция - Украина 1:1</a></h4>
+            <a href="https://football.ua/gallery/2780.html">
+			    <h4><a href="https://football.ua/gallery/2780.html">Ничья с привкусом победы. Франция - Украина 1:1</a></h4>
+            <a href="https://football.ua/gallery/2780.html">
+			    <h4><a href="https://football.ua/gallery/2780.html">Ничья с привкусом победы. Франция - Украина 1:1</a></h4>
+            <a href="https://football.ua/gallery/2780.html">
+			    <h4><a href="https://football.ua/gallery/2780.html">Ничья с привкусом победы. Франция - Украина 1:1</a></h4>
+            <a href="https://football.ua/gallery/2780.html">
+			    <h4><a href="https://football.ua/gallery/2780.html">Ничья с привкусом победы. Франция - Украина 1:1</a></h4>
+            <a href="https://football.ua/gallery/2780.html">
+			    <h4><a href="https://football.ua/gallery/2780.html">Ничья с привкусом победы. Франция - Украина 1:1</a></h4>
+			<h4><a href="https://football.ua/gallery/2779.html">Непростая победа Украины над Швейцарией</a></h4>
 			<h4><a href="https://football.ua/gallery/2777.html">Первая тренировка Динамо при Луческу</a></h4>
-			<h4><a href="https://football.ua/gallery/2776.html">Динамо в 12 раз выиграло Кубок Украины</a></h4>
 	<p class="more"><a href="https://football.ua/galleries/">все фото</a></p>
 			<p class="author"><a href="https://football.ua/conference/conf53.html">Сергей Шевченко</a></p>
 			<h4><a href="https://football.ua/conference/conf53.html">Итальянская Серия А</a></h4>
-			<p class="author"><a href="https://football.ua/conference/conf52.html">Александр Пузик</a></p>
-			<h4><a href="https://football.ua/conference/conf52.html">Испанская Ла Лига</a></h4>
 			<p class="author"><a href="https://football.ua/conference/conf33.html">Football.ua</a></p>
 			<h4><a href="https://football.ua/conference/conf33.html">Редакция Football.ua</a></h4>
+			<p class="author"><a href="https://football.ua/conference/conf52.html">Александр Пузик</a></p>
+			<h4><a href="https://football.ua/conference/conf52.html">Испанская Ла Лига</a></h4>
 	<p class="more"><a href="https://football.ua/conferences/">все конференции</a></p>
-			<h4><a href="https://football.ua/tvschedule/#tv-2021-02-08">Чемпионат Украины                                              </a></h4>
-			<h4><a href="https://football.ua/tvschedule/#tv-2021-02-08">Лига Европы                                                    </a></h4>
-			<h4><a href="https://football.ua/tvschedule/#tv-2021-02-08">Чемпионат Италии                                               </a></h4>
-			<h4><a href="https://football.ua/tvschedule/#tv-2021-02-08"></a></h4>
-			<h4><a href="https://football.ua/tvschedule/#tv-2021-02-08">Лига чемпионов                                                 </a></h4>
-			<h4><a href="https://football.ua/tvschedule/#tv-2021-02-08">Лига Европы                                                    </a></h4>
-			<h4><a href="https://football.ua/tvschedule/#tv-2021-02-08">Чемпионат Италии                                               </a></h4>
-			<h4><a href="https://football.ua/tvschedule/#tv-2021-02-08">Чемпионат Италии                                               </a></h4>
-			<h4><a href="https://football.ua/tvschedule/#tv-2021-02-08">Чемпионат Италии                                               </a></h4>
-			<h4><a href="https://football.ua/tvschedule/#tv-2021-02-08">Лига чемпионов                                                 </a></h4>
+			<h4><a href="https://football.ua/tvschedule/#tv-2021-03-29">Отбор на ЧМ-2022                                               </a></h4>
+			<h4><a href="https://football.ua/tvschedule/#tv-2021-03-29"></a></h4>
+			<h4><a href="https://football.ua/tvschedule/#tv-2021-03-29">Отбор на ЧМ-2022                                               </a></h4>
+			<h4><a href="https://football.ua/tvschedule/#tv-2021-03-29">ЧМ-2022                                                        </a></h4>
+			<h4><a href="https://football.ua/tvschedule/#tv-2021-03-29"></a></h4>
+			<h4><a href="https://football.ua/tvschedule/#tv-2021-03-29">Отбор на ЧМ-2022                                               </a></h4>
+			<h4><a href="https://football.ua/tvschedule/#tv-2021-03-29">Отбор к ЧМ-2022                                                </a></h4>
+			<h4><a href="https://football.ua/tvschedule/#tv-2021-03-29">Отбор к ЧМ-2022                                                </a></h4>
+			<h4><a href="https://football.ua/tvschedule/#tv-2021-03-29">Отборна ЧМ-2022                                                </a></h4>
+			<h4><a href="https://football.ua/tvschedule/#tv-2021-03-29"></a></h4>
 	<p class="more"><a href="https://football.ua/tvschedule/">Все программы</a></p>
 	<li><a href="http://m.football.ua">Мобильная версия</a></li>
 	<li><a href="https://itunes.apple.com/us/app/football.ua/id494293809?mt=8" target="_blank">Приложение для iPhone</a></li>

@@ -13,12 +13,13 @@ namespace Proxy
         enum class Success : CodeType
         {
             Success = 0,
-            BannedHostConnectionRefused = 1,
+            DataTransferEnded = 1,
             IgnoredBadConnectionHostDomainName = 2,
             WaitingForData = 3,
             WaitingForConnectResponse = 4,
             WaitingForTLSMessages = 5,
             GeneratedRecordsAndWaitForData = 6,
+            CloseSocketConnection = 100001,
         };
         enum class Error : CodeType
         {

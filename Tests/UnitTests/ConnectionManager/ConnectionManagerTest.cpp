@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "ConnectionManager/ConnectionManager.hpp"
+#include "ConnectionManager/SocketConnectionManager.hpp"
 #include "Status.hpp"
 namespace Proxy
 {
@@ -11,10 +11,10 @@ namespace Proxy
         int32_t sockfd = -1;
         uint32_t eventFlags = 1;
 
-        status = ConnectionManager::EpollAdd(epollfd, sockfd, eventFlags);
+        status = SocketConnectionManager::EpollAdd(epollfd, sockfd, eventFlags);
         EXPECT_EQ( status, Status::Error::BadEpollCTL);
 
-        status = ConnectionManager::EpollAdd(epollfd, sockfd, eventFlags, nullptr);
+        status = SocketConnectionManager::EpollAdd(epollfd, sockfd, eventFlags, nullptr);
         EXPECT_EQ( status, Status::Error::BadEpollCTL);
     }
 
@@ -24,7 +24,7 @@ namespace Proxy
         int32_t epollfd = 3;
         epoll_event fakeEvents[3] = {};
 
-        status = ConnectionManager::EpollWait(epollfd, fakeEvents, sizeof(fakeEvents), epollfd);
+        status = SocketConnectionManager::EpollWait(epollfd, fakeEvents, sizeof(fakeEvents), epollfd);
         EXPECT_EQ( status, Status::Error::BadEpollWait);
     }
 
@@ -32,7 +32,7 @@ namespace Proxy
     {
         Status status;
 
-        status = ConnectionManager::MakeSocketNonblocking(-1);
+        status = SocketConnectionManager::MakeSocketNonblocking(-1);
         EXPECT_EQ( status, Status::Error::BadMakingSocketNonblocking);
     }
 
@@ -41,15 +41,14 @@ namespace Proxy
         Status status;
         int32_t epollfd = 3;
 
-        status = ConnectionManager::BindSocketToPort(epollfd, 443);
-        EXPECT_EQ( status, Status::Error::BadBindListeningPortToSocket);
+        status = SocketConnectionManager::BindSocketToPort(epollfd, 443);
+        EXPECT_EQ( status, Status::Error::BadListeningSocketInitializaton);
     }
 
     TEST(ConnectionManagerTest, BadAcceptNewConnection)
     {
         Status status;
-        int32_t epollfd = 3;
-        ConnectionManager m;
+        SocketConnectionManager m;
         status = m.AcceptNewConnectionSocket(0, 0);
         EXPECT_EQ( status, Status::Error::BadConnectionFromListeningSocket);
     }

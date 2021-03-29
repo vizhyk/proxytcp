@@ -34,4 +34,9 @@ namespace Proxy
         return result->second;
     }
 
+    void SocketConversationManager::ErasePipeline(int32_t sockfd) noexcept
+    {
+        pipelines.erase(sockfd);
+    }
+
 }

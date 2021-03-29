@@ -40,6 +40,7 @@ namespace Proxy
 
     void SocketCapturingConversationManager::OpenPCAPFile(const std::string& filePath) noexcept
     {
+        //TODO: check if I've opened non-empty file!!
         m_pcapfile.Open(filePath, std::ios_base::binary);
         m_pcapfile.Write(nullptr,0);
         m_pcapfile.Close();

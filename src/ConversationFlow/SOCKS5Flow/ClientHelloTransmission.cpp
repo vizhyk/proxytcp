@@ -12,7 +12,6 @@ namespace Proxy::SOCKS5Flow
         using namespace  TrafficParsing;
         Status status;
         status = ReadAllDataFromConnection(clientConnection);
-        LogData("Client", clientConnection.Buffer());
         if (status.Failed()) { return nullptr; }
 
         if (SOCKS5Parser::IsValidClientHelloMessage(clientConnection.Buffer().GetBuffer(),clientConnection.Buffer().GetUsedBytes()))

@@ -15,16 +15,19 @@ namespace Proxy
         signal(SIGPIPE, SIG_IGN);
 
         receivedData = recv(m_socket, tmpBuffer, sizeof(tmpBuffer), 0);
-
-        if (receivedData == -1)
+        if (receivedData < 0)
         {
             status = Status(Status::Error::BadRecievingDataFromSocket);
             return status;
         }
-
         if (receivedData == 0)
         {
-            status = Status(Status::Success::Success);
+            if(errno == EWOULDBLOCK)
+            {
+                status = Status(Status::Success::DataTransferEnded);
+                return status;
+            }
+            status = Status(Status::Error::BadRecievingDataFromSocket);
             return status;
         }
 

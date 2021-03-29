@@ -196,14 +196,14 @@ namespace Proxy::PCAP
         return tmpTCPHeader;
     }
 
-    ByteStream PCAPGenerator::GenerateTCPHeader(PCAPData& senderPCAPData, PCAPData& recipientPCAPData, uint32_t tcpPayloadSize, uint32_t sourcePort, uint32_t destinationPort, uint16_t flags) noexcept
+    ByteStream PCAPGenerator::GenerateTCPHeader(PCAPData& senderPCAPData, PCAPData& recipientPCAPData, uint32_t tcpPayloadSize, uint16_t flags) noexcept
     {
         ByteStream tmpTCPHeader(HeaderSize::TCP);
 
         //source port
-        tmpTCPHeader.Insert(static_cast<uint16_t>(htons(sourcePort)));
+        tmpTCPHeader.Insert(static_cast<uint16_t>(htons(senderPCAPData.m_port)));
         //destination port
-        tmpTCPHeader.Insert(static_cast<uint16_t>(htons(destinationPort)));
+        tmpTCPHeader.Insert(static_cast<uint16_t>(htons(recipientPCAPData.m_port)));
         //sequence number
         tmpTCPHeader.Insert(static_cast<uint32_t>(htonl(senderPCAPData.m_sequenceNumber)));
         //acknowledgment number
@@ -319,7 +319,7 @@ namespace Proxy::PCAP
         tmpAckPacket.Insert(GeneratePCAPPacketHeader(0, lhsPCAPData.m_timestamp.TSval, pcapTimestamp.TSusec));
         tmpAckPacket.Insert( GenerateEthHeader());
         tmpAckPacket.Insert( GenerateIPv4Header(0,sourceIPv4,destinationIPv4));
-        tmpAckPacket.Insert( GenerateTCPHeader(lhsPCAPData, rhsPCAPData, 0, sourcePort, destinationPort, flags));
+        tmpAckPacket.Insert(GenerateTCPHeader(lhsPCAPData, rhsPCAPData, 0, flags));
 
         return tmpAckPacket;
     }
@@ -383,6 +383,60 @@ namespace Proxy::PCAP
         uint32_t second = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
         uint32_t microsecond = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count() - second * 1'000'000;
         return {second,microsecond};
+    }
+
+    ByteStream PCAPGenerator::GenerateFINACKHandshake(PCAPData& client, PCAPData& server) noexcept
+    {
+        ByteStream tmpFINACKHandshake;
+
+        auto now = std::chrono::system_clock::now();
+        auto pcapTimestamp = GeneratePCAPTimestampFromNow(now);
+
+        server.m_timestamp.TSval = pcapTimestamp.TSsec;
+        client.m_timestamp.TSecr = pcapTimestamp.TSsec;
+
+        //FIN
+        tmpFINACKHandshake.Insert(GeneratePCAPPacketHeader(0, HeaderSize::TCP, server.m_timestamp.TSval, pcapTimestamp.TSusec));
+        tmpFINACKHandshake.Insert(GenerateEthHeader());
+        tmpFINACKHandshake.Insert(GenerateIPv4Header(0, server.m_ipv4, client.m_ipv4, HeaderSize::TCP));
+        tmpFINACKHandshake.Insert(GenerateTCPHeader(client, server, 0, TCP::Flags::FIN));
+
+        now = std::chrono::system_clock::now();
+        pcapTimestamp = GeneratePCAPTimestampFromNow(now);
+
+        client.m_timestamp.TSval = pcapTimestamp.TSsec;
+        server.m_timestamp.TSecr = pcapTimestamp.TSsec;
+
+        //FINACK
+        tmpFINACKHandshake.Insert(GeneratePCAPPacketHeader(0, HeaderSize::TCP, client.m_timestamp.TSval, pcapTimestamp.TSusec));
+        tmpFINACKHandshake.Insert(GenerateEthHeader());
+        tmpFINACKHandshake.Insert(GenerateIPv4Header(0, client.m_ipv4, server.m_ipv4, HeaderSize::TCP));
+        tmpFINACKHandshake.Insert(GenerateTCPHeader(server, client, 0, TCP::Flags::FINACK));
+
+        now = std::chrono::system_clock::now();
+        pcapTimestamp = GeneratePCAPTimestampFromNow(now);
+
+        server.m_timestamp.TSval = pcapTimestamp.TSsec;
+        client.m_timestamp.TSecr = pcapTimestamp.TSsec;
+
+        //ACK
+        tmpFINACKHandshake.Insert(GeneratePCAPPacketHeader(0, HeaderSize::TCP, server.m_timestamp.TSval, pcapTimestamp.TSusec));
+        tmpFINACKHandshake.Insert(GenerateEthHeader());
+        tmpFINACKHandshake.Insert(GenerateIPv4Header(0, server.m_ipv4, client.m_ipv4, HeaderSize::TCP));
+        tmpFINACKHandshake.Insert(GenerateTCPHeader(client, server, 0, TCP::Flags::ACK));
+
+        return tmpFINACKHandshake;
+    }
+
+    ByteStream PCAPGenerator::GenerateTLSHeader(uint16_t tcpPayloadSize) noexcept
+    {
+        ByteStream tmpTLSHandshake;
+
+        tmpTLSHandshake.Insert(static_cast<uint8_t>(0x17));
+        tmpTLSHandshake.Insert(static_cast<uint16_t>(htons(0x0303)));
+        tmpTLSHandshake.Insert(static_cast<uint16_t>(htons(tcpPayloadSize)));
+
+        return tmpTLSHandshake;
     }
 
 }

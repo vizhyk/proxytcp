@@ -13,12 +13,18 @@ namespace Proxy
         CapturingConversationPipeline(int32_t epollfd, SocketConversationManager& conversationManager) noexcept;
         CapturingConversationPipeline(int32_t epollfd, std::unique_ptr<ConversationFlow> flow, SocketConversationManager& conversationManager) noexcept;
 
+//        ~CapturingConversationPipeline() override
+//        {
+//            m_pcapfile.Close();
+//            std::cout << "file closed\n";
+//        }
+
         PCAP::PCAPCapturingFile& PCAPFile() noexcept;
 
         PCAPData& ClientPCAPData() noexcept;
         PCAPData& ServerPCAPData() noexcept;
 
-        void PerformTransaction(int32_t sockfdWithEvent) noexcept override;
+//        Status PerformTransaction(int32_t sockfdWithEvent) noexcept override;
 
         void InitServerConnection(int32_t sockfd) noexcept override;
         void InitClientConnection(int32_t sockfd) noexcept override;

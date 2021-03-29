@@ -14,6 +14,7 @@ namespace Proxy
 
         static Status EpollAdd(int32_t epollfd, int32_t sockfd, uint32_t eventFlags) noexcept;
         static Status EpollAdd(int32_t epollfd, int32_t sockfd, uint32_t eventFlags, ConversationPipeline* pipeline) noexcept;
+        static Status EpollRemove(int32_t epollfd, int32_t sockfd, uint32_t eventFlags) noexcept;
         static Status EpollCreate(int32_t& epollfd) noexcept;
         static Status EpollWait(int32_t epollfd, epoll_event* epollEvents, uint32_t epollEventsSize, int32_t& socketsWithEvent) noexcept;
         static Status BindSocketToPort(int32_t& sockfd, uint16_t port) noexcept;
@@ -24,7 +25,7 @@ namespace Proxy
 
         Status AcceptNewConnectionSocket(int32_t listeningSocket, int32_t epollfd) noexcept;
         Status ProcessConnections(uint16_t port) override;
-        Status FindPipelineAndPerformTransaction(int32_t sockfd) override;
+        Status FindPipelineAndPerformTransaction(int32_t sockfd, int32_t epollfd) override;
 
     };
 }

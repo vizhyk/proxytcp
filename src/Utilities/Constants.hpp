@@ -20,7 +20,6 @@ namespace Proxy::Utilities::Offsets
 {
     namespace TLS
     {
-
         const uint32_t TLS_DATA = 66; // start point of the tls data;
         const uint32_t RECORD_TYPE = 66;
         const uint32_t MESSAGE_TYPE = 71;
@@ -115,16 +114,25 @@ namespace Proxy::PCAP
         uint32_t maxPacketSize;
         uint32_t dataLinkType;
     };
+
+    enum Insert : uint8_t
+    {
+        FINACK = 0b10000000,
+        Packet = 0b00011000,
+        ACK    = 0b00000001,
+    };
 }
 
 namespace Proxy::TCP
 {
     namespace Flags
     {
-        const uint16_t SYN    = 0x002;
-        const uint16_t SYNACK = 0x012;
-        const uint16_t ACK    = 0x010;
-        const uint16_t PSHACK = 0x018;
+        const uint16_t FIN    = 0x01;
+        const uint16_t SYN    = 0x02;
+        const uint16_t ACK    = 0x10;
+        const uint16_t SYNACK = 0x12;
+        const uint16_t FINACK = 0x11;
+        const uint16_t PSHACK = 0x18;
     };
 }
 

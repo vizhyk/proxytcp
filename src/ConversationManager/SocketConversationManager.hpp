@@ -17,6 +17,7 @@ namespace Proxy
         virtual  ~ConversationManager() = default;
         virtual std::shared_ptr<ConversationPipeline> LinkSockfdToExistingPipeline(int32_t sockfd, std::shared_ptr<ConversationPipeline>& pipelinePtr) = 0;
         virtual std::shared_ptr<ConversationPipeline> FindPipelineBySockfd(int32_t sockfd) noexcept  = 0;
+        virtual void ErasePipeline(int32_t sockfd) noexcept = 0;
     };
 
     class SocketConversationManager : public ConversationManager
@@ -25,6 +26,8 @@ namespace Proxy
         virtual std::shared_ptr<ConversationPipeline> AddNewPipeline(int32_t clientSockfd, int32_t epollfd);
         std::shared_ptr<ConversationPipeline> LinkSockfdToExistingPipeline(int32_t sockfd, std::shared_ptr<ConversationPipeline>& pipelinePtr)override;
         std::shared_ptr<ConversationPipeline> FindPipelineBySockfd(int32_t sockfd) noexcept override;
+        void ErasePipeline(int32_t sockfd) noexcept override;
+
 
     protected:
         std::map<int32_t, std::shared_ptr<ConversationPipeline>> pipelines;

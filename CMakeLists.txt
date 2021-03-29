@@ -41,6 +41,8 @@ ADD_LIBRARY(SourceFiles STATIC
         src/PCAP/PCAPCapturingFile.cpp
         src/PCAP/PCAPReplayFile.cpp
         src/CommandLineOptions/CommandLineOptions.cpp
+#        src/ConversationFlow/BreakConnection.cpp
+#        src/ConversationFlow/BreakConnection.hpp
         )
 
 add_executable(proxytcp main.cpp)
@@ -57,7 +59,8 @@ add_executable(proxytcp_tests
         Tests/UnitTests/ConnectionManager/ConnectionManagerTest.cpp
         Tests/UnitTests/SOCKS5/SOCKS5FlowTest.cpp
         Tests/UnitTests/ConversationPipeline/ConversationPipelineTest.cpp
-        Tests/UnitTests/TrafficParsing/TLSRecordParser.cpp)
+        Tests/UnitTests/TrafficParsing/TLSRecordParser.cpp
+        )
 
 target_link_libraries(proxytcp_tests SourceFiles)
 target_link_libraries(proxytcp_tests gtest gtest_main)
