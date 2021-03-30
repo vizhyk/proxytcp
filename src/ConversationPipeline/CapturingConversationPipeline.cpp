@@ -43,15 +43,6 @@ namespace Proxy
         return m_serverPCAPData;
     }
 
-//    Status CapturingConversationPipeline::PerformTransaction(int32_t sockfdWithEvent) noexcept
-//    {
-//        auto newFlow = m_conversationFlow->PerformTransaction(*m_clientConnection, *m_serverConnection, m_epollfd, sockfdWithEvent);
-//        if (newFlow != nullptr)
-//        {
-//            m_conversationFlow = std::move(newFlow);
-//        }
-//    }
-
     void CapturingConversationPipeline::InitPCAPClientData(const PCAPData& pcapData) noexcept
     {
         m_clientPCAPData = pcapData;
@@ -62,20 +53,4 @@ namespace Proxy
         m_serverPCAPData = pcapData;
     }
 
-    void CapturingConversationPipeline::InitPCAPClientData(uint32_t sequenceNumber, uint32_t acknowledgmentNumber, uint32_t IPv4) noexcept
-    {
-        m_clientPCAPData.m_sequenceNumber = sequenceNumber;
-        m_clientPCAPData.m_acknowledgmentNumber = acknowledgmentNumber;
-        m_clientPCAPData.m_ipv4 = IPv4;
-        m_clientPCAPData.m_timestamp = {0, 0};
-    }
-
-    void CapturingConversationPipeline::InitPCAPServerData(uint32_t sequenceNumber, uint32_t acknowledgmentNumber, uint32_t IPv4) noexcept
-    {
-        m_serverPCAPData.m_sequenceNumber = sequenceNumber;
-        m_serverPCAPData.m_acknowledgmentNumber = acknowledgmentNumber;
-        m_serverPCAPData.m_ipv4 = IPv4;
-        m_serverPCAPData.m_timestamp = {0, 0};
-
-    }
 }

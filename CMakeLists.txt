@@ -60,6 +60,7 @@ add_executable(proxytcp_tests
         Tests/UnitTests/SOCKS5/SOCKS5FlowTest.cpp
         Tests/UnitTests/ConversationPipeline/ConversationPipelineTest.cpp
         Tests/UnitTests/TrafficParsing/TLSRecordParser.cpp
+        Tests/UnitTests/Connection/ConnectionTest.cpp
         )
 
 target_link_libraries(proxytcp_tests SourceFiles)

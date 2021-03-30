@@ -35,8 +35,6 @@ namespace Proxy
         ConnectionSide GetConnectionSide() const noexcept;
         int32_t GetSocketfd() const noexcept;
 
-        void ChangeState(ConnectionSide state) noexcept;
-
         ByteStream& Buffer() noexcept;
         std::weak_ptr<ConversationPipeline>& Pipeline() noexcept;
     protected:

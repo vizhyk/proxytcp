@@ -68,6 +68,7 @@ namespace Proxy
             NoServerHelloFound = -40,
             PCAPFileWasNotCreated = -41,
             ConnectionManagerIsNotInitialized = -42,
+            NoAvailableModeChosen = -43,
         };
 
     public:

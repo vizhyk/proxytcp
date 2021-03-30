@@ -23,15 +23,5 @@ namespace Proxy
         return recipient.SendDataTo(data,recipient);
     }
 
-    void ConversationFlow::LogData(const std::string& sender, const ByteStream& data) noexcept
-    {
-        std::cout << "[" << sender << "]: ";
-        for(std::size_t i = 0; i < data.GetUsedBytes(); ++i)
-        {
-            printf("%02x ", data.GetBuffer()[i]);
-        }
-        std::cout << "\n";
-    }
-
 }
 
