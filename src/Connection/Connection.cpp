@@ -13,12 +13,6 @@ namespace Proxy
         close(m_socket);
     }
 
-    void
-    Connection::ChangeState(ConnectionSide state) noexcept
-    {
-        m_connectionSide = state;
-    }
-
     Connection::ConnectionSide
     Connection::GetConnectionSide() const noexcept
     {
@@ -43,10 +37,8 @@ namespace Proxy
     }
 
 
-
-
     bool operator==(const Connection& lhs, const Connection& rhs) noexcept { return lhs.GetSocketfd() == rhs.GetSocketfd(); }
-    bool operator!=(const Connection& lhs, const Connection& rhs) noexcept { return !(lhs == rhs); }
+    bool operator!=(const Connection& lhs, const Connection& rhs) noexcept { return lhs.GetSocketfd() != rhs.GetSocketfd(); }
 
 }
 

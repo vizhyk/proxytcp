@@ -8,7 +8,7 @@ sudo cmake --build .
 ./bin/proxytcp_tests
 
 cd Tests/RegressionTests/
-./LaunchAllTests.sh
+./LaunchAllTests.sh $PATH_TO_PROXYTCP
 cd ../..
 
 mkdir CodeCoverage

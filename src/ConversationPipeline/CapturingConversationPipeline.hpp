@@ -30,8 +30,6 @@ namespace Proxy
         void InitClientConnection(int32_t sockfd) noexcept override;
         void InitPCAPClientData(const PCAPData& pcapData) noexcept;
         void InitPCAPServerData(const PCAPData& pcapData) noexcept;
-        void InitPCAPClientData(uint32_t sequenceNumber, uint32_t acknowledgmentNumber, uint32_t IPv4) noexcept;
-        void InitPCAPServerData(uint32_t sequenceNumber, uint32_t acknowledgmentNumber, uint32_t IPv4) noexcept;
 
     private:
         PCAPData m_clientPCAPData;

@@ -27,14 +27,11 @@ namespace Proxy
             if(m_connectionSide == ConnectionSide::Client)
             {
                 CaptureData(currentPipeline->PCAPFile(), m_buffer, currentPipeline->ClientPCAPData(),currentPipeline->ServerPCAPData(), PCAP::Insert::FINACK);
-//                CaptureData(currentPipeline->PCAPFile(), m_buffer, currentPipeline->ClientPCAPData(),currentPipeline->ServerPCAPData(), PCAP::Insert::FINACK);
             }
                 //if data was sended from server
             else
             {
                 CaptureData(currentPipeline->PCAPFile(), m_buffer, currentPipeline->ServerPCAPData(),currentPipeline->ClientPCAPData(), PCAP::Insert::FINACK);
-//                CaptureData(currentPipeline->PCAPFile(), m_buffer, currentPipeline->ServerPCAPData(),currentPipeline->ClientPCAPData(), PCAP::Insert::FINACK);
-
             }
 
             return status;

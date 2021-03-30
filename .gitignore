@@ -13,3 +13,5 @@ proxytcp_tests
 googletest/
 curlOutputs/
 CodeCoverage/
+bin/*.pcap
+Testing/

@@ -33,6 +33,7 @@ namespace Proxy
                 break;
             case ExecutionModeType::Replay:
             default:
+                return Status(Status::Error::NoAvailableModeChosen);
                 break;
 
         }

@@ -30,8 +30,6 @@ namespace Proxy
         static Status SendAllDataFromConnection(const ByteStream& data, SocketConnection& connection) noexcept;
         static Status SendAllDataToConnection(const ByteStream& data, SocketConnection& recipient) noexcept;
 
-        static void LogData(const std::string& sender, const ByteStream& data) noexcept;
-
     protected:
         FlowState m_flowState {};
     };
